@@ -1,0 +1,16 @@
+version: '3.1'
+services:
+  mariadb:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: canteen
+      MYSQL_USER: canteen
+      MYSQL_PASSWORD: canteen
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    ports:
+      - 3306:3306
+  
+  # ...
