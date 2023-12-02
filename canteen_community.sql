@@ -1,321 +1,438 @@
 /*
-Navicat MySQL Data Transfer
+ @Author: Lu Tiancheng, Xu Weizhe
 
-Source Server         : experiment
-Source Server Version : 80034
-Source Host           : localhost:3306
-Source Database       : canteen_community
+ Navicat Premium Data Transfer
 
-Target Server Type    : MYSQL
-Target Server Version : 80034
-File Encoding         : 65001
+ Source Server         : localhost
+ Source Server Type    : MySQL
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : localhost:3306
+ Source Schema         : canteen_community
 
-Date: 2023-12-02 11:41:17
+ Target Server Type    : MySQL
+ Target Server Version : 80100 (8.1.0)
+ File Encoding         : 65001
+
+ Date: 02/12/2023 16:38:19
 */
 
-SET FOREIGN_KEY_CHECKS=0;
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for announcement
+-- ----------------------------
+DROP TABLE IF EXISTS `announcement`;
+CREATE TABLE `announcement`  (
+  `announcement_id` int NOT NULL AUTO_INCREMENT COMMENT '公告ID',
+  `canteen_id` int NOT NULL COMMENT '食堂ID',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '公告标题',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '公告内容',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`announcement_id`) USING BTREE,
+  INDEX `idx_announcement_canteen_id`(`canteen_id` ASC) USING BTREE,
+  INDEX `idx_announcement_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_announcement_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `announcement_ibfk_1` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `announcement_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 5000))
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '公告表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for canteen
 -- ----------------------------
 DROP TABLE IF EXISTS `canteen`;
-CREATE TABLE `canteen` (
-  `canteen_id` int NOT NULL AUTO_INCREMENT,
-  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `introduction` varbinary(255) DEFAULT NULL,
-  `notice` binary(255) DEFAULT NULL,
-  `menu` binary(255) DEFAULT NULL,
-  PRIMARY KEY (`canteen_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `canteen`  (
+  `canteen_id` int NOT NULL AUTO_INCREMENT COMMENT '食堂ID',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '食堂名称',
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '食堂位置',
+  `introduction` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '食堂简介',
+  `comp_score` decimal(5, 2) NULL DEFAULT NULL COMMENT '综合评分',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`canteen_id`) USING BTREE,
+  INDEX `idx_canteen_name`(`name` ASC) USING BTREE,
+  INDEX `idx_canteen_comp_score`(`comp_score` ASC) USING BTREE,
+  INDEX `idx_canteen_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_canteen_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `canteen_chk_1` CHECK ((`comp_score` >= 0) and (`comp_score` <= 5))
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '食堂表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of canteen
+-- Table structure for comment
 -- ----------------------------
-
--- ----------------------------
--- Table structure for canteen_comment
--- ----------------------------
-DROP TABLE IF EXISTS `canteen_comment`;
-CREATE TABLE `canteen_comment` (
-  `canteen_comment_id` int NOT NULL,
-  `canteen_id` int DEFAULT NULL COMMENT '所评价的canteen_id',
-  `created_by` int DEFAULT NULL,
-  `created_time` datetime DEFAULT NULL,
-  `content` binary(255) DEFAULT NULL,
-  `score` decimal(5,2) DEFAULT NULL,
-  PRIMARY KEY (`canteen_comment_id`),
-  KEY `cc_canteen_id` (`canteen_id`),
-  KEY `cc_created_by` (`created_by`),
-  CONSTRAINT `cc_canteen_id` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `cc_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of canteen_comment
--- ----------------------------
-
--- ----------------------------
--- Table structure for canteen_rank
--- ----------------------------
-DROP TABLE IF EXISTS `canteen_rank`;
-CREATE TABLE `canteen_rank` (
-  `canteen_id` int NOT NULL AUTO_INCREMENT,
-  `introduction` binary(255) DEFAULT NULL,
-  `score` decimal(5,2) DEFAULT NULL,
-  `position` int DEFAULT NULL,
-  PRIMARY KEY (`canteen_id`),
-  CONSTRAINT `cr_canteen_id` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of canteen_rank
--- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment`  (
+  `comment_id` int NOT NULL AUTO_INCREMENT COMMENT '评论ID',
+  `type` enum('canteen','item','complaint','topic') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论类型',
+  `reference_id` int NOT NULL COMMENT '评论对象ID',
+  `created_by` int NULL DEFAULT NULL COMMENT '评论者ID',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '评论内容',
+  `score` decimal(5, 2) NULL DEFAULT NULL COMMENT '评分',
+  `parent_id` int NULL DEFAULT NULL COMMENT '父评论ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`comment_id`) USING BTREE,
+  INDEX `idx_comment_type_reference_id`(`type` ASC, `reference_id` ASC) USING BTREE,
+  INDEX `idx_comment_created_by`(`created_by` ASC) USING BTREE,
+  INDEX `idx_comment_parent_id`(`parent_id` ASC) USING BTREE,
+  INDEX `idx_comment_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_comment_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `comment_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 500)),
+  CONSTRAINT `comment_chk_2` CHECK ((`score` >= 0) and (`score` <= 5))
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表,包括食堂评论、菜品评论、帖子评论和投诉评论（投诉评论不能回复，以列表形式呈现）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for complaint
 -- ----------------------------
 DROP TABLE IF EXISTS `complaint`;
-CREATE TABLE `complaint` (
-  `complaint_id` int NOT NULL AUTO_INCREMENT,
-  `created_by` int DEFAULT NULL,
-  `time` datetime DEFAULT NULL,
-  `content` binary(255) DEFAULT NULL,
-  PRIMARY KEY (`complaint_id`),
-  KEY `complaint_created_by` (`created_by`),
-  CONSTRAINT `complaint_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `complaint`  (
+  `complaint_id` int NOT NULL AUTO_INCREMENT COMMENT '投诉ID',
+  `created_by` int NULL DEFAULT NULL COMMENT '投诉者ID',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '投诉内容',
+  `status` enum('pending','processing','replied','finished') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'pending' COMMENT '投诉状态, pending: 待处理, processing: 处理中, replied: 已回复, finished: 已完成',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`complaint_id`) USING BTREE,
+  INDEX `created_by`(`created_by` ASC) USING BTREE,
+  INDEX `idx_complaint_status_created_by`(`status` ASC, `created_by` ASC) USING BTREE,
+  INDEX `idx_complaint_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_complaint_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `complaint_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `complaint_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 5000))
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投诉表,当用户发起投诉，状态为pending，管理员回复后状态为replied，用户回复后状态为processing，管理员处理完成后状态为finished，投诉信息不可被删除' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of complaint
+-- Table structure for cuisine
 -- ----------------------------
+DROP TABLE IF EXISTS `cuisine`;
+CREATE TABLE `cuisine`  (
+  `cuisine_id` int NOT NULL AUTO_INCREMENT COMMENT '菜系ID',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '菜系名称',
+  `canteen_id` int NULL DEFAULT NULL COMMENT '食堂ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`cuisine_id`) USING BTREE,
+  INDEX `idx_cuisine_name`(`name` ASC) USING BTREE,
+  INDEX `idx_cuisine_canteen_id`(`canteen_id` ASC) USING BTREE,
+  INDEX `idx_cuisine_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_cuisine_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `cuisine_ibfk_1` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜系表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for image
+-- ----------------------------
+DROP TABLE IF EXISTS `image`;
+CREATE TABLE `image`  (
+  `image_id` int NOT NULL AUTO_INCREMENT COMMENT '图片ID',
+  `file_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件ID',
+  `type` enum('canteen','item','complaint','topic') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '图片类型',
+  `reference_id` int NULL DEFAULT NULL COMMENT '图片对象ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`image_id`) USING BTREE,
+  INDEX `idx_image_file_id`(`file_id` ASC) USING BTREE,
+  INDEX `idx_image_type_reference_id`(`type` ASC, `reference_id` ASC) USING BTREE,
+  INDEX `idx_image_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_image_updated_at`(`updated_at` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '图片表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for item
 -- ----------------------------
 DROP TABLE IF EXISTS `item`;
-CREATE TABLE `item` (
-  `item_id` int NOT NULL AUTO_INCREMENT,
-  `cuisine` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '菜系',
-  `price` decimal(10,2) DEFAULT NULL,
-  `canteen_id` int DEFAULT NULL COMMENT '所在食堂',
-  `introduction` binary(255) DEFAULT NULL,
-  `score` decimal(5,2) DEFAULT NULL COMMENT '总评分',
-  PRIMARY KEY (`item_id`),
-  KEY `item_canteen_id` (`canteen_id`),
-  CONSTRAINT `item_canteen_id` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of item
--- ----------------------------
-
--- ----------------------------
--- Table structure for item_comment
--- ----------------------------
-DROP TABLE IF EXISTS `item_comment`;
-CREATE TABLE `item_comment` (
-  `comment_id` int NOT NULL AUTO_INCREMENT,
-  `item_id` int DEFAULT NULL COMMENT '所评价的canteen_id',
-  `created_by` int DEFAULT NULL,
-  `created_time` datetime DEFAULT NULL,
-  `content` binary(255) DEFAULT NULL,
-  `score` decimal(5,2) DEFAULT NULL,
-  PRIMARY KEY (`comment_id`),
-  KEY `ic_item_id` (`item_id`),
-  KEY `ic_created_by` (`created_by`),
-  CONSTRAINT `ic_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `ic_item_id` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of item_comment
--- ----------------------------
-
--- ----------------------------
--- Table structure for item_rank
--- ----------------------------
-DROP TABLE IF EXISTS `item_rank`;
-CREATE TABLE `item_rank` (
-  `item_id` int NOT NULL AUTO_INCREMENT,
-  `introduction` binary(255) DEFAULT NULL,
-  `score` decimal(5,2) DEFAULT NULL,
-  `position` int DEFAULT NULL,
-  PRIMARY KEY (`item_id`),
-  CONSTRAINT `ir_item_id` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of item_rank
--- ----------------------------
-
--- ----------------------------
--- Table structure for notice
--- ----------------------------
-DROP TABLE IF EXISTS `notice`;
-CREATE TABLE `notice` (
-  `notice_id` int NOT NULL AUTO_INCREMENT,
-  `type` varchar(255) DEFAULT NULL COMMENT '促销活动，推荐菜品，或其他',
-  `time` datetime DEFAULT NULL COMMENT '发布时间',
-  `created_by` varchar(255) DEFAULT NULL COMMENT '发布者',
-  `content` binary(255) DEFAULT NULL,
-  PRIMARY KEY (`notice_id`),
-  KEY `notice_created_by` (`created_by`),
-  CONSTRAINT `notice_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`employee_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of notice
--- ----------------------------
-
--- ----------------------------
--- Table structure for ponit_log
--- ----------------------------
-DROP TABLE IF EXISTS `ponit_log`;
-CREATE TABLE `ponit_log` (
-  `log_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `point_change` decimal(5,2) DEFAULT NULL,
-  `level_change` int DEFAULT NULL,
-  PRIMARY KEY (`log_id`),
-  KEY `pl_user_id` (`user_id`),
-  CONSTRAINT `pl_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of ponit_log
--- ----------------------------
+CREATE TABLE `item`  (
+  `item_id` int NOT NULL AUTO_INCREMENT COMMENT '菜品ID',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '菜品名称',
+  `cuisine_id` int NULL DEFAULT NULL COMMENT '菜系ID',
+  `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '菜品价格',
+  `promotion_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '促销价格',
+  `introduction` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '菜品简介',
+  `comp_score` decimal(5, 2) NULL DEFAULT NULL COMMENT '综合评分',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`item_id`) USING BTREE,
+  INDEX `idx_item_name`(`name` ASC) USING BTREE,
+  INDEX `idx_item_cuisine_id`(`cuisine_id` ASC) USING BTREE,
+  INDEX `idx_item_price_promotion_price`(`price` ASC, `promotion_price` ASC) USING BTREE,
+  INDEX `idx_item_comp_score`(`comp_score` ASC) USING BTREE,
+  INDEX `idx_item_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_item_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `item_ibfk_1` FOREIGN KEY (`cuisine_id`) REFERENCES `cuisine` (`cuisine_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `item_chk_1` CHECK ((`comp_score` >= 0) and (`comp_score` <= 5))
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for topic
 -- ----------------------------
 DROP TABLE IF EXISTS `topic`;
-CREATE TABLE `topic` (
-  `topic_id` int NOT NULL AUTO_INCREMENT,
-  `type` smallint NOT NULL,
-  `title` binary(255) DEFAULT NULL,
-  `content` binary(255) DEFAULT NULL,
-  `point` int DEFAULT NULL,
-  `created_time` datetime DEFAULT NULL,
-  `created_by` int DEFAULT NULL,
-  PRIMARY KEY (`topic_id`),
-  KEY `topic_created_by` (`created_by`),
-  CONSTRAINT `topic_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `topic`  (
+  `topic_id` int NOT NULL AUTO_INCREMENT COMMENT '帖子ID',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '内容',
+  `created_by` int NULL DEFAULT NULL COMMENT '创建者ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`topic_id`) USING BTREE,
+  INDEX `idx_topic_created_by`(`created_by` ASC) USING BTREE,
+  INDEX `idx_topic_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_topic_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `topic_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `topic_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 5000))
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of topic
+-- Table structure for topic_like
 -- ----------------------------
-
--- ----------------------------
--- Table structure for topic_comment
--- ----------------------------
-DROP TABLE IF EXISTS `topic_comment`;
-CREATE TABLE `topic_comment` (
-  `comment_id` int NOT NULL AUTO_INCREMENT,
-  `topic_id` int DEFAULT NULL COMMENT '所属topic_id',
-  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `created_by` int NOT NULL,
-  `created_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`comment_id`),
-  KEY `log_user_id` (`created_by`) USING BTREE,
-  KEY `tc_topic_id` (`topic_id`),
-  CONSTRAINT `tc_crated_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `tc_topic_id` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`topic_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
--- ----------------------------
--- Records of topic_comment
--- ----------------------------
+DROP TABLE IF EXISTS `topic_like`;
+CREATE TABLE `topic_like`  (
+  `topic_id` int NOT NULL COMMENT '帖子ID',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`topic_id`, `user_id`) USING BTREE,
+  INDEX `idx_topic_like_topic_id`(`topic_id` ASC) USING BTREE,
+  INDEX `idx_topic_like_user_id`(`user_id` ASC) USING BTREE,
+  INDEX `idx_topic_like_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_topic_like_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `topic_like_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`topic_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `topic_like_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子点赞表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `password` varchar(50) DEFAULT NULL,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `employee_id` varchar(50) DEFAULT NULL,
-  `role` varchar(50) DEFAULT NULL COMMENT '三种用户角色：系统管理员、师生用户、食堂管理员',
-  `level` bigint DEFAULT NULL,
-  `point` bigint DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL COMMENT '是否被屏蔽',
-  PRIMARY KEY (`user_id`),
-  KEY `user_id` (`user_id`,`username`),
-  KEY `employee_id` (`employee_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `user`  (
+  `user_id` int NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
+  `password` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '密码,使用Bcrypt加密,长度60,预留20',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '真实姓名',
+  `employee_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '学工号',
+  `level` int NULL DEFAULT 0 COMMENT '用户等级',
+  `point` bigint NULL DEFAULT 0 COMMENT '积分',
+  `available` tinyint NULL DEFAULT 1 COMMENT '是否可用',
+  `role` enum('user','canteen_admin','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'user' COMMENT '用户角色',
+  `is_verified` tinyint NULL DEFAULT 0 COMMENT '是否已验证学工号',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `last_login_at` datetime NULL DEFAULT NULL COMMENT '最后登录时间',
+  PRIMARY KEY (`user_id`) USING BTREE,
+  UNIQUE INDEX `username`(`username` ASC) USING BTREE,
+  INDEX `level`(`level` ASC) USING BTREE,
+  INDEX `is_verified`(`is_verified` ASC) USING BTREE,
+  INDEX `idx_user_username`(`username` ASC) USING BTREE,
+  INDEX `idx_user_level`(`level` ASC) USING BTREE,
+  INDEX `idx_user_is_verified`(`is_verified` ASC) USING BTREE,
+  INDEX `idx_user_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_user_updated_at`(`updated_at` ASC) USING BTREE,
+  INDEX `idx_user_last_login_at`(`last_login_at` ASC) USING BTREE,
+  INDEX `idx_user_role`(`role` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of user
+-- Table structure for user_message
 -- ----------------------------
+DROP TABLE IF EXISTS `user_message`;
+CREATE TABLE `user_message`  (
+  `message_id` int NOT NULL AUTO_INCREMENT COMMENT '消息ID',
+  `from_user_id` int NULL DEFAULT NULL COMMENT '发送者ID',
+  `to_user_id` int NULL DEFAULT NULL COMMENT '接收者ID',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '消息内容',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`message_id`) USING BTREE,
+  INDEX `from_user_id`(`from_user_id` ASC) USING BTREE,
+  INDEX `to_user_id`(`to_user_id` ASC) USING BTREE,
+  CONSTRAINT `user_message_ibfk_1` FOREIGN KEY (`from_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_message_ibfk_2` FOREIGN KEY (`to_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_message_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 200))
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户消息表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_notification
+-- ----------------------------
+DROP TABLE IF EXISTS `user_notification`;
+CREATE TABLE `user_notification`  (
+  `notification_id` int NOT NULL AUTO_INCREMENT COMMENT '通知ID',
+  `user_id` int NULL DEFAULT NULL COMMENT '用户ID',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '通知内容',
+  `is_read` tinyint NULL DEFAULT 0 COMMENT '是否已读',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`notification_id`) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE,
+  CONSTRAINT `user_notification_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户通知表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_point_log
+-- ----------------------------
+DROP TABLE IF EXISTS `user_point_log`;
+CREATE TABLE `user_point_log`  (
+  `log_id` int NOT NULL AUTO_INCREMENT COMMENT '日志ID',
+  `user_id` int NULL DEFAULT NULL COMMENT '用户ID',
+  `point` int NULL DEFAULT NULL COMMENT '积分',
+  `detail` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '积分详情',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`log_id`) USING BTREE,
+  INDEX `idx_user_point_log_user_id`(`user_id` ASC) USING BTREE,
+  INDEX `idx_user_point_log_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_user_point_log_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `user_point_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户积分日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for vote
 -- ----------------------------
 DROP TABLE IF EXISTS `vote`;
-CREATE TABLE `vote` (
-  `vote_id` int NOT NULL,
-  `vote_name` varchar(255) DEFAULT NULL,
-  `starttime` datetime DEFAULT NULL,
-  `endtime` datetime DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL,
-  `vote_intro` varchar(255) DEFAULT NULL,
-  `votetime` datetime DEFAULT NULL,
-  `if_more` smallint DEFAULT NULL COMMENT '确定是否为多选',
-  `max` int DEFAULT NULL,
-  `min` int DEFAULT '1',
-  `created_by` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`vote_id`),
-  KEY `vote_created_by` (`created_by`),
-  CONSTRAINT `vote_created_by` FOREIGN KEY (`created_by`) REFERENCES `user` (`employee_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of vote
--- ----------------------------
-
--- ----------------------------
--- Table structure for voter
--- ----------------------------
-DROP TABLE IF EXISTS `voter`;
-CREATE TABLE `voter` (
-  `voter_id` int NOT NULL,
-  `vote_id` int NOT NULL COMMENT '所属的vote_id',
-  `user_id` int DEFAULT NULL COMMENT '投票人：用户名、IP地址、未知',
-  `option_id` int DEFAULT NULL COMMENT '所投的选项',
-  PRIMARY KEY (`vote_id`,`voter_id`),
-  KEY `voter_user_id` (`user_id`),
-  KEY `voter_option_id` (`option_id`),
-  CONSTRAINT `voter_option_id` FOREIGN KEY (`option_id`) REFERENCES `vote_option` (`vote_option_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `voter_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `voter_vote_id` FOREIGN KEY (`vote_id`) REFERENCES `vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of voter
--- ----------------------------
+CREATE TABLE `vote`  (
+  `vote_id` int NOT NULL AUTO_INCREMENT COMMENT '投票ID',
+  `vote_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '投票名称',
+  `starttime` datetime NULL DEFAULT NULL COMMENT '开始时间',
+  `endtime` datetime NULL DEFAULT NULL COMMENT '结束时间',
+  `vote_intro` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '投票简介',
+  `if_more` tinyint NULL DEFAULT 0 COMMENT '是否多选',
+  `max` int NULL DEFAULT NULL COMMENT '最多选择数',
+  `min` int NULL DEFAULT 1 COMMENT '最少选择数',
+  `created_by` int NULL DEFAULT NULL COMMENT '创建者ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`vote_id`) USING BTREE,
+  INDEX `idx_vote_created_by`(`created_by` ASC) USING BTREE,
+  INDEX `idx_vote_starttime_endtime`(`starttime` ASC, `endtime` ASC) USING BTREE,
+  INDEX `idx_vote_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_vote_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `vote_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `vote_chk_1` CHECK ((length(`vote_intro`) > 0) and (length(`vote_intro`) < 500)),
+  CONSTRAINT `vote_chk_2` CHECK (`max` > 0),
+  CONSTRAINT `vote_chk_3` CHECK (`min` > 0)
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for vote_option
 -- ----------------------------
 DROP TABLE IF EXISTS `vote_option`;
-CREATE TABLE `vote_option` (
-  `vote_option_id` int NOT NULL COMMENT '主键',
-  `vote_id` int DEFAULT NULL COMMENT '所属vote_id',
-  `name` varchar(100) DEFAULT NULL COMMENT '选项名称',
-  `img_url` varchar(255) DEFAULT NULL COMMENT '图片地址',
-  `number` int DEFAULT NULL COMMENT '被投数量',
-  `update_by` varchar(255) DEFAULT NULL COMMENT '更新时间',
-  `create_by` varchar(255) DEFAULT NULL COMMENT '创建者',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`vote_option_id`),
-  KEY `vo_vote_id` (`vote_id`),
-  CONSTRAINT `vo_vote_id` FOREIGN KEY (`vote_id`) REFERENCES `vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `vote_option`  (
+  `vote_option_id` int NOT NULL AUTO_INCREMENT COMMENT '投票选项ID',
+  `vote_id` int NULL DEFAULT NULL COMMENT '投票ID',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '选项名称',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`vote_option_id`) USING BTREE,
+  INDEX `idx_vote_option_vote_id`(`vote_id` ASC) USING BTREE,
+  INDEX `idx_vote_option_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_vote_option_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `vote_option_ibfk_1` FOREIGN KEY (`vote_id`) REFERENCES `vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票选项表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of vote_option
+-- Table structure for voter
 -- ----------------------------
+DROP TABLE IF EXISTS `voter`;
+CREATE TABLE `voter`  (
+  `voter_id` int NOT NULL AUTO_INCREMENT COMMENT '投票者ID',
+  `vote_id` int NOT NULL COMMENT '投票ID',
+  `user_id` int NULL DEFAULT NULL COMMENT '用户ID',
+  `option_id` int NULL DEFAULT NULL COMMENT '选项ID',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`voter_id`) USING BTREE,
+  UNIQUE INDEX `vote_id`(`vote_id` ASC, `user_id` ASC, `option_id` ASC) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE,
+  INDEX `option_id`(`option_id` ASC) USING BTREE,
+  INDEX `idx_voter_vote_id_user_id_option_id`(`vote_id` ASC, `user_id` ASC, `option_id` ASC) USING BTREE,
+  INDEX `idx_voter_created_at`(`created_at` ASC) USING BTREE,
+  INDEX `idx_voter_updated_at`(`updated_at` ASC) USING BTREE,
+  CONSTRAINT `voter_ibfk_1` FOREIGN KEY (`vote_id`) REFERENCES `vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `voter_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `voter_ibfk_3` FOREIGN KEY (`option_id`) REFERENCES `vote_option` (`vote_option_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票者记录表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Triggers structure for table canteen
+-- ----------------------------
+DROP TRIGGER IF EXISTS `canteen_after_delete`;
+delimiter ;;
+CREATE TRIGGER `canteen_after_delete` AFTER DELETE ON `canteen` FOR EACH ROW BEGIN
+DELETE FROM
+    `comment`
+WHERE
+    `type` = 'canteen'
+    AND `reference_id` = OLD.`canteen_id`;
+
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table complaint
+-- ----------------------------
+DROP TRIGGER IF EXISTS `complaint_after_delete`;
+delimiter ;;
+CREATE TRIGGER `complaint_after_delete` AFTER DELETE ON `complaint` FOR EACH ROW BEGIN
+DELETE FROM
+    `comment`
+WHERE
+    `type` = 'complaint'
+    AND `reference_id` = OLD.`complaint_id`;
+
+DELETE FROM
+    `image`
+WHERE
+    `type` = 'complaint'
+    AND `reference_id` = OLD.`complaint_id`;
+
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table item
+-- ----------------------------
+DROP TRIGGER IF EXISTS `item_after_delete`;
+delimiter ;;
+CREATE TRIGGER `item_after_delete` AFTER DELETE ON `item` FOR EACH ROW BEGIN
+DELETE FROM
+    `comment`
+WHERE
+    `type` = 'item'
+    AND `reference_id` = OLD.`item_id`;
+
+DELETE FROM
+    `image`
+WHERE
+    `type` = 'item'
+    AND `reference_id` = OLD.`item_id`;
+
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table topic
+-- ----------------------------
+DROP TRIGGER IF EXISTS `topic_after_delete`;
+delimiter ;;
+CREATE TRIGGER `topic_after_delete` AFTER DELETE ON `topic` FOR EACH ROW BEGIN
+DELETE FROM
+    `comment`
+WHERE
+    `type` = 'topic'
+    AND `reference_id` = OLD.`topic_id`;
+
+DELETE FROM
+    `image`
+WHERE
+    `type` = 'topic'
+    AND `reference_id` = OLD.`topic_id`;
+
+END
+;;
+delimiter ;
+
+SET FOREIGN_KEY_CHECKS = 1;
