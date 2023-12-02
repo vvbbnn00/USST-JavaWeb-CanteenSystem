@@ -1,13 +1,14 @@
-package cn.vvbbnn00.canteensystemjavabackend.model;
+package cn.vvbbnn00.canteen.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Image {
+public class Image implements Serializable {
     @Id
     private Integer imageId;
 

@@ -1,11 +1,12 @@
-package cn.vvbbnn00.canteensystemjavabackend.model;
+package cn.vvbbnn00.canteen.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class UserNotification {
+public class UserNotification implements Serializable {
     @Id
     private Integer notificationId;
     private Integer userId;

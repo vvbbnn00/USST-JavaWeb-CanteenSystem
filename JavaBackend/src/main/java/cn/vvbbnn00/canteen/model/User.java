@@ -1,13 +1,15 @@
-package cn.vvbbnn00.canteensystemjavabackend.model;
+package cn.vvbbnn00.canteen.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-public class User {
-    @Id
+public class User implements Serializable {
     private Integer userId;
 
     @NotEmpty(message = "用户名不能为空")
@@ -27,13 +29,13 @@ public class User {
     private Boolean isVerified;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
     public enum Role {
         user, canteen_admin, admin

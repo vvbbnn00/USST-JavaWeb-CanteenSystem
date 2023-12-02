@@ -1,13 +1,14 @@
-package cn.vvbbnn00.canteensystemjavabackend.model;
+package cn.vvbbnn00.canteen.model;
 
 import lombok.Data;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Announcement {
+public class Announcement implements Serializable {
     @Id
     private Integer announcementId;
 
