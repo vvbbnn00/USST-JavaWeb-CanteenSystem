@@ -19,6 +19,7 @@ USST JavaWeb大作业：上海理工大学食堂点评交流社区
 
 ## 目录结构
 
+- `canteen_community.sql`：数据库表结构文件
 - JavaBackend：Java后端项目目录
 - CommunityFrontend: 社区前端
 - AdminFrontend: 管理员后台前端
