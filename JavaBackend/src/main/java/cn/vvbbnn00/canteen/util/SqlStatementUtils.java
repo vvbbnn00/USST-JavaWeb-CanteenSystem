@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SqlStatementUtils {
@@ -43,6 +44,36 @@ public class SqlStatementUtils {
 
 
     /**
+     * 生成并返回一个PreparedStatement的更新语句，仅限基础更新语句，不支持复杂的条件
+     *
+     * @param connection 数据库连接
+     * @param entity     实体对象
+     * @param fields     需要更新的字段数组
+     * @param conditions 条件字段数组
+     * @return PreparedStatement
+     */
+    public static PreparedStatement generateUpdateStatement(Connection connection, Object entity, String[] fields, String[] conditions)
+            throws SQLException, IllegalAccessException, NoSuchFieldException {
+        Class<?> clazz = entity.getClass(); // 获取实体类的Class对象
+        String tableName = camelToSnakeQuote(clazz.getSimpleName()); // 将类名转换为下划线命名
+        tableName = Hikari.getDbName() + "." + tableName; // 添加数据库名
+
+        String fieldNames = Arrays.stream(fields)
+                .map(SqlStatementUtils::camelToSnakeQuote)
+                .collect(Collectors.joining(" = ?, "));
+
+        String conditionNames = Arrays.stream(conditions)
+                .map(SqlStatementUtils::camelToSnakeQuote)
+                .collect(Collectors.joining(" = ? AND "));
+
+        String sql = "UPDATE " + tableName + " SET " + fieldNames + " = ? WHERE " + conditionNames + " = ?;";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        setStatementParams(preparedStatement, entity, fields);
+        setStatementParams(preparedStatement, entity, conditions);
+        return preparedStatement;
+    }
+
+    /**
      * 生成并返回选择语句的基础部分
      *
      * @param entity 实体对象
@@ -61,6 +92,19 @@ public class SqlStatementUtils {
         return "SELECT " + fieldNames + " FROM " + tableName;
     }
 
+
+    /**
+     * 生成并返回选择语句的条件部分
+     *
+     * @param conditions 条件字段数组
+     * @return 选择语句的条件部分
+     */
+    public static String generateWhereSql(List<String> conditions) {
+        if (conditions.isEmpty()) {
+            return "";
+        }
+        return " WHERE " + String.join(" AND ", conditions);
+    }
 
     /**
      * 生成并返回一个PreparedStatement的更新语句
@@ -145,7 +189,7 @@ public class SqlStatementUtils {
      * @param camelCaseString 驼峰命名的字符串
      * @return 下划线命名的字符串
      */
-    private static String camelToSnakeQuote(String camelCaseString) {
+    public static String camelToSnakeQuote(String camelCaseString) {
         return "`" + camelToSnake(camelCaseString) + "`";
     }
 }
