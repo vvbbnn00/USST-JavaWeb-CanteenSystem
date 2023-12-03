@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static cn.vvbbnn00.canteen.util.StringUtils.camelToSnake;
+
 public class SqlStatementUtils {
 
     /**
@@ -170,17 +172,6 @@ public class SqlStatementUtils {
             field.set(entity, resultSet.getObject(column));
         }
         return entity;
-    }
-
-
-    /**
-     * 将驼峰命名转换为下划线命名
-     *
-     * @param camelCaseString 驼峰命名的字符串
-     * @return 下划线命名的字符串
-     */
-    private static String camelToSnake(String camelCaseString) {
-        return camelCaseString.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 
     /**

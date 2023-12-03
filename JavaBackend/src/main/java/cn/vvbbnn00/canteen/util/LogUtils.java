@@ -10,8 +10,8 @@ public class LogUtils {
         // 获取调用者信息
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         String callerInfo = "";
-        if (stackTrace.length > 2) {
-            StackTraceElement caller = stackTrace[2]; // 第一个是getStackTrace，第二个是log方法本身
+        if (stackTrace.length > 3) {
+            StackTraceElement caller = stackTrace[3]; // 第一个是getStackTrace，第二个是log方法本身
             callerInfo = String.format("[%s.%s(Line:%d)] ", caller.getClassName(), caller.getMethodName(), caller.getLineNumber());
         }
 
@@ -39,5 +39,9 @@ public class LogUtils {
 
     public static void severe(String message) {
         log(Level.SEVERE, message);
+    }
+
+    public static void error(String message) {
+        severe(message);
     }
 }

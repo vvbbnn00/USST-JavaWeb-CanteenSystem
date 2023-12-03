@@ -1,5 +1,6 @@
 package cn.vvbbnn00.canteen.dao;
 
+import cn.vvbbnn00.canteen.util.ConfigUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -16,10 +17,10 @@ public class Hikari {
     static {
         HikariConfig config = new HikariConfig();
 
-        config.setJdbcUrl(getEnv("DB_URL", "jdbc:mysql://192.168.19.2:3306/canteen_community?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false"));
-        config.setUsername(getEnv("DB_USERNAME", "root"));
-        config.setPassword(getEnv("DB_PASSWORD", "password"));
-        config.setDriverClassName(getEnv("DB_DRIVER", "com.mysql.cj.jdbc.Driver"));
+        config.setJdbcUrl(ConfigUtils.getEnv("DB_URL", "jdbc:mysql://192.168.19.2:3306/canteen_community?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false"));
+        config.setUsername(ConfigUtils.getEnv("DB_USERNAME", "root"));
+        config.setPassword(ConfigUtils.getEnv("DB_PASSWORD", "password"));
+        config.setDriverClassName(ConfigUtils.getEnv("DB_DRIVER", "com.mysql.cj.jdbc.Driver"));
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -46,22 +47,8 @@ public class Hikari {
     }
 
     /**
-     * 获取环境变量
-     *
-     * @param key          环境变量名
-     * @param defaultValue 默认值
-     * @return 环境变量值
-     */
-    private static String getEnv(String key, String defaultValue) {
-        String value = System.getenv(key);
-        if (value == null) {
-            value = defaultValue;
-        }
-        return value;
-    }
-
-    /**
      * 获取数据库名
+     *
      * @return 数据库名
      */
     public static String getDbName() {
