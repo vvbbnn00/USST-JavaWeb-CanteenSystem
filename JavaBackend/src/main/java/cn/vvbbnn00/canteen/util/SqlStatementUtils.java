@@ -71,7 +71,7 @@ public class SqlStatementUtils {
         String sql = "UPDATE " + tableName + " SET " + fieldNames + " = ? WHERE " + conditionNames + " = ?;";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         setStatementParams(preparedStatement, entity, fields);
-        setStatementParams(preparedStatement, entity, conditions);
+        setStatementParams(preparedStatement, entity, conditions, fields.length);
         return preparedStatement;
     }
 
@@ -114,30 +114,44 @@ public class SqlStatementUtils {
      * @param preparedStatement PreparedStatement
      * @param entity            实体对象
      * @param fields            需要更新的字段数组
+     * @param offset            偏移量
      */
-    private static void setStatementParams(PreparedStatement preparedStatement, Object entity, String[] fields)
+    private static void setStatementParams(PreparedStatement preparedStatement, Object entity, String[] fields, int offset)
             throws SQLException, IllegalAccessException, NoSuchFieldException {
         Class<?> clazz = entity.getClass(); // 获取实体类的Class对象
         for (int i = 0; i < fields.length; i++) {
+            int index = i + offset + 1;
             Field field = clazz.getDeclaredField(fields[i]);
             field.setAccessible(true);
             // 判断是否是enum类型
             if (field.getType().isEnum()) {
-                preparedStatement.setObject(i + 1, field.get(entity).toString());
+                preparedStatement.setObject(index, field.get(entity).toString());
                 continue;
             }
             // 判断是否是boolean类型
             if (field.getType().equals(boolean.class)) {
-                preparedStatement.setObject(i + 1, field.getBoolean(entity) ? 1 : 0);
+                preparedStatement.setObject(index, field.getBoolean(entity) ? 1 : 0);
                 continue;
             }
             // 判断是否为LocalDateTime类型，如是，则转换为Timestamp类型
             if (field.getType().equals(java.time.LocalDateTime.class)) {
-                preparedStatement.setObject(i + 1, java.sql.Timestamp.valueOf((java.time.LocalDateTime) field.get(entity)));
+                preparedStatement.setObject(index, java.sql.Timestamp.valueOf((java.time.LocalDateTime) field.get(entity)));
                 continue;
             }
-            preparedStatement.setObject(i + 1, field.get(entity));
+            preparedStatement.setObject(index, field.get(entity));
         }
+    }
+
+    /**
+     * 生成并返回一个PreparedStatement的更新语句
+     *
+     * @param preparedStatement PreparedStatement
+     * @param entity            实体对象
+     * @param fields            需要更新的字段数组
+     */
+    private static void setStatementParams(PreparedStatement preparedStatement, Object entity, String[] fields)
+            throws SQLException, IllegalAccessException, NoSuchFieldException {
+        setStatementParams(preparedStatement, entity, fields, 0);
     }
 
 
@@ -165,7 +179,7 @@ public class SqlStatementUtils {
                 continue;
             }
             // 判断是否是boolean类型
-            if (field.getType().equals(boolean.class)) {
+            if (field.getType().equals(Boolean.class)) {
                 field.set(entity, resultSet.getInt(camelToSnake(field.getName())) == 1);
                 continue;
             }

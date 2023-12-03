@@ -17,8 +17,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean insert(User user) {
-        user.setPassword(SafetyUtils.passwordDoBCrypt(user.getPassword()));
-
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateInsertStatement(connection, user, new String[]{
                     "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified"
@@ -67,7 +65,6 @@ public class UserDaoImpl implements UserDao {
         return null;
     }
 
-    // TODO 函数尚未验证
     @Override
     public boolean update(User user) {
         try (Connection connection = Hikari.getConnection()) {

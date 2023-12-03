@@ -6,42 +6,53 @@ import java.util.logging.Logger;
 public class LogUtils {
     private static final Logger LOGGER = Logger.getLogger(LogUtils.class.getName());
 
-    public static void log(Level level, String message) {
+    // 添加异常作为参数
+    public static void log(Level level, String message, Throwable throwable) {
         // 获取调用者信息
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        String callerInfo = "";
-        if (stackTrace.length > 3) {
-            StackTraceElement caller = stackTrace[3]; // 第一个是getStackTrace，第二个是log方法本身
-            callerInfo = String.format("[%s.%s(Line:%d)] ", caller.getClassName(), caller.getMethodName(), caller.getLineNumber());
-        }
+        String callerInfo = getCallerInfo();
 
         // 根据日志等级输出信息
         if (LOGGER.isLoggable(level)) {
             LOGGER.log(level, callerInfo + message);
 
-            // 输出traceback信息
-            if (level == Level.SEVERE) {
-                for (StackTraceElement ste : stackTrace) {
-                    LOGGER.log(Level.SEVERE, "at " + ste.toString());
-                }
+            // 输出异常调用栈
+            if (throwable != null && level == Level.SEVERE) {
+                LOGGER.log(Level.SEVERE, "Exception caught", throwable);
             }
         }
     }
 
-    // 方便使用的静态方法
+    // 获取调用此日志的类和方法信息
+    private static String getCallerInfo() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < stackTrace.length; i++) {
+            StackTraceElement ste = stackTrace[i];
+            if (!ste.getClassName().equals(LogUtils.class.getName())) {
+                return String.format("[%s.%s(Line:%d)] ", ste.getClassName(), ste.getMethodName(), ste.getLineNumber());
+            }
+        }
+        return "";
+    }
+
+    // 方便使用的静态方法，不包含异常
     public static void info(String message) {
-        log(Level.INFO, message);
+        log(Level.INFO, message, null);
     }
 
     public static void warning(String message) {
-        log(Level.WARNING, message);
+        log(Level.WARNING, message, null);
     }
 
     public static void severe(String message) {
-        log(Level.SEVERE, message);
+        log(Level.SEVERE, message, null);
     }
 
-    public static void error(String message) {
-        severe(message);
+    // 重载方法，包含异常
+    public static void severe(String message, Throwable throwable) {
+        log(Level.SEVERE, message, throwable);
+    }
+
+    public static void error(String message, Throwable throwable) {
+        severe(message, throwable);
     }
 }
