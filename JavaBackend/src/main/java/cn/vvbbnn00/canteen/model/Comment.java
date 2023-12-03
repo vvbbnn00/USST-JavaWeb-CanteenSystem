@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Comment implements Serializable {
-    @Id
     private Integer commentId;
 
     @Enumerated(EnumType.STRING)

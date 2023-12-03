@@ -12,15 +12,18 @@ import java.util.Date;
 public class User implements Serializable {
     private Integer userId;
 
-    @NotEmpty(message = "用户名不能为空")
+    @Pattern(regexp = "^[a-zA-Z0-9_]{4,16}$", message = "用户名只能包含字母、数字和下划线，长度为4-16位")
     private String username;
 
     // 此处的密码是加密后的密码
-    @NotEmpty(message = "密码不能为空")
+    @Pattern(regexp = "^\\S{6,16}$", message = "密码不能包含空格，长度为6-16位")
     private String password;
     private String name;
     private String employeeId;
+    @Min(value = 0, message = "level不能小于0")
+    @Max(value = 6, message = "level不能大于6")
     private Integer level;
+    @Min(value = 0, message = "point不能小于0")
     private Long point;
     private Boolean available;
 

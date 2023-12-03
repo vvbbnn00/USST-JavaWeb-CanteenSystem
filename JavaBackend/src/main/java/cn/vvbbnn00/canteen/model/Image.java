@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Image implements Serializable {
-    @Id
     private Integer imageId;
 
     @NotBlank(message = "文件ID不能为空")

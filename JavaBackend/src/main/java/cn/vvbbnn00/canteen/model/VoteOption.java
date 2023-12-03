@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class VoteOption implements Serializable {
-    @Id
     private Integer voteOptionId;
     private Integer voteId;
 

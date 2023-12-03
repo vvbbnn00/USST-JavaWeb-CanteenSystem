@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 @Data
 public class BasicResponse implements Serializable {
-    int code; // 响应码，200表示成功，其他表示失败
+    Integer code; // 响应码，200表示成功，其他表示失败
     String message; // 响应信息，一般用于调试
 
     public BasicResponse() {

@@ -9,8 +9,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BasicListResponse extends BasicResponse {
-    private int total;
+    private Integer total;
     private Object list;
-    private int currentPage;
-    private int pageSize;
+    private Integer currentPage;
+    private Integer pageSize;
 }

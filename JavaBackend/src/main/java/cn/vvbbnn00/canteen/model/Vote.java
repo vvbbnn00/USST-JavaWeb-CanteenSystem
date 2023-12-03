@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Vote implements Serializable {
-    @Id
     private Integer voteId;
 
     @Size(max = 255, message = "投票名称长度不能超过255个字符")

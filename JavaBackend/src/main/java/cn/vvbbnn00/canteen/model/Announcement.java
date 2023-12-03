@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Announcement implements Serializable {
-    @Id
     private Integer announcementId;
 
     @NotNull(message = "食堂ID不能为空")

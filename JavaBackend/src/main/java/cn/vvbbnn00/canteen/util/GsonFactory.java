@@ -24,13 +24,24 @@ public class GsonFactory {
 
     /**
      * 生成错误响应
+     *
      * @param response HttpServletResponse对象
-     * @param code 响应码
-     * @param message 响应信息
+     * @param code     响应码
+     * @param message  响应信息
      */
     public static void makeErrorResponse(HttpServletResponse response, int code, String message) throws IOException {
         response.setStatus(code);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().println(GsonFactory.getGson().toJson(new BasicResponse(code, message)));
+    }
+
+    /**
+     * 生成成功响应
+     *
+     * @param response HttpServletResponse对象
+     * @param message  响应信息
+     */
+    public static void makeSuccessResponse(HttpServletResponse response, String message) throws IOException {
+        makeErrorResponse(response, 200, message);
     }
 }

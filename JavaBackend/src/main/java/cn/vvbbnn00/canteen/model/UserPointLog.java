@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class UserPointLog implements Serializable {
-    @Id
     private Integer logId;
     private Integer userId;
     private Integer point;

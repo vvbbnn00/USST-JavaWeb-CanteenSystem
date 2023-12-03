@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class Canteen implements Serializable {
-    @Id
+public class  Canteen implements Serializable {
     private Integer canteenId;
 
     @NotBlank(message = "食堂名称不能为空")

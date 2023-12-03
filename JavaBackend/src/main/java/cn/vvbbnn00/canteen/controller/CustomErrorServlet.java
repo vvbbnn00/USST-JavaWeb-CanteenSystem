@@ -1,6 +1,7 @@
 package cn.vvbbnn00.canteen.controller;
 
 import cn.vvbbnn00.canteen.util.GsonFactory;
+import cn.vvbbnn00.canteen.util.LogUtils;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -13,12 +14,51 @@ import java.io.IOException;
 @WebServlet(name = "CustomErrorServlet", value = "/error")
 public class CustomErrorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("jakarta.servlet.error.status_code", 404);
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
         handleCustomError(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("jakarta.servlet.error.status_code", 404);
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
+        handleCustomError(request, response);
+    }
+
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
+        handleCustomError(request, response);
+    }
+
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
+        handleCustomError(request, response);
+    }
+
+    protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
+        handleCustomError(request, response);
+    }
+
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
+        handleCustomError(request, response);
+    }
+
+    protected void doTrace(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getAttribute("jakarta.servlet.error.status_code") == null) {
+            request.setAttribute("jakarta.servlet.error.status_code", 404);
+        }
         handleCustomError(request, response);
     }
 

@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class UserNotification implements Serializable {
-    @Id
     private Integer notificationId;
     private Integer userId;
     private String content;

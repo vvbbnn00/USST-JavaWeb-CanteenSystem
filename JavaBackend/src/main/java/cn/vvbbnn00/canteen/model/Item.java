@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Item implements Serializable {
-    @Id
     private Integer itemId;
 
     @NotBlank(message = "菜品名称不能为空")

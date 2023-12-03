@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Topic implements Serializable {
-    @Id
     private Integer topicId;
 
     @Size(max = 255, message = "标题长度不能超过255个字符")

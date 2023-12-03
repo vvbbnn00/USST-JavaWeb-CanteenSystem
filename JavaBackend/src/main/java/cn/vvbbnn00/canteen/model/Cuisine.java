@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class Cuisine implements Serializable {
-    @Id
     private Integer cuisineId;
 
     @NotBlank(message = "菜系名称不能为空")
