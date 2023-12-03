@@ -1,19 +1,18 @@
 /*
  @Author: Lu Tiancheng, Xu Weizhe
-
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : 19.2
  Source Server Type    : MySQL
  Source Server Version : 80100 (8.1.0)
- Source Host           : localhost:3306
+ Source Host           : 192.168.19.2:3306
  Source Schema         : canteen_community
 
  Target Server Type    : MySQL
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 02/12/2023 16:38:19
+ Date: 03/12/2023 23:19:05
 */
 
 SET NAMES utf8mb4;
@@ -57,6 +56,19 @@ CREATE TABLE `canteen`  (
   INDEX `idx_canteen_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `canteen_chk_1` CHECK ((`comp_score` >= 0) and (`comp_score` <= 5))
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '食堂表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for canteen_admin
+-- ----------------------------
+DROP TABLE IF EXISTS `canteen_admin`;
+CREATE TABLE `canteen_admin`  (
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `canteen_id` int NOT NULL COMMENT '食堂ID',
+  PRIMARY KEY (`user_id`, `canteen_id`) USING BTREE,
+  INDEX `canteen_id`(`canteen_id` ASC) USING BTREE,
+  CONSTRAINT `canteen_admin_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `canteen_admin_ibfk_2` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '食堂管理员表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for comment
