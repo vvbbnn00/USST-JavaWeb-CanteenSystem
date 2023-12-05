@@ -4,10 +4,7 @@ import cn.vvbbnn00.canteen.dao.Hikari;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +36,7 @@ public class SqlStatementUtils {
                 .collect(Collectors.joining(", "));
 
         String sql = "INSERT INTO " + tableName + " (" + fieldNames + ") VALUES (" + placeholders + ");";
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         setStatementParams(preparedStatement, entity, fields);
         return preparedStatement;
     }
