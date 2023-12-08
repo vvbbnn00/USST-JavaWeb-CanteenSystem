@@ -42,7 +42,7 @@ public class CanteenDaoImpl implements CanteenDao {
     @Override
     public Canteen queryCanteenById(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = SqlStatementUtils.generateBasicSelectSql(new Canteen(), new String[]{
+            String sql = SqlStatementUtils.generateBasicSelectSql(Canteen.class, new String[]{
                     "canteen_id", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
             }) + " WHERE `canteen_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -90,7 +90,7 @@ public class CanteenDaoImpl implements CanteenDao {
 
     @Override
     public List<Canteen> queryCanteens(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc) {
-        String sql = SqlStatementUtils.generateBasicSelectSql(new Canteen(), new String[]{
+        String sql = SqlStatementUtils.generateBasicSelectSql(Canteen.class, new String[]{
                 "canteen_id", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
         });
 

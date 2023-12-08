@@ -32,7 +32,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User queryUserById(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = SqlStatementUtils.generateBasicSelectSql(new User(), new String[]{
+            String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
                     "userId", "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
             }) + " WHERE `user_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -50,7 +50,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User queryUserByUsername(String username) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = SqlStatementUtils.generateBasicSelectSql(new User(), new String[]{
+            String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
                     "userId", "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
             }) + " WHERE `username` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -129,7 +129,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> queryUsers(Integer page, Integer pageSize, String kw, Boolean available, User.Role role, Boolean isVerified, String orderBy, Boolean asc) {
         // 密码不应该被查询出来
-        String sql = SqlStatementUtils.generateBasicSelectSql(new User(), new String[]{
+        String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
                 "userId", "username", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
         });
 

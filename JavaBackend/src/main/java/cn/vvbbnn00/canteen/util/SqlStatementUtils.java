@@ -75,12 +75,11 @@ public class SqlStatementUtils {
     /**
      * 生成并返回选择语句的基础部分
      *
-     * @param entity 实体对象
+     * @param clazz 实体类
      * @param fields 需要选择的字段数组
      * @return 选择语句的基础部分
      */
-    public static String generateBasicSelectSql(Object entity, String[] fields) {
-        Class<?> clazz = entity.getClass(); // 获取实体类的Class对象
+    public static String generateBasicSelectSql(Class<?> clazz, String[] fields) {
         String tableName = camelToSnakeQuote(clazz.getSimpleName()); // 将类名转换为下划线命名
         tableName = Hikari.getDbName() + "." + tableName; // 添加数据库名
 

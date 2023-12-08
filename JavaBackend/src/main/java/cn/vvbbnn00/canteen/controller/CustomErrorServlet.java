@@ -85,8 +85,9 @@ public class CustomErrorServlet extends HttpServlet {
                     message = "Bad Request";
                     break;
                 case HttpServletResponse.SC_INTERNAL_SERVER_ERROR:
-                    message = "Internal Server Error";
-                    break;
+                    throw new RuntimeException("Internal Server Error");
+                    // message = "Internal Server Error";
+                    // break;
                 default:
                     message = "Unknown Error";
             }
