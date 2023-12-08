@@ -20,7 +20,7 @@ import java.util.List;
 public class CanteenListServlet extends HttpServlet {
 
     @Override
-    @CheckRole("admin")
+    @CheckRole("user")
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         CanteenService canteenService = new CanteenService();
         String pathInfo = req.getPathInfo();

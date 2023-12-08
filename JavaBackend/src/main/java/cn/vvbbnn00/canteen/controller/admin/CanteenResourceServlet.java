@@ -58,7 +58,7 @@ public class CanteenResourceServlet extends HttpServlet {
     }
 
     @Override
-    @CheckRole("admin")
+    @CheckRole("user")
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         CanteenService canteenService = new CanteenService();
         String pathInfo = req.getPathInfo();
