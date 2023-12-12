@@ -4,10 +4,10 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class CuisineListRequest extends BasicListRequest{
-    @Pattern(regexp = "^(userId|username|name|employeeId|level|point|isVerified|available|role|createdAt|updatedAt|lastLoginAt)$",
-            message = "orderBy必须是userId,username,name,employeeId,level,point,isVerified,available,role,createdAt,updatedAt,lastLoginAt中的一个")
+    @Pattern(regexp = "^(cuisine_id|name|canteen_id|created_at|updated_at)$",
+            message = "orderBy必须是cuisine_id,name,canteen_id,created_at,updated_at中的一个")
     private String orderBy;
 }

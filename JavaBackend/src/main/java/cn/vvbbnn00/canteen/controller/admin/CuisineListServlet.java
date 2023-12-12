@@ -14,14 +14,13 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "CuisineListServlet", value = {"/admin/cuisine/list/*"})
 public class CuisineListServlet extends HttpServlet {
     @Override
     @CheckRole("admin")
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CuisineService cuisineService = new CuisineService();
         String pathInfo = request.getPathInfo();
         if (pathInfo != null && !pathInfo.equals("/")) {

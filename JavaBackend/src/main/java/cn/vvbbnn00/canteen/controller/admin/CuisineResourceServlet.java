@@ -6,7 +6,6 @@ import cn.vvbbnn00.canteen.model.Cuisine;
 import cn.vvbbnn00.canteen.service.CuisineService;
 import cn.vvbbnn00.canteen.util.GsonFactory;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
-import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 
