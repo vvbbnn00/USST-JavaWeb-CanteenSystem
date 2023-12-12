@@ -27,6 +27,7 @@ public class RoleCheckFilter extends HttpFilter {
         servletMapping.put("/admin/user/list", cn.vvbbnn00.canteen.controller.admin.UserListServlet.class);
         servletMapping.put("/admin/canteen", cn.vvbbnn00.canteen.controller.admin.CanteenResourceServlet.class);
         servletMapping.put("/admin/canteen/list", cn.vvbbnn00.canteen.controller.admin.CanteenListServlet.class);
+        servletMapping.put("/admin/cuisine", cn.vvbbnn00.canteen.controller.admin.CuisineResourceServlet.class);
         // 为其他Servlet添加更多映射
     }
 
