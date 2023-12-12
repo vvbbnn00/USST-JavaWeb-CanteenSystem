@@ -11,7 +11,7 @@ public interface CuisineDao {
      * @param cuisine 菜品，由于作为新数据插入数据库，其id、createdAt、updatedAt属性会被忽略
      * @return 是否成功
      */
-    int insert(Cuisine cuisine);
+    boolean insert(Cuisine cuisine);
     /**
      * 根据id查询菜品
      *
