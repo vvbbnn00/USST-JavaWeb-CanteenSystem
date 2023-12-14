@@ -17,6 +17,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'dashboard',
                 meta: {
                     title: '首页',
+                    permiss: '1',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
             },
@@ -25,8 +26,18 @@ const routes: RouteRecordRaw[] = [
                 name: 'user',
                 meta: {
                     title: '用户管理',
+                    permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/user.vue'),
+            },
+            {
+                path: '/canteen',
+                name: 'canteen',
+                meta: {
+                    title: '食堂管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/canteen.vue'),
             }
         ],
     },

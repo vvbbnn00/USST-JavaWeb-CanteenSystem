@@ -6,3 +6,10 @@ export const getUserList = () => {
         method: 'get'
     });
 };
+
+export const getCanteenList = () => {
+    return request({
+        url: './canteen.json',
+        method: 'get'
+    });
+}

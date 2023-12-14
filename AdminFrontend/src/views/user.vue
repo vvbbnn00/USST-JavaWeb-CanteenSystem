@@ -20,19 +20,19 @@
         <el-table-column prop="role" label="权限">
           <template #default="scope">
             <el-tag
-                :type="scope.row.role === 'canteen_admin' ? 'success' : scope.row.role === 'user' ? 'primary' : ''"
+                :type="scope.row.role === 'canteen_admin' ? 'primary' : scope.row.role === 'user' ? 'success' : ''"
             >
-              {{ scope.row.role === 'canteen_admin' ? '食堂管理员' : scope.row.role === 'admin' ? '管理员' : '用户' }}
+              {{ scope.row.role === 'canteen_admin' ? '食堂管理员' :  '用户' }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="level" label="等级" width="60px"></el-table-column>
         <el-table-column prop="point" label="评分" width="60px"></el-table-column>
         <el-table-column prop="name" label="用户昵称"></el-table-column>
-        <el-table-column prop="create_at" label="注册时间" width="160px">
+        <el-table-column prop="created_at" label="注册时间" width="160px">
           <template #default="scope">
             <div>
-              {{ parseDateTime(scope.row.create_at) }}
+              {{ parseDateTime(scope.row.created_at) }}
             </div>
           </template>
         </el-table-column>
@@ -197,7 +197,7 @@ const getData = () => {
   // });
   getUserList().then(res => {
     let data = res.data;
-
+    console.log(data);
     tableData.value = data?.data;
     pageTotal.value = data?.pageTotal || 0;
     query.pageIndex = data?.pageIndex || 1;
