@@ -19,6 +19,14 @@ const routes: RouteRecordRaw[] = [
                     title: '首页',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
+            },
+            {
+                path: '/user',
+                name: 'user',
+                meta: {
+                    title: '用户管理',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/user.vue'),
             }
         ],
     },

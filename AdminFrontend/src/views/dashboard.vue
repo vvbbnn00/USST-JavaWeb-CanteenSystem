@@ -153,16 +153,16 @@ const query = reactive({
   bookCount: undefined as unknown as number
 });
 
-(async () => {
-  const resp = await getDashboardInfo();
-  if (resp.data.code !== 200) {
-    ElMessage.error(resp.data.message);
-    return;
-  }
-  query.userCount = resp.data?.data?.userCount;
-  query.commentCount = resp.data?.data?.commentCount;
-  query.bookCount = resp.data?.data?.bookCount;
-})();
+// (async () => {
+//   const resp = await getDashboardInfo();
+//   if (resp.data.code !== 200) {
+//     ElMessage.error(resp.data.message);
+//     return;
+//   }
+//   query.userCount = resp.data?.data?.userCount;
+//   query.commentCount = resp.data?.data?.commentCount;
+//   query.bookCount = resp.data?.data?.bookCount;
+// })();
 
 const addView = ref(false)
 let todo = reactive({
