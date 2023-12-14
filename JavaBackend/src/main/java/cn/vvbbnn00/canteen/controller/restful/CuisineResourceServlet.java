@@ -1,8 +1,9 @@
-package cn.vvbbnn00.canteen.controller.admin;
+package cn.vvbbnn00.canteen.controller.restful;
 
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
 import cn.vvbbnn00.canteen.model.Cuisine;
+import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.service.CuisineService;
 import cn.vvbbnn00.canteen.util.GsonFactory;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
@@ -10,15 +11,17 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
-@WebServlet(name = "CuisineResourceServlet", value = "/admin/cuisine/*")
+@WebServlet(name = "CuisineResourceServlet", value = "/restful/cuisine/*")
 public class CuisineResourceServlet extends HttpServlet {
 
     @Override
-    @CheckRole("admin")
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws  IOException {
+    @CheckRole("canteen_admin")
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CuisineService cuisineService = new CuisineService();
         String pathInfo = request.getPathInfo();
+        User user = (User) request.getSession().getAttribute("user");
 
         // post操作只能是创建菜品
         if (pathInfo != null && !pathInfo.equals("/")) {
@@ -47,7 +50,7 @@ public class CuisineResourceServlet extends HttpServlet {
         // 创建菜品
         try {
             BasicDataResponse basicDataResponse = new BasicDataResponse();
-            basicDataResponse.setData(cuisineService.createCuisine(cuisine));
+            basicDataResponse.setData(cuisineService.createCuisine(cuisine, user));
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().println(GsonFactory.getGson().toJson(basicDataResponse));
         } catch (Exception e) {
@@ -56,14 +59,21 @@ public class CuisineResourceServlet extends HttpServlet {
     }
 
     @Override
-    @CheckRole("admin")
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws  IOException {
+    @CheckRole("canteen_admin")
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CuisineService cuisineService = new CuisineService();
         String pathInfo = request.getPathInfo();
+        User user = (User) request.getSession().getAttribute("user");
 
         // put操作只能是更新菜品
         if (pathInfo == null || pathInfo.equals("/")) {
             response.sendError(404);
+            return;
+        }
+
+        // 解析路径参数
+        Integer cuisineId = RequestValidatorUtils.parseRestIdFromPathInfo(pathInfo, response);
+        if (cuisineId == null) {
             return;
         }
 
@@ -88,7 +98,8 @@ public class CuisineResourceServlet extends HttpServlet {
         // 更新菜品
         try {
             BasicDataResponse basicDataResponse = new BasicDataResponse();
-            basicDataResponse.setData(cuisineService.updateCuisine(cuisine));
+            cuisine.setCuisineId(cuisineId);
+            basicDataResponse.setData(cuisineService.updateCuisine(cuisine, user));
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().println(GsonFactory.getGson().toJson(basicDataResponse));
         } catch (Exception e) {
@@ -97,7 +108,7 @@ public class CuisineResourceServlet extends HttpServlet {
     }
 
     @Override
-    @CheckRole("admin")
+    @CheckRole("user")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CuisineService cuisineService = new CuisineService();
         String pathInfo = request.getPathInfo();
@@ -123,7 +134,7 @@ public class CuisineResourceServlet extends HttpServlet {
     }
 
     @Override
-    @CheckRole("admin")
+    @CheckRole("canteen_admin")
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CuisineService cuisineService = new CuisineService();
         String pathInfo = request.getPathInfo();
@@ -136,7 +147,7 @@ public class CuisineResourceServlet extends HttpServlet {
 
         // 删除菜品
         try {
-            cuisineService.deleteCuisineById(cuisineId);
+            cuisineService.deleteCuisineById(cuisineId, (User) request.getSession().getAttribute("user"));
             GsonFactory.makeSuccessResponse(response, "删除菜品成功");
         } catch (Exception e) {
             response.sendError(500, e.getMessage());

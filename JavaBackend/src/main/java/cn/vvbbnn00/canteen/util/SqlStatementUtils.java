@@ -75,7 +75,7 @@ public class SqlStatementUtils {
     /**
      * 生成并返回选择语句的基础部分
      *
-     * @param clazz 实体类
+     * @param clazz  实体类
      * @param fields 需要选择的字段数组
      * @return 选择语句的基础部分
      */
@@ -192,5 +192,17 @@ public class SqlStatementUtils {
      */
     public static String camelToSnakeQuote(String camelCaseString) {
         return "`" + camelToSnake(camelCaseString) + "`";
+    }
+
+    /**
+     * 生成指定数量的问号
+     *
+     * @param count 问号的数量
+     * @return 问号字符串
+     */
+    public static String generateQuestionMarks(int count) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("?, ".repeat(Math.max(0, count)));
+        return sb.substring(0, sb.length() - 2);
     }
 }

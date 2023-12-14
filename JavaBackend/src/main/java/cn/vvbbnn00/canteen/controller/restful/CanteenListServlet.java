@@ -1,4 +1,4 @@
-package cn.vvbbnn00.canteen.controller.admin;
+package cn.vvbbnn00.canteen.controller.restful;
 
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.request.CanteenListRequest;
@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-@WebServlet(name = "CanteenListServlet", value = {"/admin/canteen/list/*"})
+@WebServlet(name = "CanteenListServlet", value = {"/restful/canteen/list/*"})
 public class CanteenListServlet extends HttpServlet {
 
     @Override

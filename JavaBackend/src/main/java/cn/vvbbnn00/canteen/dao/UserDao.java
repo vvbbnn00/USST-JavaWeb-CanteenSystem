@@ -69,4 +69,13 @@ public interface UserDao {
      * @return 用户数量
      */
     Integer queryUsersCount(String kw, Boolean available, User.Role role, Boolean isVerified);
+
+    /**
+     * 批量查询用户
+     *
+     * @param userIds 用户id列表
+     * @return 用户列表
+     */
+    List<User> batchQueryUsers(List<Integer> userIds);
+
 }

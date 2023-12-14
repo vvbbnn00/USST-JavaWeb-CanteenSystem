@@ -1,4 +1,4 @@
-package cn.vvbbnn00.canteen.controller.admin;
+package cn.vvbbnn00.canteen.controller.restful;
 
 import cn.vvbbnn00.canteen.dto.request.CommentListRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicListResponse;
@@ -15,7 +15,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "CommentListServlet", value = {"/admin/comment/list/*"})
+@WebServlet(name = "CommentListServlet", value = {"/restful/comment/list/*"})
 public class CommentListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

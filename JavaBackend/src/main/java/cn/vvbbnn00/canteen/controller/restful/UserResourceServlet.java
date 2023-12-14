@@ -1,4 +1,4 @@
-package cn.vvbbnn00.canteen.controller.admin;
+package cn.vvbbnn00.canteen.controller.restful;
 
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
@@ -6,7 +6,6 @@ import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.service.UserService;
 import cn.vvbbnn00.canteen.util.GsonFactory;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
-@WebServlet(name = "UserResourceServlet", value = {"/admin/user/*"})
+@WebServlet(name = "UserResourceServlet", value = {"/restful/user/*"})
 public class UserResourceServlet extends HttpServlet {
 
     @Override
@@ -58,7 +57,7 @@ public class UserResourceServlet extends HttpServlet {
     }
 
     @Override
-    @CheckRole("admin")
+    @CheckRole("user")
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UserService userService = new UserService();
         String pathInfo = req.getPathInfo();

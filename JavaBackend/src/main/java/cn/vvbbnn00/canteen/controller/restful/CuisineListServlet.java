@@ -1,4 +1,4 @@
-package cn.vvbbnn00.canteen.controller.admin;
+package cn.vvbbnn00.canteen.controller.restful;
 
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.request.CuisineListRequest;
@@ -15,10 +15,10 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "CuisineListServlet", value = {"/admin/cuisine/list/*"})
+@WebServlet(name = "CuisineListServlet", value = {"/restful/cuisine/list/*"})
 public class CuisineListServlet extends HttpServlet {
     @Override
-    @CheckRole("admin")
+    @CheckRole("user")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         CuisineService cuisineService = new CuisineService();
         String pathInfo = request.getPathInfo();
@@ -45,11 +45,13 @@ public class CuisineListServlet extends HttpServlet {
                 cuisineListRequest.getPageSize(),
                 cuisineListRequest.getKw(),
                 cuisineListRequest.getOrderBy(),
-                cuisineListRequest.getAsc()
+                cuisineListRequest.getAsc(),
+                cuisineListRequest.getCanteenId()
         );
 
         int count = cuisineService.getCuisineListCount(
-                cuisineListRequest.getKw()
+                cuisineListRequest.getKw(),
+                cuisineListRequest.getCanteenId()
         );
 
         Gson gson = GsonFactory.getGson();

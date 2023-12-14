@@ -99,6 +99,7 @@ public class UserDaoImpl implements UserDao {
     private static class ConditionAndParam {
         List<String> conditions;
         List<Object> params;
+
         ConditionAndParam(String kw, Boolean available, User.Role role, Boolean isVerified) {
             conditions = new ArrayList<>();
             params = new ArrayList<>();
@@ -193,6 +194,32 @@ public class UserDaoImpl implements UserDao {
             }
         } catch (Exception e) {
             LogUtils.severe(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public List<User> batchQueryUsers(List<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        try (Connection connection = Hikari.getConnection()) {
+            String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
+                    "userId", "username", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
+            }) + " WHERE `user_id` IN (" + SqlStatementUtils.generateQuestionMarks(userIds.size()) + ");";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            for (int i = 0; i < userIds.size(); i++) {
+                ps.setInt(i + 1, userIds.get(i));
+            }
+            LogUtils.info(ps.toString());
+            ResultSet rs = ps.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (rs.next()) {
+                users.add((User) SqlStatementUtils.makeEntityFromResult(rs, User.class));
+            }
+            return users;
+        } catch (Exception e) {
+            LogUtils.severe(e.getMessage(), e);
         }
         return null;
     }
