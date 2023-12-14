@@ -43,7 +43,7 @@ public class CanteenDaoImpl implements CanteenDao {
     public Canteen queryCanteenById(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Canteen.class, new String[]{
-                    "canteen_id", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
+                    "canteenId", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
             }) + " WHERE `canteen_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
@@ -91,7 +91,7 @@ public class CanteenDaoImpl implements CanteenDao {
     @Override
     public List<Canteen> queryCanteens(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Canteen.class, new String[]{
-                "canteen_id", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
+                "canteenId", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
         });
 
         ConditionAndParam condAndParam = new ConditionAndParam(kw);
@@ -168,6 +168,32 @@ public class CanteenDaoImpl implements CanteenDao {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Canteen> batchQueryCanteens(List<Integer> canteenIds) {
+        if (canteenIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String sql = SqlStatementUtils.generateBasicSelectSql(Canteen.class, new String[]{
+                "canteenId", "name", "location", "introduction", "compScore", "createdAt", "updatedAt"
+        });
+        sql += " WHERE `canteen_id` IN (" + SqlStatementUtils.generateQuestionMarks(canteenIds.size()) + ");";
+        try (Connection connection = Hikari.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            for (int i = 0; i < canteenIds.size(); i++) {
+                ps.setInt(i + 1, canteenIds.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            List<Canteen> canteens = new ArrayList<>();
+            while (rs.next()) {
+                canteens.add((Canteen) SqlStatementUtils.makeEntityFromResult(rs, Canteen.class));
+            }
+            return canteens;
+        } catch (Exception e) {
+            LogUtils.severe(e.getMessage());
         }
         return null;
     }

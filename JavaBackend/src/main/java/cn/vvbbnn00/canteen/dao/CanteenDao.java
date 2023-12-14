@@ -1,7 +1,9 @@
 package cn.vvbbnn00.canteen.dao;
 
 import cn.vvbbnn00.canteen.model.Canteen;
+
 import java.util.List;
+
 public interface CanteenDao {
     /**
      * 插入一个食堂
@@ -54,4 +56,12 @@ public interface CanteenDao {
      * @return 食堂数量
      */
     Integer queryCanteensCount(String kw);
+
+    /**
+     * Queries the list of Canteen objects based on the given list of canteen IDs.
+     *
+     * @param canteenIds the list of canteen IDs to search for
+     * @return a list of Canteen objects that match the given canteen IDs
+     */
+    List<Canteen> batchQueryCanteens(List<Integer> canteenIds);
 }

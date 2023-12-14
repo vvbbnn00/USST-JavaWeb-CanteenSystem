@@ -39,14 +39,16 @@ public interface CuisineDao {
      * @param kw       关键词，模糊匹配菜品名称
      * @param orderBy  排序字段，支持：id、name、createdAt、updatedAt
      * @param asc      是否升序
+     * @param canteenId 食堂id
      * @return 菜品列表
      */
-    List<Cuisine> queryCuisines(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc);
+    List<Cuisine> queryCuisines(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc, Integer canteenId);
     /**
      * 查询菜品数量，参数为空可忽略这个条件
      *
      * @param kw 关键词，模糊匹配菜品名称
+     * @param canteenId 食堂id
      * @return 菜品数量
      */
-    Integer queryCuisinesCount(String kw);
+    Integer queryCuisinesCount(String kw, Integer canteenId);
 }

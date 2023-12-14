@@ -3,6 +3,7 @@ package cn.vvbbnn00.canteen.filter;
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.util.GsonFactory;
+import cn.vvbbnn00.canteen.util.ServletMappingHelper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
@@ -17,26 +18,13 @@ import java.util.Map;
  */
 @WebFilter(filterName = "RoleCheckFilter", urlPatterns = "/*")
 public class RoleCheckFilter extends HttpFilter {
-    private Map<String, Class<?>> servletMapping;
-
-    @Override
-    public void init(FilterConfig filterConfig) {
-        // 添加映射后，请手动重启Tomcat，否则不会生效（Rebel插件也需要重启）
-        servletMapping = new HashMap<>();
-        servletMapping.put("/admin/user", cn.vvbbnn00.canteen.controller.admin.UserResourceServlet.class);
-        servletMapping.put("/admin/user/list", cn.vvbbnn00.canteen.controller.admin.UserListServlet.class);
-        servletMapping.put("/admin/canteen", cn.vvbbnn00.canteen.controller.admin.CanteenResourceServlet.class);
-        servletMapping.put("/admin/canteen/list", cn.vvbbnn00.canteen.controller.admin.CanteenListServlet.class);
-        servletMapping.put("/admin/cuisine", cn.vvbbnn00.canteen.controller.admin.CuisineResourceServlet.class);
-        // 为其他Servlet添加更多映射
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession();
 
-        Class<?> clazz = servletMapping.get(httpRequest.getServletPath());
+        Class<?> clazz = ServletMappingHelper.getServletMapping().get(httpRequest.getServletPath());
         // LogUtils.info(httpRequest.getServletPath() + " " + clazz);
         if (clazz == null) {
             chain.doFilter(request, response);
