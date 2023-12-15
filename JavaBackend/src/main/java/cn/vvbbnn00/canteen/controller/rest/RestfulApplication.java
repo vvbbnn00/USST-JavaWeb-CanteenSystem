@@ -1,6 +1,6 @@
 package cn.vvbbnn00.canteen.controller.rest;
 
-import cn.vvbbnn00.canteen.filter.ErrorResponseRestfulFilter;
+import cn.vvbbnn00.canteen.filter.IllegalArgumentExceptionMapper;
 import cn.vvbbnn00.canteen.filter.SecurityContextRestfulFilter;
 import cn.vvbbnn00.canteen.filter.role_check.RoleCheckRestfulFilter;
 import jakarta.ws.rs.ApplicationPath;
@@ -18,11 +18,10 @@ public class RestfulApplication extends Application {
         // include filters
         classes.add(RoleCheckRestfulFilter.class);
         classes.add(SecurityContextRestfulFilter.class);
+        classes.add(IllegalArgumentExceptionMapper.class);
 
         // include hello resource
         classes.add(HelloResource.class);
-
-        classes.add(ErrorResponseRestfulFilter.class);
         return classes;
     }
 }
