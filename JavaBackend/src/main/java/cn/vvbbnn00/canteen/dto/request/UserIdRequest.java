@@ -5,7 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.beans.JavaBean;
+
 @Data
+@JavaBean
 public class UserIdRequest {
 
     @NotNull(message = "userId不能为空")

@@ -5,9 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
 
+import java.beans.JavaBean;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JavaBean
 public class UserListRequest extends BasicListRequest {
     private Boolean available;
     private User.Role role;

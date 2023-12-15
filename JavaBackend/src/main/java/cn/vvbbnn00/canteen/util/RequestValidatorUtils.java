@@ -67,15 +67,16 @@ public class RequestValidatorUtils {
      * @param obj 实体类对象
      */
     public static void doHibernateValidate(Object obj) throws IllegalArgumentException {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<Object>> violations = validator.validate(obj);
-        if (!violations.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder();
-            for (ConstraintViolation<?> violation : violations) {
-                errorMessage.append(violation.getMessage()).append(";");
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<Object>> violations = validator.validate(obj);
+            if (!violations.isEmpty()) {
+                StringBuilder errorMessage = new StringBuilder();
+                for (ConstraintViolation<?> violation : violations) {
+                    errorMessage.append(violation.getMessage()).append(";");
+                }
+                throw new IllegalArgumentException(errorMessage.toString());
             }
-            throw new IllegalArgumentException(errorMessage.toString());
         }
     }
 
