@@ -70,6 +70,16 @@ public class CanteenAdminDaoImpl implements CanteenAdminDao {
         return null;
     }
 
+    @Override
+    public List<CanteenAdmin> queryByCanteenId(Integer canteenId) {
+        return query(canteenId, null);
+    }
+
+    @Override
+    public List<CanteenAdmin> queryByUserId(Integer userId) {
+        return query(null, userId);
+    }
+
     public static class ConditionAndParam {
         public List<String> conditions = new ArrayList<>();
         public List<Object> params = new ArrayList<>();

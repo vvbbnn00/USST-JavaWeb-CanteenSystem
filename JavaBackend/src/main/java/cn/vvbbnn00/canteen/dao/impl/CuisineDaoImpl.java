@@ -11,18 +11,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CuisineDaoImpl implements CuisineDao {
     @Override
     public boolean insert(Cuisine cuisine) {
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateInsertStatement(connection, cuisine, new String[]{
-                    "name","canteen_id","created_at","updated_at"
+                    "name", "canteenId"
             });
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
-            LogUtils.severe(e.getMessage());
+            LogUtils.severe(e.getMessage(), e);
             return false;
         }
     }
@@ -32,29 +33,32 @@ public class CuisineDaoImpl implements CuisineDao {
         try {
             Connection connection = Hikari.getConnection();
             String sql = SqlStatementUtils.generateBasicSelectSql(Cuisine.class, new String[]{
-                    "cuisine_id", "name", "canteen_id", "created_at", "updated_at"
+                    "cuisineId", "name", "canteenId", "createdAt", "updatedAt"
             }) + " WHERE `cuisine_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
-            return (Cuisine) SqlStatementUtils.makeEntityFromResult(ps.executeQuery(), Cuisine.class);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (Cuisine) SqlStatementUtils.makeEntityFromResult(rs, Cuisine.class);
+            }
         } catch (Exception e) {
-            LogUtils.severe(e.getMessage());
-            return null;
+            LogUtils.severe(e.getMessage(), e);
         }
+        return null;
     }
 
     @Override
     public boolean update(Cuisine cuisine) {
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateUpdateStatement(connection, cuisine, new String[]{
-                    "name","canteen_id","created_at","updated_at"
+                    "name"
             }, new String[]{
-                    "cuisine_id"
+                    "cuisineId"
             });
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
-            LogUtils.severe(e.getMessage());
+            LogUtils.severe(e.getMessage(), e);
             return false;
         }
     }
@@ -77,23 +81,27 @@ public class CuisineDaoImpl implements CuisineDao {
         List<String> conditions;
         List<Object> params;
 
-        ConditionAndParams(String kw) {
+        ConditionAndParams(String kw, Integer canteenId) {
             this.conditions = new ArrayList<>();
             this.params = new ArrayList<>();
             if (kw != null) {
                 this.conditions.add("(`name` LIKE ?)");
                 this.params.add("%" + kw + "%");
             }
+            if (canteenId != null) {
+                this.conditions.add("`canteen_id` = ?");
+                this.params.add(canteenId);
+            }
         }
     }
 
     @Override
-    public List<Cuisine> queryCuisines(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc) {
+    public List<Cuisine> queryCuisines(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc, Integer canteenId) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Cuisine.class, new String[]{
                 "cuisine_id", "name", "canteen_id", "created_at", "updated_at"
         });
 
-        ConditionAndParams conditionAndParams = new ConditionAndParams(kw);
+        ConditionAndParams conditionAndParams = new ConditionAndParams(kw, canteenId);
 
         List<String> conditions = conditionAndParams.conditions;
         List<Object> params = conditionAndParams.params;
@@ -132,9 +140,9 @@ public class CuisineDaoImpl implements CuisineDao {
     }
 
     @Override
-    public Integer queryCuisinesCount(String kw) {
+    public Integer queryCuisinesCount(String kw, Integer canteenId) {
         String sql = "SELECT COUNT(*) FROM " + Hikari.getDbName() + ".`cuisine`";
-        ConditionAndParams conditionAndParams = new ConditionAndParams(kw);
+        ConditionAndParams conditionAndParams = new ConditionAndParams(kw, canteenId);
 
         List<String> conditions = conditionAndParams.conditions;
         List<Object> params = conditionAndParams.params;

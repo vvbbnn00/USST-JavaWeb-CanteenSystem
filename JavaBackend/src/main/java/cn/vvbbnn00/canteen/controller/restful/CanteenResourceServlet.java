@@ -1,4 +1,4 @@
-package cn.vvbbnn00.canteen.controller.admin;
+package cn.vvbbnn00.canteen.controller.restful;
 
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
@@ -6,16 +6,14 @@ import cn.vvbbnn00.canteen.model.Canteen;
 import cn.vvbbnn00.canteen.service.CanteenService;
 import cn.vvbbnn00.canteen.util.GsonFactory;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Objects;
 
-@WebServlet(name = "CanteenResourceServlet", value = {"/admin/canteen/*"})
+@WebServlet(name = "CanteenResourceServlet", value = {"/restful/canteen/*"})
 public class CanteenResourceServlet extends HttpServlet {
 
     @Override
