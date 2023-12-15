@@ -4,7 +4,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.beans.JavaBean;
+
 @Data
+@JavaBean
 public class UserLoginRequest {
     @NotEmpty(message = "用户名不能为空")
     @Size(min = 2, max = 20, message = "用户名不合法")

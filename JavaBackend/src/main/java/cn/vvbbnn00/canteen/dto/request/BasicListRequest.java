@@ -3,7 +3,10 @@ package cn.vvbbnn00.canteen.dto.request;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.beans.JavaBean;
+
 @Data
+@JavaBean
 public class BasicListRequest {
     @Min(value = 1, message = "currentPage必须大于等于1")
     private Integer currentPage;

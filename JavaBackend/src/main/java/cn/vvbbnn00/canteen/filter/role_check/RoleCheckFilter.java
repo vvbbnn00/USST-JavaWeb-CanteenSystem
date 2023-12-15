@@ -5,11 +5,11 @@ import cn.vvbbnn00.canteen.model.User;
 public class RoleCheckFilter {
 
     /**
-     * Checks if the user has the required role.
+     * 检查用户是否具有所需的角色。
      *
-     * @param user          the user object
-     * @param requiredRole  the required role string
-     * @return 1 if the user has the required role, 0 if not, -1 if the user is null
+     * @param user          用户对象
+     * @param requiredRole  所需的角色字符串
+     * @return 如果用户具有所需的角色，则返回 1；如果没有，则返回 0；如果用户为 null，则返回 -1
      */
     public static int checkRole(User user, String requiredRole) {
         if (user == null) {

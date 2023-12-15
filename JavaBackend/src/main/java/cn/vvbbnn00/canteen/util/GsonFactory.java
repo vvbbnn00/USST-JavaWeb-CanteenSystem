@@ -23,6 +23,17 @@ public class GsonFactory {
                 .create();
     }
 
+
+    /**
+     * 将对象转换为 JSON 格式。
+     *
+     * @param obj 需要被转换为 JSON 的对象。
+     * @return 对象的 JSON 字符串表示形式。
+     */
+    public static String toJson(Object obj) {
+        return getGson().toJson(obj);
+    }
+
     /**
      * 生成错误响应
      *
