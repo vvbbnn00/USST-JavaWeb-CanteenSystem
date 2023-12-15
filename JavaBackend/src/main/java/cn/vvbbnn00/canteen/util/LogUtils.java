@@ -25,9 +25,9 @@ public class LogUtils {
     // 获取调用此日志的类和方法信息
     private static String getCallerInfo() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (int i = 0; i < stackTrace.length; i++) {
-            StackTraceElement ste = stackTrace[i];
-            if (!ste.getClassName().equals(LogUtils.class.getName())) {
+        for (StackTraceElement ste : stackTrace) {
+            if (!ste.getClassName().equals(LogUtils.class.getName())
+                    && ste.getClassName().indexOf("java.lang.Thread") != 0) {
                 return String.format("[%s.%s(Line:%d)] ", ste.getClassName(), ste.getMethodName(), ste.getLineNumber());
             }
         }
