@@ -13,3 +13,10 @@ export const getCanteenList = () => {
         method: 'get'
     });
 }
+
+export const getCommentList = () => {
+    return request({
+        url: './comment.json',
+        method: 'get'
+    });
+}
