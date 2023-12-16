@@ -4,10 +4,12 @@ import lombok.Data;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.beans.JavaBean;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@JavaBean
 public class Announcement implements Serializable {
     private Integer announcementId;
 

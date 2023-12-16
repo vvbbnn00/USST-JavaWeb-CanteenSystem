@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.beans.JavaBean;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@JavaBean
 public class Cuisine implements Serializable {
     private Integer cuisineId;
 

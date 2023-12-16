@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.beans.JavaBean;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
+@JavaBean
 public class User implements Serializable {
     private Integer userId;
 

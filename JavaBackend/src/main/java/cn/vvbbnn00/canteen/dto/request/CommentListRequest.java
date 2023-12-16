@@ -4,8 +4,11 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.beans.JavaBean;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JavaBean
 public class CommentListRequest extends BasicListRequest{
     private String type;
 
