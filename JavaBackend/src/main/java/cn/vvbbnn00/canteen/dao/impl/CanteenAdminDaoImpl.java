@@ -28,7 +28,7 @@ public class CanteenAdminDaoImpl implements CanteenAdminDao {
     }
 
     @Override
-    public boolean remove(CanteenAdmin canteenAdmin) {
+    public boolean delete(CanteenAdmin canteenAdmin) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = "DELETE FROM " + Hikari.getDbName() + ".`canteen_admin`" + " WHERE canteen_id=? AND user_id=?;";
             PreparedStatement ps = connection.prepareStatement(sql);

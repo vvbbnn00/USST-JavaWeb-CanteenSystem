@@ -17,7 +17,7 @@ public class Hikari {
     static {
         HikariConfig config = new HikariConfig();
 
-        config.setJdbcUrl(ConfigUtils.getEnv("DB_URL", "jdbc:mysql://192.168.19.2:3306/canteen_community?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false"));
+        config.setJdbcUrl(ConfigUtils.getEnv("DB_URL", "jdbc:mysql://192.168.31.106:3306/canteen_community?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false"));
         config.setUsername(ConfigUtils.getEnv("DB_USERNAME", "root"));
         config.setPassword(ConfigUtils.getEnv("DB_PASSWORD", "password"));
         config.setDriverClassName(ConfigUtils.getEnv("DB_DRIVER", "com.mysql.cj.jdbc.Driver"));

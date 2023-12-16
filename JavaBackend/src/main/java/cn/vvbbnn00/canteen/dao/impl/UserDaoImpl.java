@@ -211,7 +211,7 @@ public class UserDaoImpl implements UserDao {
             for (int i = 0; i < userIds.size(); i++) {
                 ps.setInt(i + 1, userIds.get(i));
             }
-            LogUtils.info(ps.toString());
+            // LogUtils.info(ps.toString());
             ResultSet rs = ps.executeQuery();
             List<User> users = new ArrayList<>();
             while (rs.next()) {

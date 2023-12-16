@@ -1,5 +1,4 @@
 package cn.vvbbnn00.canteen.dao;
-import cn.vvbbnn00.canteen.model.Canteen;
 import cn.vvbbnn00.canteen.model.CanteenAdmin;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public interface CanteenAdminDao {
      * @param canteenAdmin 餐厅管理员对象
      * @return 是否移除成功
      */
-    boolean remove(CanteenAdmin canteenAdmin);
+    boolean delete(CanteenAdmin canteenAdmin);
 
     /**
      * 查询餐厅管理员列表

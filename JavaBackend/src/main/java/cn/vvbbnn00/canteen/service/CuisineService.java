@@ -99,9 +99,6 @@ public class CuisineService {
         if (cuisine.getName() != null) {
             existCuisine.setName(cuisine.getName());
         }
-        if (cuisine.getCanteenId() != null) {
-            existCuisine.setCanteenId(cuisine.getCanteenId());
-        }
         if (!canteenAdminService.checkHasCanteenAdmin(existCuisine.getCanteenId(), user.getUserId())) {
             throw new RuntimeException("无权限更新菜品");
         }
@@ -134,7 +131,6 @@ public class CuisineService {
         if (!canteenAdminService.checkHasCanteenAdmin(cuisine.getCanteenId(), user.getUserId())) {
             throw new RuntimeException("无权限插入菜品");
         }
-        Logger.getLogger("CuisineService").info(cuisine.toString());
         boolean success = cuisineDao.insert(cuisine);
         if (!success) {
             throw new RuntimeException("插入菜品失败");

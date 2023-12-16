@@ -13,4 +13,20 @@ import java.beans.JavaBean;
 @JavaBean
 public class BasicDataResponse extends BasicResponse {
     private Object data;
+
+    public BasicDataResponse(int code, String message, Object data) {
+        super(code, message);
+        this.data = data;
+    }
+
+    public BasicDataResponse() {
+    }
+
+    public BasicDataResponse(Object data) {
+        this.data = data;
+    }
+
+    public BasicDataResponse(int code, String message) {
+        super(code, message);
+    }
 }
