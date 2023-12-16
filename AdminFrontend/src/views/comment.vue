@@ -25,16 +25,17 @@
       <el-table :data="commentData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="comment_id" label="评论ID" width="100px"></el-table-column>
         <el-table-column prop="created_by" label="评论创建人"></el-table-column>
-        <el-table-column label="评论内容" width="230" align="center">
+        <el-table-column prop="score" label="评论评分"></el-table-column>
+        <el-table-column label="评论内容" align="center">
           <template #default="scope">
             <el-button class="el-icon-lx-comment" @click="handleInfo(scope.$index, scope.row)">
               查看详情内容
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="发布时间" width="200"></el-table-column>
-        <el-table-column prop="updated_at" label="更新时间" width="200"></el-table-column>
-        <el-table-column label="操作" width="300" align="center" fixed="right">
+        <el-table-column prop="created_at" label="发布时间"></el-table-column>
+        <el-table-column prop="updated_at" label="更新时间"></el-table-column>
+        <el-table-column label="操作" align="center" fixed="right">
           <template #default="scope">
             <el-button text icon="Edit" @click="handleCheck(scope.row)">审核</el-button>
             <el-button text icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
@@ -227,7 +228,7 @@ const handleDelete = (row: any) => {
   })
       .then(async () => {
         try {
-          await updateComment({
+          await deleteComment({
             review_id: row.review_id,
           })
           ElMessage.success(`删除成功`);

@@ -60,8 +60,8 @@
                   <Goods/>
                 </el-icon>
                 <div class="grid-cont-right">
-                  <div class="grid-num">{{ query.bookCount }}</div>
-                  <div>书籍</div>
+                  <div class="grid-num">{{ query.canteenCount }}</div>
+                  <div>食堂/菜品</div>
                 </div>
               </div>
             </el-card>
@@ -150,7 +150,7 @@ const name = localStorage.getItem('ms_username');
 const query = reactive({
   userCount: undefined as unknown as number,
   commentCount: undefined as unknown as number,
-  bookCount: undefined as unknown as number
+  canteenCount: undefined as unknown as number
 });
 
 // (async () => {
