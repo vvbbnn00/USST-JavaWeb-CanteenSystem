@@ -92,6 +92,7 @@ public class UserService {
      * @return 更新后的用户
      */
     public User updateUser(User user) {
+        String adminUsername = ConfigUtils.getEnv("ADMIN_USERNAME", "admin");
         User newUser = userDao.queryUserById(user.getUserId());
         if (newUser == null) {
             throw new RuntimeException("用户不存在");
@@ -115,9 +116,15 @@ public class UserService {
             newUser.setEmployeeId(user.getEmployeeId());
         }
         if (user.getAvailable() != null) {
+            if (adminUsername.equals(newUser.getUsername()) && !user.getAvailable()) {
+                throw new RuntimeException("系统内置用户不能禁用");
+            }
             newUser.setAvailable(user.getAvailable());
         }
         if (user.getRole() != null) {
+            if (adminUsername.equals(newUser.getUsername()) && !user.getRole().equals(User.Role.admin)) {
+                throw new RuntimeException("系统内置用户不能修改角色");
+            }
             newUser.setRole(user.getRole());
         }
         if (user.getIsVerified() != null) {
@@ -128,6 +135,9 @@ public class UserService {
         }
         if (user.getLevel() != null) {
             newUser.setLevel(user.getLevel());
+        }
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+            newUser.setEmail(user.getEmail());
         }
         boolean success = userDao.update(newUser);
         if (success) {
@@ -183,6 +193,9 @@ public class UserService {
         }
         if (user.getIsVerified() == null) {
             user.setIsVerified(false);
+        }
+        if (user.getEmail() == null) {
+            user.setEmail("");
         }
         if (user.getPoint() == null) {
             user.setPoint(0L);

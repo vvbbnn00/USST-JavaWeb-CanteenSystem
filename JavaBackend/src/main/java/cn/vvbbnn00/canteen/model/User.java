@@ -1,5 +1,6 @@
 package cn.vvbbnn00.canteen.model;
 
+import cn.vvbbnn00.canteen.util.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -41,6 +42,13 @@ public class User implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastLoginAt;
+
+    @Email(message = "邮箱格式不正确")
+    private String email;
+
+    public String getAvatar() {
+        return StringUtils.getAvatarUrl(this.email);
+    }
 
     public enum Role {
         user, canteen_admin, admin

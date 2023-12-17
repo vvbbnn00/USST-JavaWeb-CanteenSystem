@@ -2,12 +2,12 @@
   <div>
     <div class="container">
       <div class="handle-box" v-if="isAdmin === 'admin'">
-        <el-input v-model="query.name" placeholder="食堂名称" class="handle-input mr10"></el-input>
+        <el-input v-model="query.kw" placeholder="食堂名称" class="handle-input mr10"></el-input>
         <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
         <el-button type="primary" :icon="Plus" @click="handleCreate">新增</el-button>
       </div>
       <el-table :data="canteenData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-        <el-table-column prop="canteen_id" label="食堂ID"></el-table-column>
+        <el-table-column prop="canteenId" label="食堂ID"></el-table-column>
         <el-table-column prop="name" label="分类名"></el-table-column>
         <el-table-column prop="location" label="食堂地址"></el-table-column>
         <el-table-column label="操作" width="200" align="center" fixed="right">
@@ -27,7 +27,6 @@
           </template>
         </el-table-column>
         <!--    显示食堂介绍     -->
-        <el-table-column prop="comp_score" label="食堂评分"></el-table-column>
         <el-table-column label="介绍" width="150" align="center">
           <template #default="scope">
             <el-button class="el-icon-lx-skinfill" @click="handleInfo(scope.$index, scope.row)">
@@ -38,14 +37,14 @@
         <el-table-column prop="created_at" label="注册时间" width="160px">
           <template #default="scope">
             <div>
-              {{ parseDateTime(scope.row.create_at) }}
+              {{ parseDateTime(scope.row.createdAt) }}
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="updated_at" label="更新记录时间" width="160px">
           <template #default="scope">
             <div>
-              {{ parseDateTime(scope.row.updated_at) }}
+              {{ parseDateTime(scope.row.updatedAt) }}
             </div>
           </template>
         </el-table-column>
@@ -54,7 +53,7 @@
         <el-pagination
             background
             layout="total, prev, pager, next"
-            :current-page="query.pageIndex"
+            :current-page="query.currentPage"
             :page-size="query.pageSize"
             :total="pageTotal"
             @current-change="handlePageChange"
@@ -115,16 +114,16 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus, Edit} from '@element-plus/icons-vue';
-import {getCanteenList} from "../api/userRequest";
+import {getCanteenList} from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 
-const isAdmin = localStorage.getItem('ms_keys');
+const isAdmin = localStorage.getItem('ms_role');
 
 const query = reactive({
   // 需要根据是否是管理员来判断
-  canteen_id: undefined as unknown as number,
-  name: '',
-  pageIndex: 1,
+  // canteen_id: undefined as unknown as number,
+  kw: '',
+  currentPage: 1,
   pageSize: 10
 });
 
@@ -148,26 +147,17 @@ let pageTotal = ref(0);
 
 // 获取表格数据
 const getData = () => {
-  // getCanteenList(query).then(res => {
-  //   let data = res.data;
-  //   if (data.code !== 200) {
-  //     ElMessage.error(data.message);
-  //     return;
-  //   }
-  //   data = data?.data;
-  //
-  //   categoryData.value = data?.list;
-  //   pageTotal.value = data?.pageTotal || 0;
-  //   query.pageIndex = data?.pageIndex || 1;
-  //   query.pageSize = data?.pageSize;
-  // });
-
-  getCanteenList().then(res => {
+  getCanteenList(query).then(res => {
     let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+    console.log(data)
 
-    canteenData.value = data?.data;
+    canteenData.value = data?.list;
     pageTotal.value = data?.pageTotal || 0;
-    query.pageIndex = data?.pageIndex || 1;
+    query.currentPage = data?.currentPage || 1;
     query.pageSize = data?.pageSize;
   });
 };
@@ -180,7 +170,7 @@ const handleSearch = () => {
 
 // 分页导航
 const handlePageChange = (val: number) => {
-  query.pageIndex = val;
+  query.currentPage = val;
   getData();
 };
 
@@ -188,7 +178,7 @@ const infoVisible = ref(false);
 const infoData = ref([]);
 const handleInfo = (index: number, row: any) => {
   infoData.value = canteenData.value.filter(item => {
-    return row.canteen_id === item.canteen_id;
+    return row.canteenId === item.canteenId;
   });
   infoVisible.value = true;
 };
@@ -216,7 +206,7 @@ const handleState = (row: any) => {
 };
 
 let createForm = reactive({
-  canteen_id: undefined as unknown as number,
+  canteenId: undefined as unknown as number,
   name: '',
   location: '',
   introduction: '',
