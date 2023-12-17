@@ -29,6 +29,8 @@ public class RestfulApplication extends Application {
         classes.add(CanteenAdminResource.class);
         classes.add(CuisineResource.class);
         classes.add(AnnouncementResource.class);
+        classes.add(ImageResource.class);
+        classes.add(ItemResource.class);
 
         return classes;
     }

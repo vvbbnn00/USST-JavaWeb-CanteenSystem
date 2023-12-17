@@ -31,7 +31,7 @@ public class AnnouncementResource {
     @Path("/announcement/list")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @CheckRole("caneteen_admin")
+    @CheckRole("canteen_admin")
     public BasicListResponse restListAnnouncement(
             AnnouncementListRequest announcementListRequest
     ) {
