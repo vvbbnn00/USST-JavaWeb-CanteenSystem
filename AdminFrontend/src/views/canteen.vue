@@ -7,7 +7,7 @@
         <el-button type="primary" :icon="Plus" @click="handleCreate">新增</el-button>
       </div>
       <el-table :data="canteenData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-        <el-table-column prop="canteen_id" label="食堂ID"></el-table-column>
+        <el-table-column prop="canteenId" label="食堂ID"></el-table-column>
         <el-table-column prop="name" label="分类名"></el-table-column>
         <el-table-column prop="location" label="食堂地址"></el-table-column>
         <el-table-column label="操作" width="200" align="center" fixed="right">
@@ -27,7 +27,6 @@
           </template>
         </el-table-column>
         <!--    显示食堂介绍     -->
-        <el-table-column prop="comp_score" label="食堂评分"></el-table-column>
         <el-table-column label="介绍" width="150" align="center">
           <template #default="scope">
             <el-button class="el-icon-lx-skinfill" @click="handleInfo(scope.$index, scope.row)">
@@ -38,14 +37,14 @@
         <el-table-column prop="created_at" label="注册时间" width="160px">
           <template #default="scope">
             <div>
-              {{ parseDateTime(scope.row.create_at) }}
+              {{ parseDateTime(scope.row.createdAt) }}
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="updated_at" label="更新记录时间" width="160px">
           <template #default="scope">
             <div>
-              {{ parseDateTime(scope.row.updated_at) }}
+              {{ parseDateTime(scope.row.updatedAt) }}
             </div>
           </template>
         </el-table-column>
@@ -118,7 +117,7 @@ import {Search, Plus, Edit} from '@element-plus/icons-vue';
 import {getCanteenList} from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 
-const isAdmin = localStorage.getItem('ms_keys');
+const isAdmin = localStorage.getItem('ms_role');
 
 const query = reactive({
   // 需要根据是否是管理员来判断
@@ -155,7 +154,6 @@ const getData = () => {
       return;
     }
     console.log(data)
-    data = data?.data;
 
     canteenData.value = data?.list;
     pageTotal.value = data?.pageTotal || 0;
@@ -180,7 +178,7 @@ const infoVisible = ref(false);
 const infoData = ref([]);
 const handleInfo = (index: number, row: any) => {
   infoData.value = canteenData.value.filter(item => {
-    return row.canteen_id === item.canteen_id;
+    return row.canteenId === item.canteenId;
   });
   infoVisible.value = true;
 };
@@ -208,7 +206,7 @@ const handleState = (row: any) => {
 };
 
 let createForm = reactive({
-  canteen_id: undefined as unknown as number,
+  canteenId: undefined as unknown as number,
   name: '',
   location: '',
   introduction: '',

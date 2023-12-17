@@ -81,6 +81,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
           localStorage.setItem('ms_user_id', response?.data?.userId);
           localStorage.setItem('ms_email', response?.data?.email);
           localStorage.setItem('ms_avatar', response?.data?.avatar);
+          localStorage.setItem('ms_role', response?.data?.role);
           const keys = permiss.defaultList[response?.data?.role === 'admin' ? 'admin' : 'canteen_admin'];
           permiss.handleSet(keys);
           router.push('/dashboard');

@@ -1,4 +1,4 @@
-export const BASE_URL = "http://192.168.19.10:60001/backend";
+export const BASE_URL = "http://10.100.164.6:60001/backend";
 
 export const passwordLogin = async (username: string, password: string) => {
     const response = await fetch(`${BASE_URL}/auth/login`, {
