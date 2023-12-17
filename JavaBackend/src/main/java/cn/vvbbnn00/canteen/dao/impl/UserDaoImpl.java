@@ -19,7 +19,7 @@ public class UserDaoImpl implements UserDao {
     public boolean insert(User user) {
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateInsertStatement(connection, user, new String[]{
-                    "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified"
+                    "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "email"
             });
             ps.executeUpdate();
             return true;
@@ -33,7 +33,7 @@ public class UserDaoImpl implements UserDao {
     public User queryUserById(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
-                    "userId", "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
+                    "userId", "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt", "email"
             }) + " WHERE `user_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
@@ -51,7 +51,7 @@ public class UserDaoImpl implements UserDao {
     public User queryUserByUsername(String username) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
-                    "userId", "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
+                    "userId", "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt", "email"
             }) + " WHERE `username` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, username);
@@ -69,7 +69,7 @@ public class UserDaoImpl implements UserDao {
     public boolean update(User user) {
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateUpdateStatement(connection, user, new String[]{
-                    "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified"
+                    "username", "password", "name", "employeeId", "level", "point", "available", "role", "isVerified", "email"
             }, new String[]{
                     "userId"
             });
@@ -131,7 +131,7 @@ public class UserDaoImpl implements UserDao {
     public List<User> queryUsers(Integer page, Integer pageSize, String kw, Boolean available, User.Role role, Boolean isVerified, String orderBy, Boolean asc) {
         // 密码不应该被查询出来
         String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
-                "userId", "username", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
+                "userId", "username", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt", "email"
         });
 
         ConditionAndParam condAndParam = new ConditionAndParam(kw, available, role, isVerified);
@@ -205,7 +205,7 @@ public class UserDaoImpl implements UserDao {
         }
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(User.class, new String[]{
-                    "userId", "username", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt"
+                    "userId", "username", "name", "employeeId", "level", "point", "available", "role", "isVerified", "createdAt", "updatedAt", "lastLoginAt", "email"
             }) + " WHERE `user_id` IN (" + SqlStatementUtils.generateQuestionMarks(userIds.size()) + ");";
             PreparedStatement ps = connection.prepareStatement(sql);
             for (int i = 0; i < userIds.size(); i++) {
