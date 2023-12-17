@@ -191,6 +191,9 @@ public class SqlStatementUtils {
      * @return 下划线命名的字符串
      */
     public static String camelToSnakeQuote(String camelCaseString) {
+        if (camelCaseString.startsWith("(")) {
+            return camelCaseString;
+        }
         return "`" + camelToSnake(camelCaseString) + "`";
     }
 
