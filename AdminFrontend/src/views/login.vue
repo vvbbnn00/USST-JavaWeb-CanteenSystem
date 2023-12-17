@@ -38,6 +38,7 @@ import {useRouter} from 'vue-router';
 import {ElMessage} from 'element-plus';
 import type {FormInstance, FormRules} from 'element-plus';
 import {Lock, User} from '@element-plus/icons-vue';
+import {passwordLogin} from "../api";
 
 interface LoginInfo {
   username: string;
@@ -67,40 +68,27 @@ const loginLoading = ref<boolean>(false);
 
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  // formEl.validate((valid: boolean) => {
-  //   if (valid) {
-  //     loginLoading.value = true;
-  //     passwordLogin(param.username, param.password).then(response => {
-  //       loginLoading.value = false;
-  //       if (response.code === 200) {
-  //         const token = response.data.token;
-  //         ElMessage.success('登录成功');
-  //         localStorage.setItem('ms_username', response?.data?.user?.username);
-  //         localStorage.setItem('ms_email', response?.data?.user?.email);
-  //         localStorage.setItem('ms_user_id', response?.data?.user?.user_id);
-  //         const keys = response?.data?.user?.role;
-  //         permiss.handleSet(keys);
-  //         localStorage.setItem('ms_token', token);
-  //         router.push('/dashboard');
-  //       } else {
-  //         ElMessage.error(response.message);
-  //       }
-  //     }).catch(() => {
-  //       loginLoading.value = false;
-  //       ElMessage.error('请求失败');
-  //     });
-  //   }
-  // });
   formEl.validate((valid: boolean) => {
     if (valid) {
-      ElMessage.success('登录成功');
-      localStorage.setItem('ms_username', param.username);
-      const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'canteen_admin'];
-      permiss.handleSet(keys);
-      router.push('/');
-    } else {
-      ElMessage.error('登录成功');
-      return false;
+      loginLoading.value = true;
+      passwordLogin(param.username, param.password).then(response => {
+        loginLoading.value = false;
+        if (response.code === 200) {
+          const token = response.data.token;
+          ElMessage.success('登录成功');
+          localStorage.setItem('ms_username', response?.data?.username);
+          localStorage.setItem('ms_user_id', response?.data?.userId);
+          localStorage.setItem('ms_email', response?.data?.email);
+          const keys = permiss.defaultList[response?.data?.role === 'admin' ? 'admin' : 'canteen_admin'];
+          permiss.handleSet(keys);
+          router.push('/dashboard');
+        } else {
+          ElMessage.error(response.message);
+        }
+      }).catch(() => {
+        loginLoading.value = false;
+        ElMessage.error('请求失败');
+      });
     }
   });
 };
