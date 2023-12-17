@@ -14,6 +14,7 @@ public class UserMessage implements Serializable {
     private Integer fromUserId;
     private Integer toUserId;
 
+    @NotBlank(message = "消息内容不能为空")
     @Size(max = 200, message = "消息内容长度不能超过200个字符")
     private String content;
 
