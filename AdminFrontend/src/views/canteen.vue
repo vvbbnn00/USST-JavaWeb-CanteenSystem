@@ -2,7 +2,7 @@
   <div>
     <div class="container">
       <div class="handle-box" v-if="isAdmin === 'admin'">
-        <el-input v-model="query.name" placeholder="食堂名称" class="handle-input mr10"></el-input>
+        <el-input v-model="query.kw" placeholder="食堂名称" class="handle-input mr10"></el-input>
         <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
         <el-button type="primary" :icon="Plus" @click="handleCreate">新增</el-button>
       </div>
@@ -54,7 +54,7 @@
         <el-pagination
             background
             layout="total, prev, pager, next"
-            :current-page="query.pageIndex"
+            :current-page="query.currentPage"
             :page-size="query.pageSize"
             :total="pageTotal"
             @current-change="handlePageChange"
@@ -115,16 +115,16 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus, Edit} from '@element-plus/icons-vue';
-import {getCanteenList} from "../api/userRequest";
+import {getCanteenList} from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 
 const isAdmin = localStorage.getItem('ms_keys');
 
 const query = reactive({
   // 需要根据是否是管理员来判断
-  canteen_id: undefined as unknown as number,
-  name: '',
-  pageIndex: 1,
+  // canteen_id: undefined as unknown as number,
+  kw: '',
+  currentPage: 1,
   pageSize: 10
 });
 
@@ -148,26 +148,18 @@ let pageTotal = ref(0);
 
 // 获取表格数据
 const getData = () => {
-  // getCanteenList(query).then(res => {
-  //   let data = res.data;
-  //   if (data.code !== 200) {
-  //     ElMessage.error(data.message);
-  //     return;
-  //   }
-  //   data = data?.data;
-  //
-  //   categoryData.value = data?.list;
-  //   pageTotal.value = data?.pageTotal || 0;
-  //   query.pageIndex = data?.pageIndex || 1;
-  //   query.pageSize = data?.pageSize;
-  // });
-
-  getCanteenList().then(res => {
+  getCanteenList(query).then(res => {
     let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+    console.log(data)
+    data = data?.data;
 
-    canteenData.value = data?.data;
+    canteenData.value = data?.list;
     pageTotal.value = data?.pageTotal || 0;
-    query.pageIndex = data?.pageIndex || 1;
+    query.currentPage = data?.currentPage || 1;
     query.pageSize = data?.pageSize;
   });
 };
@@ -180,7 +172,7 @@ const handleSearch = () => {
 
 // 分页导航
 const handlePageChange = (val: number) => {
-  query.pageIndex = val;
+  query.currentPage = val;
   getData();
 };
 

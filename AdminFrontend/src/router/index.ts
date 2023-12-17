@@ -82,7 +82,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | Canteen 管理系统`;
+    document.title = `${to.meta.title} | 食堂管理系统`;
     const role = localStorage.getItem('ms_keys');
     const permiss = usePermissStore();
     if (!role && to.path !== '/login') {

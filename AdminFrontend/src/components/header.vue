@@ -13,7 +13,7 @@
     <div class="header-right">
       <div class="header-user-con">
         <!-- 用户头像 -->
-        <el-avatar class="user-avator" :size="30" :src="getAvatarUrl(email)"/>
+        <el-avatar class="user-avator" :size="30" :src="avatar"/>
         <!-- 用户名下拉菜单 -->
         <el-dropdown class="user-name" trigger="click" @command="handleCommand">
 					<span class="el-dropdown-link">
@@ -43,6 +43,7 @@ const username: string | null = localStorage.getItem('ms_username');
 const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
 const sidebar = useSidebarStore();
+const avatar = localStorage.getItem('ms_avatar');
 // 侧边栏折叠
 const collapseChage = () => {
   sidebar.handleCollapse();
