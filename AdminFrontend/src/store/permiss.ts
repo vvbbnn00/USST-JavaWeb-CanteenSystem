@@ -10,8 +10,8 @@ export const usePermissStore = defineStore('permiss', {
 		return {
 			key: keys ? JSON.parse(keys) : <string[]>[],
 			defaultList: <ObjectList>{
-				admin: ['1','2',],
-				canteen_admin: ['1']
+				admin: ['1','2','3'],
+				canteen_admin: ['1','2']
 			}
 		};
 	},

@@ -42,10 +42,15 @@
         </el-table-column>
         <el-table-column prop="created_at" label="发布时间"></el-table-column>
         <el-table-column prop="updated_at" label="更新时间"></el-table-column>
-        <el-table-column label="操作" align="center" fixed="right">
+        <el-table-column label="操作" align="center" fixed="right" v-if="isAdmin === 'admin'">
           <template #default="scope">
             <el-button text icon="Edit" @click="handleCheck(scope.row)">审核</el-button>
             <el-button text icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" fixed="right" v-if="isAdmin === 'canteen_admin'">
+          <template #default="scope">
+            <el-button text icon="ChatRound" @click="replyVisible = true">回复</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -132,6 +137,22 @@
       </template>
     </el-dialog>
 
+    <!-- 评论回复对话框 -->
+    <el-dialog title="回复评论" v-model="replyVisible" width="50%">
+      <el-form label-width="100px">
+        <el-form-item label="回复内容">
+          <el-input type="textarea" v-model="replyContent"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="replyVisible = false">取消</el-button>
+      <el-button type="primary" @click="handleReply">提交回复</el-button>
+    </span>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -142,6 +163,8 @@ import {Search} from '@element-plus/icons-vue';
 import {getUserList, getCommentList} from '../api/userRequest';
 
 const userList = ref([]);
+
+const isAdmin = localStorage.getItem('ms_keys');
 
 const loadUserList = (query: string) => {
   // getUserList({
@@ -270,6 +293,15 @@ const handleCheck = async (row: any) => {
 
   loadingModeration.value = false;
   console.log(JSON.stringify(moderation.value));
+};
+
+const replyVisible = ref(false);
+const replyContent = ref('');
+const handleReply = () => {
+  // 待实现回复逻辑
+  console.log("回复内容: ", replyContent.value);
+  replyContent.value = '';
+  replyVisible.value = false;
 };
 </script>
 

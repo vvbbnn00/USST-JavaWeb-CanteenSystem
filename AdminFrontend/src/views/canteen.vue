@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-      <div class="handle-box">
+      <div class="handle-box" v-if="isAdmin === 'admin'">
         <el-input v-model="query.name" placeholder="食堂名称" class="handle-input mr10"></el-input>
         <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
         <el-button type="primary" :icon="Plus" @click="handleCreate">新增</el-button>
@@ -50,7 +50,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pagination">
+      <div class="pagination" v-if="isAdmin === 'admin'">
         <el-pagination
             background
             layout="total, prev, pager, next"
@@ -118,7 +118,10 @@ import {Search, Plus, Edit} from '@element-plus/icons-vue';
 import {getCanteenList} from "../api/userRequest";
 import {parseDateTime} from "../utils/string";
 
+const isAdmin = localStorage.getItem('ms_keys');
+
 const query = reactive({
+  // 需要根据是否是管理员来判断
   canteen_id: undefined as unknown as number,
   name: '',
   pageIndex: 1,

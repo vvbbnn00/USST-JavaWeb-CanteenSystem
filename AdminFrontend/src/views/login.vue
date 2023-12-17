@@ -95,9 +95,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       ElMessage.success('登录成功');
       localStorage.setItem('ms_username', param.username);
-      const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
+      const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'canteen_admin'];
       permiss.handleSet(keys);
-      localStorage.setItem('ms_keys', JSON.stringify(keys));
       router.push('/');
     } else {
       ElMessage.error('登录成功');
