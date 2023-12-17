@@ -32,4 +32,6 @@ public interface MessageDao {
      * @return 消息列表数量
      */
     int queryMessagesCount(Integer toUserId);
+
+    UserMessage queryMessageById(Integer messageId);
 }
