@@ -1,5 +1,6 @@
 package cn.vvbbnn00.canteen.controller.rest;
 
+import cn.vvbbnn00.canteen.filter.AllowCorsRestFilter;
 import cn.vvbbnn00.canteen.filter.IllegalArgumentExceptionMapper;
 import cn.vvbbnn00.canteen.filter.SecurityContextRestfulFilter;
 import cn.vvbbnn00.canteen.filter.role_check.RoleCheckRestfulFilter;
@@ -22,6 +23,7 @@ public class RestfulApplication extends Application {
         classes.add(RoleCheckRestfulFilter.class);
         classes.add(SecurityContextRestfulFilter.class);
         classes.add(IllegalArgumentExceptionMapper.class);
+        classes.add(AllowCorsRestFilter.class);
 
         // include resource
         classes.add(UserResource.class);
