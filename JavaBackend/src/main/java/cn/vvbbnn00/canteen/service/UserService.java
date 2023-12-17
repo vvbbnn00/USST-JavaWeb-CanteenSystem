@@ -116,6 +116,9 @@ public class UserService {
             newUser.setEmployeeId(user.getEmployeeId());
         }
         if (user.getAvailable() != null) {
+            if (adminUsername.equals(newUser.getUsername()) && !user.getAvailable()) {
+                throw new RuntimeException("系统内置用户不能禁用");
+            }
             newUser.setAvailable(user.getAvailable());
         }
         if (user.getRole() != null) {

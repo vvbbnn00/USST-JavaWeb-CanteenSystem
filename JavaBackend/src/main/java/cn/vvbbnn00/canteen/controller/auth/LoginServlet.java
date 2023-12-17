@@ -2,6 +2,7 @@ package cn.vvbbnn00.canteen.controller.auth;
 
 import cn.vvbbnn00.canteen.dto.request.UserLoginRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
+import cn.vvbbnn00.canteen.dto.response.UserLoginResponse;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.service.LoginService;
 import cn.vvbbnn00.canteen.util.GsonFactory;
@@ -38,11 +39,26 @@ public class LoginServlet extends HttpServlet {
         try {
             LoginService loginService = new LoginService();
             User user = loginService.login(userLoginRequest.getUsername(), userLoginRequest.getPassword());
+
+            if (!user.getAvailable()) {
+                resp.sendError(403, "账号已被禁用");
+                return;
+            }
+
             req.getSession().setAttribute("user", user);
+
+            UserLoginResponse userLoginResponse = new UserLoginResponse();
+            userLoginResponse.setAvatar(user.getAvatar());
+            userLoginResponse.setRole(user.getRole());
+            userLoginResponse.setUserId(user.getUserId());
+            userLoginResponse.setUsername(user.getUsername());
+            userLoginResponse.setEmail(user.getEmail());
+
             BasicDataResponse response = new BasicDataResponse();
             response.setMessage("登录成功");
-            user.setPassword(null);
-            response.setData(user);
+            response.setData(userLoginResponse);
+
+            resp.setContentType("application/json;charset=utf-8");
             resp.getWriter().println(GsonFactory.getGson().toJson(response));
         } catch (Exception e) {
             resp.sendError(401, e.getMessage());
