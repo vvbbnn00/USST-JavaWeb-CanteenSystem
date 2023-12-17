@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @JavaBean
 public class Announcement implements Serializable {
     private Integer announcementId;
-
-    @NotNull(message = "食堂ID不能为空")
     private Integer canteenId;
 
     @NotBlank(message = "公告标题不能为空")

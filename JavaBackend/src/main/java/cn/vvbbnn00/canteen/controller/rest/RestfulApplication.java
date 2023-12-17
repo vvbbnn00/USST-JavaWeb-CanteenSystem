@@ -28,6 +28,8 @@ public class RestfulApplication extends Application {
         classes.add(CanteenResource.class);
         classes.add(CanteenAdminResource.class);
         classes.add(CuisineResource.class);
+        classes.add(AnnouncementResource.class);
+
         return classes;
     }
 }

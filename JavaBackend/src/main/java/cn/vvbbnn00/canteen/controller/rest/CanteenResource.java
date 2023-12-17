@@ -39,6 +39,8 @@ public class CanteenResource {
                 canteenListRequest.getAsc()
         ));
         response.setTotal(canteenService.getCanteenListCount(canteenListRequest.getKw()));
+        response.setPageSize(canteenListRequest.getPageSize());
+        response.setCurrentPage(canteenListRequest.getCurrentPage());
         return response;
     }
 

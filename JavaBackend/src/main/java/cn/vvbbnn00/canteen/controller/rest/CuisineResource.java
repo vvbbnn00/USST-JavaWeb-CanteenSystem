@@ -54,6 +54,8 @@ public class CuisineResource {
                 cuisineListRequest.getKw(),
                 canteenId
         ));
+        response.setPageSize(cuisineListRequest.getPageSize());
+        response.setCurrentPage(cuisineListRequest.getCurrentPage());
         return response;
     }
 
