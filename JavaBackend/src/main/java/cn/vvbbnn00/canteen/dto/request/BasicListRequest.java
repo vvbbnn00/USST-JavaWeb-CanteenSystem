@@ -9,10 +9,10 @@ import java.beans.JavaBean;
 @JavaBean
 public class BasicListRequest {
     @Min(value = 1, message = "currentPage必须大于等于1")
-    private Integer currentPage;
+    private Integer currentPage = 1;
     @Min(value = 1, message = "pageSize必须大于等于1")
     @Max(value = 100, message = "pageSize必须小于等于100")
-    private Integer pageSize;
+    private Integer pageSize = 10;
 
     @Pattern(regexp = "^[a-zA-Z_][a-zA-Z0-9_]*$", message = "orderBy必须是字母数字下划线组成，且不能以数字开头")
     private String orderBy;

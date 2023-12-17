@@ -1,5 +1,6 @@
 package cn.vvbbnn00.canteen.model;
 
+import cn.vvbbnn00.canteen.dto.response.ImageInfoResponse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -25,7 +26,6 @@ public class Item implements Serializable {
     @DecimalMin(value = "0.00", message = "促销价格不能为负")
     private BigDecimal promotionPrice;
 
-    @Column(name = "introduction", columnDefinition = "TEXT")
     private String introduction;
 
     @DecimalMin(value = "0.00", message = "综合评分不能低于0.00")
@@ -37,5 +37,11 @@ public class Item implements Serializable {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    private Boolean recommended = false;
     private Cuisine cuisine;
+    private Canteen canteen;
+
+    private ImageInfoResponse image;
+    private String fileKey;
 }

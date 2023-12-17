@@ -68,7 +68,7 @@ public class CanteenAdminService {
         canteenAdmin.setCanteenId(canteenId);
         canteenAdmin.setUserId(userId);
 
-        boolean result = canteenAdminDao.remove(canteenAdmin);
+        boolean result = canteenAdminDao.delete(canteenAdmin);
         if (!result) {
             throw new RuntimeException("移除失败");
         }

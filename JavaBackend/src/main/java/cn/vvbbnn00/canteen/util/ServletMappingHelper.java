@@ -17,12 +17,6 @@ public class ServletMappingHelper {
 
         // 生成Servlet的路径映射
         SERVLET_MAPPING = Map.ofEntries(
-                Map.entry("/restful/user", cn.vvbbnn00.canteen.controller.restful.UserResourceServlet.class),
-                Map.entry("/restful/user/list", cn.vvbbnn00.canteen.controller.restful.UserListServlet.class),
-                Map.entry("/restful/canteen", cn.vvbbnn00.canteen.controller.restful.CanteenResourceServlet.class),
-                Map.entry("/restful/canteen/list", cn.vvbbnn00.canteen.controller.restful.CanteenListServlet.class),
-                Map.entry("/restful/cuisine", cn.vvbbnn00.canteen.controller.restful.CuisineResourceServlet.class),
-                Map.entry("/restful/cuisine/list", cn.vvbbnn00.canteen.controller.restful.CuisineResourceServlet.class)
 
 //                Map.entry("/restful/item/list", cn.vvbbnn00.canteen.controller.restful.CuisineResourceServlet.class),
 //                Map.entry("/restful/item", cn.vvbbnn00.canteen.controller.restful.CuisineResourceServlet.class)

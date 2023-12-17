@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'user',
                 meta: {
                     title: '用户管理',
-                    permiss: '2',
+                    permiss: '3',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/user.vue'),
             },
@@ -38,6 +38,15 @@ const routes: RouteRecordRaw[] = [
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/canteen.vue'),
+            },
+            {
+                path: '/comment',
+                name: 'comment',
+                meta: {
+                    title: '评价管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/comment.vue'),
             }
         ],
     },
