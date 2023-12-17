@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  minio-javaweb-autoscript:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'minio-javaweb-autoscript'
+    restart: always
+    networks:
+      - oss-network
+
+networks:
+  oss-network:
+    external: true
