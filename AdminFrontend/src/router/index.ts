@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
                 name: 'user',
                 meta: {
                     title: '用户管理',
-                    permiss: '2',
+                    permiss: '3',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/user.vue'),
             },
