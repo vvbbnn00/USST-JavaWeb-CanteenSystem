@@ -4,7 +4,7 @@
       <el-col :span="8">
         <el-card shadow="hover" class="mgb20">
           <div class="user-info">
-            <el-avatar :size="120" :src="getAvatarUrl(email)"/>
+            <el-avatar :size="120" :src="avatar" />
             <div class="user-info-cont">
               <div class="user-info-name">{{ name }}</div>
               <div>{{ email }}</div>
@@ -146,6 +146,7 @@ fetch('https://v1.hitokoto.cn?c=k')
 
 const router = useRouter();
 const name = localStorage.getItem('ms_username');
+const avatar = localStorage.getItem('ms_avatar');
 
 const query = reactive({
   userCount: undefined as unknown as number,

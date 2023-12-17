@@ -75,10 +75,12 @@ const submitForm = (formEl: FormInstance | undefined) => {
         loginLoading.value = false;
         if (response.code === 200) {
           const token = response.data.token;
+          console.log('response', response)
           ElMessage.success('登录成功');
           localStorage.setItem('ms_username', response?.data?.username);
           localStorage.setItem('ms_user_id', response?.data?.userId);
           localStorage.setItem('ms_email', response?.data?.email);
+          localStorage.setItem('ms_avatar', response?.data?.avatar);
           const keys = permiss.defaultList[response?.data?.role === 'admin' ? 'admin' : 'canteen_admin'];
           permiss.handleSet(keys);
           router.push('/dashboard');
