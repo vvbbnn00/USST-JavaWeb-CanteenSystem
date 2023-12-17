@@ -86,4 +86,22 @@ public class MessageDaoImpl implements MessageDao {
         return 0;
     }
 
+    @Override
+    public UserMessage queryMessageById(Integer messageId) {
+        try (Connection connection = Hikari.getConnection()) {
+            String sql = SqlStatementUtils.generateBasicSelectSql(UserMessage.class, new String[]{
+                    "messageId", "fromUserId", "toUserId", "content", "createdAt", "updatedAt"
+            }) + " WHERE `message_id` = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, messageId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return (UserMessage) SqlStatementUtils.makeEntityFromResult(rs, UserMessage.class);
+            }
+        } catch (Exception e) {
+            LogUtils.severe(e.getMessage());
+        }
+        return null;
+    }
+
 }
