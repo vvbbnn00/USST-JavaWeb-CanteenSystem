@@ -6,7 +6,7 @@ import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.util.SafetyUtils;
 
 public class LoginService {
-    private final UserDao userDao = new UserDaoImpl();
+    private static final UserDao userDao = new UserDaoImpl();
 
     /**
      * 登录

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ImageService {
-    private final ImageDao imageDao = new ImageDaoImpl();
+    private static final ImageDao imageDao = new ImageDaoImpl();
 
     /**
      * 获取图片信息的函数

@@ -9,7 +9,7 @@ import cn.vvbbnn00.canteen.util.SafetyUtils;
 import java.util.List;
 
 public class UserService {
-    private final UserDao userDao = new UserDaoImpl();
+    private static final UserDao userDao = new UserDaoImpl();
 
     /**
      * 获取用户列表

@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 
 public class CuisineService {
 
-    private final CuisineDao cuisineDao = new CuisineDaoImpl();
-    private final CanteenAdminService canteenAdminService = new CanteenAdminService();
+    private static final CuisineDao cuisineDao = new CuisineDaoImpl();
+    private static final CanteenAdminService canteenAdminService = new CanteenAdminService();
 
     /**
      * 获取菜品列表

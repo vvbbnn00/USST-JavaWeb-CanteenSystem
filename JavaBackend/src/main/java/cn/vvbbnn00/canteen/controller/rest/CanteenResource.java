@@ -5,6 +5,7 @@ import cn.vvbbnn00.canteen.dto.request.CanteenListRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicListResponse;
 import cn.vvbbnn00.canteen.model.Canteen;
+import cn.vvbbnn00.canteen.service.CanteenAdminService;
 import cn.vvbbnn00.canteen.service.CanteenService;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
 import jakarta.enterprise.context.RequestScoped;
@@ -87,7 +88,7 @@ public class CanteenResource {
     @Path("/{canteenId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @CheckRole("admin")
+    @CheckRole("canteen_admin")
     public BasicDataResponse restPutCanteen(
             @PathParam("canteenId") @NotNull @Min(value = 1, message = "无效的Id") Integer canteenId,
             Canteen canteen
@@ -95,11 +96,11 @@ public class CanteenResource {
         // 校验请求参数
         RequestValidatorUtils.doHibernateParamsValidate(canteenId, canteen);
         RequestValidatorUtils.doHibernateValidate(canteen);
-
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
         BasicDataResponse response = new BasicDataResponse();
         try {
             canteen.setCanteenId(canteenId);
-            response.setData(canteenService.updateCanteen(canteen));
+            response.setData(canteenService.updateCanteen(canteen, userId));
         } catch (Exception e) {
             response.setCode(409);
             response.setMessage(e.getMessage());

@@ -34,6 +34,7 @@ public class RestfulApplication extends Application {
         classes.add(ImageResource.class);
         classes.add(ItemResource.class);
         classes.add(UserMessageResource.class);
+        classes.add(TopicResource.class);
 
         return classes;
     }

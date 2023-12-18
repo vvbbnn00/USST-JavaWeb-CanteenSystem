@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CanteenAdminService {
-    private final CanteenAdminDao canteenAdminDao = new CanteenAdminDaoImpl();
+    private static final CanteenAdminDao canteenAdminDao = new CanteenAdminDaoImpl();
 
     /**
      * 检查是否可以添加或移除餐厅管理员
