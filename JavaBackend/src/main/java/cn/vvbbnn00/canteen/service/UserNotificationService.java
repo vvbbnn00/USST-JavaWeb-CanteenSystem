@@ -1,6 +1,5 @@
 package cn.vvbbnn00.canteen.service;
 
-
 import cn.vvbbnn00.canteen.dao.UserNotificationDao;
 import cn.vvbbnn00.canteen.dao.impl.UserNotificationDaoImpl;
 import cn.vvbbnn00.canteen.model.User;
@@ -9,42 +8,77 @@ import cn.vvbbnn00.canteen.model.UserNotification;
 import java.util.List;
 
 public class UserNotificationService {
-    private final UserNotificationDao notificationDao = new UserNotificationDaoImpl();
+    private final UserNotificationDao userNotificationDao = new UserNotificationDaoImpl();
 
     /**
-     * 获取通知列表
+     * 根据用户ID和阅读状态获取用户通知列表
      *
-     * @param unread   是否未读
-     * @param UserId   接收者id
-     * @return 通知列表
+     * @param isRead 阅读状态
+     * @param userId 用户ID
+     * @return 用户通知列表
      */
-    public List<UserNotification> getUserNotificationList(Boolean unread,Integer UserId) {
-        return notificationDao.queryByUserId(unread,UserId);
+    public List<UserNotification> getUserNotificationList(Boolean isRead, Integer userId) {
+        return userNotificationDao.queryByUserId(userId, isRead);
     }
 
     /**
-     * 增加通知
-     * @param UserId   接收者id
+     * 添加用户通知
+     *
+     * @param UserId  用户ID
      * @param content 通知内容
-     * @return 通知列表
      */
-
-    public int addUserNotification(Integer UserId, String content) {
+    public void addUserNotification(Integer UserId, String content) {
         UserNotification notification = new UserNotification();
         notification.setUserId(UserId);
         notification.setContent(content);
         notification.setIsRead(false);
-        return notificationDao.insert(notification);
+        try {
+            boolean result = userNotificationDao.insert(notification);
+            if (!result) {
+                throw new RuntimeException("添加通知失败");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+
     /**
-     * 更新通知的isRead状态
+     * 读取用户通知
+     *
+     * @param userId         用户ID
+     * @param notificationId 通知ID
+     */
+    public void readUserNotification(Integer userId, Integer notificationId) {
+        userNotificationDao.update(notificationId, true, userId);
+    }
+
+    /**
+     * 读取所有用户通知
+     *
+     * @param UserId 用户ID
+     */
+    public void readAllUserNotification(Integer UserId) {
+        userNotificationDao.update(null, true, UserId);
+    }
+
+
+    /**
+     * 获取用户未读通知数量
+     *
+     * @param userId 用户ID
+     * @return 未读通知数量
+     */
+    public int count(Integer userId) {
+        return userNotificationDao.count(false, userId);
+    }
+
+    /**
+     * 删除通知
      *
      * @param notificationId 通知ID
-     * @param isRead 新的isRead状态
+     * @param userId         用户ID
      */
-    public void readUserNotification(Integer notificationId, Boolean isRead) {
-        notificationDao.batchUpdate(notificationId, isRead);
+    public void deleteUserNotification(Integer notificationId, Integer userId) {
+        userNotificationDao.delete(notificationId, userId);
     }
-    public readAllUserNotification(Integer UserId) {
-        notificationDao.batchUpdate(UserId);
-    }
+}

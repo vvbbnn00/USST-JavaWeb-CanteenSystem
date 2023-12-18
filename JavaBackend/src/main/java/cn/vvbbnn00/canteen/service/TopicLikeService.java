@@ -4,10 +4,13 @@ import cn.vvbbnn00.canteen.dao.TopicLikeDao;
 import cn.vvbbnn00.canteen.dao.impl.TopicLikeDaoImpl;
 import cn.vvbbnn00.canteen.model.Topic;
 import cn.vvbbnn00.canteen.model.TopicLike;
+import cn.vvbbnn00.canteen.model.User;
+import cn.vvbbnn00.canteen.util.TagUtils;
 
 public class TopicLikeService {
     private static final TopicLikeDao topicLikeDao = new TopicLikeDaoImpl();
     private static final TopicService topicService = new TopicService();
+    private static final UserNotificationService userNotificationService = new UserNotificationService();
 
     public void addTopicLike(Integer userId, Integer topicId) {
         if (userId == null) {
@@ -16,7 +19,7 @@ public class TopicLikeService {
         if (topicId == null) {
             throw new RuntimeException("主题ID不能为空");
         }
-        topicService.getTopicById(topicId, userId);
+        Topic topic = topicService.getTopicById(topicId, userId);
 
         if (topicLikeDao.queryTopicLikeById(userId, topicId)) {
             throw new RuntimeException("已经喜欢过该话题");
@@ -25,9 +28,15 @@ public class TopicLikeService {
         topicLike.setUserId(userId);
         topicLike.setTopicId(topicId);
 
+        User fromUser = new UserService().getUserById(userId);
+
         if (!topicLikeDao.insert(topicLike)) {
             throw new RuntimeException("添加主题喜欢失败");
         }
+
+        userNotificationService.addUserNotification(
+                topic.getCreatedBy(),
+                "用户" + TagUtils.generateTag(fromUser) + "喜欢了你的话题" + TagUtils.generateTag(topic) + "。");
     }
 
     public void deleteTopicLike(Integer userId, Integer topicId) {

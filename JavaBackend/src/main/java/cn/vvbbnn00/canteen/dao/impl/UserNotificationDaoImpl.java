@@ -3,6 +3,7 @@ package cn.vvbbnn00.canteen.dao.impl;
 
 import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.dao.UserNotificationDao;
+import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.model.UserNotification;
 import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
@@ -20,11 +21,10 @@ public class UserNotificationDaoImpl implements UserNotificationDao {
     public boolean insert(UserNotification notification) {
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateInsertStatement(connection, notification, new String[]{
-                    "userId", "content", "isRead"
+                    "userId", "content"
             });
 
             ps.executeUpdate();
-
             ResultSet generatedKeys = ps.getGeneratedKeys();
 
             if (generatedKeys.next()) {
@@ -40,13 +40,21 @@ public class UserNotificationDaoImpl implements UserNotificationDao {
     }
 
     @Override
-    public List<UserNotification> queryByUserId(Integer userId) {
+    public List<UserNotification> queryByUserId(Integer userId, Boolean isRead) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(UserNotification.class, new String[]{
                     "notificationId", "userId", "content", "isRead", "createdAt", "updatedAt"
-            }) + " WHERE `user_id` = ? ORDER BY `created_at` DESC LIMIT 200;";
+            }) + " WHERE `user_id` = ? ";
+            if (isRead != null) {
+                sql += "AND `is_read` = ? ";
+            }
+            sql += " ORDER BY `created_at` DESC";
+            sql += " LIMIT 200";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, userId);
+            if (isRead != null) {
+                ps.setBoolean(2, isRead);
+            }
             ResultSet rs = ps.executeQuery();
             List<UserNotification> notifications = new ArrayList<>();
             while (rs.next()) {
@@ -59,15 +67,41 @@ public class UserNotificationDaoImpl implements UserNotificationDao {
         return null;
     }
 
+    private static class ConditionAndParam {
+        List<String> conditions;
+        List<Object> params;
+
+        ConditionAndParam(Integer notificationId, Boolean isRead) {
+            conditions = new ArrayList<>();
+            params = new ArrayList<>();
+            if (notificationId != null) {
+                conditions.add("`notification_id` = ?");
+                params.add(notificationId);
+            }
+            if (isRead != null) {
+                conditions.add("`is_read` = ?");
+                params.add(isRead);
+            }
+        }
+    }
+
 
     @Override
     public boolean update(Integer notificationId, Boolean isRead, Integer userId) {
+        if (userId == null) {
+            return false;
+        }
+        String sql = "UPDATE " + Hikari.getDbName() + ".`user_notification` SET `is_read` = ? WHERE `user_id` = ? ";
+        if (notificationId != null) {
+            sql += "AND `notification_id` = ? ";
+        }
         try (Connection connection = Hikari.getConnection()) {
-            String sql = "UPDATE " + Hikari.getDbName() + ".`user_notification` SET `is_read` = ? WHERE `notification_id` = ? AND `user_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setBoolean(1, isRead);
-            ps.setInt(2, notificationId);
-            ps.setInt(3, userId);
+            ps.setInt(2, userId);
+            if (notificationId != null) {
+                ps.setInt(3, notificationId);
+            }
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -99,14 +133,14 @@ public class UserNotificationDaoImpl implements UserNotificationDao {
         return 0;
     }
 
+
     @Override
-    public void batchUpdate(Integer notificationId, Boolean isRead, Integer userId) {
+    public void delete(Integer notificationId, Integer userId) {
+        String sql = "DELETE FROM " + Hikari.getDbName() + ".`user_notification` WHERE `user_id` = ? AND `notification_id` = ? ";
         try (Connection connection = Hikari.getConnection()) {
-            String sql = "UPDATE " + Hikari.getDbName() + ".`user_notification` SET `is_read` = ? WHERE `notification_id` = ? AND `user_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setBoolean(1, isRead);
+            ps.setInt(1, userId);
             ps.setInt(2, notificationId);
-            ps.setInt(3, userId);
             ps.executeUpdate();
         } catch (Exception e) {
             LogUtils.severe(e.getMessage());
