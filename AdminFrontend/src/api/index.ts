@@ -1,3 +1,5 @@
+import request from "../utils/request";
+
 export const BASE_URL = "http://10.100.164.6:60001/backend";
 import {doSign} from "../lib/security/release";
 
@@ -20,4 +22,10 @@ export const passwordLogin = async (username: string, password: string) => {
     return await response.json();
 }
 
+export const getUploadUrl = () => {
+    return request({
+        url: `${BASE_URL}/api/rest/image/upload`,
+        method: 'post'
+    });
+}
 
