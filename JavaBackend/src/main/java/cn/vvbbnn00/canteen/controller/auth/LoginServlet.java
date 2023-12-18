@@ -47,12 +47,8 @@ public class LoginServlet extends HttpServlet {
             resp.sendError(400, "时间戳格式错误");
             return;
         }
-        if (System.currentTimeMillis() - timestamp > 1000 * 60 * 5) {
+        if (Math.abs(System.currentTimeMillis() - timestamp) > 1000 * 60 * 2) {
             resp.sendError(400, "请求已过期，请检查本地时间是否正确");
-            return;
-        }
-        if (System.currentTimeMillis() - timestamp < 0) {
-            resp.sendError(400, "请检查本地时间是否正确");
             return;
         }
 

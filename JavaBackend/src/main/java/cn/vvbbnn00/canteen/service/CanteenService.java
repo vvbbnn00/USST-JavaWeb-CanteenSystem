@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class CanteenService {
-    private final CanteenDao canteenDao = new CanteenDaoImpl();
+    private static final CanteenDao canteenDao = new CanteenDaoImpl();
+    private CanteenAdminService canteenAdminService = new CanteenAdminService();
+
 
     /**
      * 获取食堂列表
@@ -64,13 +66,16 @@ public class CanteenService {
      * @param canteen 食堂
      * @return 更新成功的食堂
      */
-    public Canteen updateCanteen(Canteen canteen) {
+    public Canteen updateCanteen(Canteen canteen, Integer userId) {
         if (canteen.getCanteenId() == null) {
             throw new RuntimeException("食堂id不能为空");
         }
         Canteen existCanteen = getCanteenById(canteen.getCanteenId());
         if (existCanteen == null) {
             throw new RuntimeException("食堂不存在");
+        }
+        if (!canteenAdminService.checkHasCanteenAdmin(canteen.getCanteenId(), userId)) {
+            throw new RuntimeException("无权修改食堂信息");
         }
         if (canteen.getLocation() != null) {
             existCanteen.setLocation(canteen.getLocation());

@@ -8,7 +8,7 @@ import cn.vvbbnn00.canteen.model.UserMessage;
 import java.util.List;
 
 public class UserMessageService {
-    private final UserMessageDao messageDao = new UserMessageDaoImpl();
+    private static final UserMessageDao messageDao = new UserMessageDaoImpl();
 
     /**
      * 获取消息列表

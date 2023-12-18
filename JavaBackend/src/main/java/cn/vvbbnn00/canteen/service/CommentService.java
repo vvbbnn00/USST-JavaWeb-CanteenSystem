@@ -6,7 +6,7 @@ import cn.vvbbnn00.canteen.model.Comment;
 import java.util.List;
 
 public class CommentService {
-    private final CommentDao commentDao = new CommentDaoImpl();
+    private static final CommentDao commentDao = new CommentDaoImpl();
 
     /**
      * 插入一个评论

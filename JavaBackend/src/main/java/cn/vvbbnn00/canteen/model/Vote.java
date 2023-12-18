@@ -7,6 +7,7 @@ import lombok.Data;
 import java.beans.JavaBean;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @JavaBean
@@ -20,14 +21,12 @@ public class Vote implements Serializable {
 
     @Size(max = 500, message = "投票简介长度不能超过500个字符")
     private String voteIntro;
-    private Boolean ifMore; // tinyint can be represented as Boolean
-    private Integer max;
+    private Boolean isStarted = false;
 
-    @Min(value = 1, message = "最少选择数不能小于1")
-    private Integer min;
     private Integer createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     private User user;
+    private List<VoteOption> voteOptions;
 }

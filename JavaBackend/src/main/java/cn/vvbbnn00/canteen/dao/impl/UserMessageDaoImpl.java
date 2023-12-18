@@ -31,7 +31,8 @@ public class UserMessageDaoImpl implements UserMessageDao {
 
     public List<User> queryMessagedUsers(Integer userId) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = "SELECT DISTINCT user.* , message.created_at " +
+            String sql = "SELECT DISTINCT user.user_id as user_id, user.username as username, " +
+                    "user.email as email, message.created_at as msg_created_at " +
                     "FROM " + Hikari.getDbName() + ".`user_message` AS message " +
                     "JOIN " + Hikari.getDbName() + ".`user` AS user " +
                     "ON message.from_user_id = user.user_id OR message.to_user_id = user.user_id " +

@@ -8,9 +8,9 @@ import cn.vvbbnn00.canteen.model.Canteen;
 import java.util.List;
 
 public class AnnouncementService {
-    CanteenAdminService canteenAdminService = new CanteenAdminService();
-    AnnouncementDao announcementDao = new AnnouncementDaoImpl();
-    CanteenService canteenService = new CanteenService();
+    private static final CanteenAdminService canteenAdminService = new CanteenAdminService();
+    private static final AnnouncementDao announcementDao = new AnnouncementDaoImpl();
+    private static final CanteenService canteenService = new CanteenService();
 
     /**
      * 添加一个公告

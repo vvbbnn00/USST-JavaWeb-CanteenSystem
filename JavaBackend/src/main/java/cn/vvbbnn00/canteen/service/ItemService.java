@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class ItemService {
-    CuisineService cuisineService = new CuisineService();
-    CanteenService canteenService = new CanteenService();
-    ImageService imageService = new ImageService();
-    CanteenAdminService canteenAdminService = new CanteenAdminService();
-    ItemDao itemDao = new ItemDaoImpl();
+    private static final CuisineService cuisineService = new CuisineService();
+    private static final CanteenService canteenService = new CanteenService();
+    private static final ImageService imageService = new ImageService();
+    private static final CanteenAdminService canteenAdminService = new CanteenAdminService();
+    private static final ItemDao itemDao = new ItemDaoImpl();
 
 
     /**

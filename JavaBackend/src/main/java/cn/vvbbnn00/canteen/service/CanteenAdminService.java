@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CanteenAdminService {
-    private final CanteenAdminDao canteenAdminDao = new CanteenAdminDaoImpl();
+    private static final CanteenAdminDao canteenAdminDao = new CanteenAdminDaoImpl();
 
     /**
      * 检查是否可以添加或移除餐厅管理员
@@ -83,11 +83,16 @@ public class CanteenAdminService {
      * @return 是否为餐厅管理员
      */
     public boolean checkHasCanteenAdmin(Integer canteenId, Integer userId) {
-        try {
-            checkUpdateAvailable(canteenId, userId);
-        } catch (Exception e) {
-            // LogUtils.error(e.getMessage(), e);
+        User user = new UserService().getUserById(userId);
+        if (user == null) {
             return false;
+        }
+        Canteen canteen = new CanteenService().getCanteenById(canteenId);
+        if (canteen == null) {
+            return false;
+        }
+        if (user.getRole() == User.Role.admin) {
+            return true;
         }
         List<CanteenAdmin> list = canteenAdminDao.query(canteenId, userId);
         if (list == null) {
