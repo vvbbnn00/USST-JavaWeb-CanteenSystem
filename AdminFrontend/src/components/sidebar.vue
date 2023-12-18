@@ -81,6 +81,10 @@ const items: {
         index: '/canteen',
         title: '食堂管理',
       },
+      {
+        index: '/cuisine',
+        title: '菜品管理',
+      }
     ],
   },
   {

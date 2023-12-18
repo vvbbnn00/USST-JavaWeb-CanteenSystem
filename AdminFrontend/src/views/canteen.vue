@@ -8,7 +8,7 @@
       </div>
       <el-table :data="canteenData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="canteenId" label="食堂ID"></el-table-column>
-        <el-table-column prop="name" label="分类名"></el-table-column>
+        <el-table-column prop="name" label="食堂名"></el-table-column>
         <el-table-column prop="location" label="食堂地址"></el-table-column>
         <el-table-column label="操作" width="200" align="center" fixed="right">
           <template #default="scope">
@@ -34,14 +34,14 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="注册时间" width="160px">
+        <el-table-column prop="createdAt" label="注册时间" width="160px">
           <template #default="scope">
             <div>
               {{ parseDateTime(scope.row.createdAt) }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="updated_at" label="更新记录时间" width="160px">
+        <el-table-column prop="updatedAt" label="更新记录时间" width="160px">
           <template #default="scope">
             <div>
               {{ parseDateTime(scope.row.updatedAt) }}
@@ -64,7 +64,7 @@
     <!-- 新增弹出框 -->
     <el-dialog title="新增食堂" v-model="createVisible" width="40%">
       <el-form label-width="90px" :model="createForm" :rules="validateForm">
-        <el-form-item label="食堂ID" required prop="canteen_id" v-if="createForm.canteenId">
+        <el-form-item label="食堂ID" required prop="canteenId" v-if="createForm.canteenId">
           <el-input v-model="createForm.canteenId" placeholder="请输入食堂ID" disabled></el-input>
         </el-form-item>
         <el-form-item label="食堂名称" required prop="name">
@@ -114,7 +114,7 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Search, Plus, Edit, Delete} from '@element-plus/icons-vue';
-import {getCanteenList, deleteCanteen, updateCanteen, newCanteen} from "../api/canteen";
+import {getCanteenList, deleteCanteen, updateCanteen, newCanteen, getUserCanteen} from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 
 const isAdmin = localStorage.getItem('ms_role');
@@ -146,18 +146,32 @@ let pageTotal = ref(0);
 
 // 获取表格数据
 const getData = () => {
-  getCanteenList(query).then(res => {
-    let data = res.data;
-    if (data.code !== 200) {
-      ElMessage.error(data.message);
-      return;
-    }
+  if (isAdmin === 'admin') {
+    getCanteenList(query).then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
 
-    canteenData.value = data?.list;
-    pageTotal.value = data?.total || 0;
-    query.currentPage = data?.currentPage || 1;
-    query.pageSize = data?.pageSize;
-  });
+      canteenData.value = data?.list;
+      pageTotal.value = data?.total || 0;
+      query.currentPage = data?.currentPage || 1;
+      query.pageSize = data?.pageSize;
+    });
+  } else {
+    getUserCanteen().then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
+      canteenData.value = data?.data;
+      pageTotal.value = data?.data?.length;
+      query.currentPage = data?.currentPage || 1;
+      query.pageSize = data?.pageSize;
+    });
+  }
 };
 getData();
 

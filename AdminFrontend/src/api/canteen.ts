@@ -9,6 +9,13 @@ export const getCanteenList = (query: any) => {
     });
 };
 
+export const getUserCanteen = async () => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/managed`,
+        method: 'GET'
+    });
+}
+
 export const deleteCanteen = (id: number) => {
     return request({
         url: `${BASE_URL}/api/rest/canteen/${id}`,
