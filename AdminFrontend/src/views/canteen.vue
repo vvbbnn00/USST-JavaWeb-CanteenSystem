@@ -16,13 +16,13 @@
               编辑
             </el-button>
 
-            <el-button
+            <el-button v-if="isAdmin === 'admin'"
                 text
-                :icon="scope.row.is_deleted ? 'RefreshRight' : 'Delete' "
-                :class="scope.row.is_deleted ? 'green' : 'red'"
-                @click="handleState(scope.row)"
+                :icon="Delete"
+                class="red"
+                @click="handleDelete(scope.row)"
             >
-              {{ scope.row.is_deleted ? '恢复' : '删除' }}
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -64,8 +64,8 @@
     <!-- 新增弹出框 -->
     <el-dialog title="新增食堂" v-model="createVisible" width="40%">
       <el-form label-width="90px" :model="createForm" :rules="validateForm">
-        <el-form-item label="食堂ID" required prop="canteen_id" v-if="createForm.canteen_id">
-          <el-input v-model="createForm.canteen_id" placeholder="请输入食堂ID" disabled></el-input>
+        <el-form-item label="食堂ID" required prop="canteen_id" v-if="createForm.canteenId">
+          <el-input v-model="createForm.canteenId" placeholder="请输入食堂ID" disabled></el-input>
         </el-form-item>
         <el-form-item label="食堂名称" required prop="name">
           <el-input v-model="createForm.name" placeholder="请输入食堂名称"></el-input>
@@ -84,7 +84,7 @@
       <template #footer>
 				<span class="dialog-footer">
 					<el-button @click="createVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveNewCategory">确 定</el-button>
+					<el-button type="primary" @click="saveNewCanteen">确 定</el-button>
 				</span>
       </template>
     </el-dialog>
@@ -113,15 +113,14 @@
 <script setup lang="ts">
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
-import {Search, Plus, Edit} from '@element-plus/icons-vue';
-import {getCanteenList} from "../api/canteen";
+import {Search, Plus, Edit, Delete} from '@element-plus/icons-vue';
+import {getCanteenList, deleteCanteen, updateCanteen, newCanteen} from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 
 const isAdmin = localStorage.getItem('ms_role');
 
 const query = reactive({
-  // 需要根据是否是管理员来判断
-  // canteen_id: undefined as unknown as number,
+  canteen_id: undefined as unknown as number,
   kw: '',
   currentPage: 1,
   pageSize: 10
@@ -153,10 +152,9 @@ const getData = () => {
       ElMessage.error(data.message);
       return;
     }
-    console.log(data)
 
     canteenData.value = data?.list;
-    pageTotal.value = data?.pageTotal || 0;
+    pageTotal.value = data?.total || 0;
     query.currentPage = data?.currentPage || 1;
     query.pageSize = data?.pageSize;
   });
@@ -184,17 +182,15 @@ const handleInfo = (index: number, row: any) => {
 };
 
 const createVisible = ref(false);
-const handleState = (row: any) => {
+const handleDelete = (row: any) => {
+  console.log(row.canteenId)
   // 二次确认删除
   ElMessageBox.confirm('确定要删除/恢复吗？', '提示', {
     type: 'warning'
   })
       .then(async () => {
         try {
-          await updateCanteen({
-            category_id: row.category_id,
-            is_deleted: row.is_deleted === 0 ? 1 : 0
-          })
+          await deleteCanteen(row.canteenId)
           ElMessage.success(`删除/恢复成功`);
           getData();
         } catch (e) {
@@ -216,11 +212,11 @@ const handleCreate = () => {
   createVisible.value = true;
 };
 
-const saveNewCategory = async () => {
+const saveNewCanteen = async () => {
   createVisible.value = false;
   try {
 
-    if (createForm.canteen_id) {
+    if (createForm.canteenId) {
       await updateCanteen(createForm);
     } else {
       await newCanteen(createForm);
@@ -241,7 +237,7 @@ const handleEdit = async (index: number, row: any) => {
 
 const clearForm = () => {
   createForm = reactive({
-    canteen_id: undefined as unknown as number,
+    canteenId: undefined as unknown as number,
     name: '',
     location: '',
     introduction: '',
@@ -262,6 +258,10 @@ const clearForm = () => {
 .table {
   width: 100%;
   font-size: 14px;
+}
+
+.red {
+  color: #F56C6C;
 }
 
 .mr10 {
