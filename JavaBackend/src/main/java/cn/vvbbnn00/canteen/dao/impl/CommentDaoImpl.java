@@ -12,18 +12,18 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentDaoImpl implements CommentDao{
+public class CommentDaoImpl implements CommentDao {
 
     @Override
     public boolean insert(Comment comment) {
-        try (Connection connection = Hikari.getConnection()){
+        try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateInsertStatement(connection, comment, new String[]{
-                    "type","reference_id","created_by","content","score","parent_id","created_at","updated_at"
+                    "type", "referenceId", "createdBy", "content", "score", "parentId"
             });
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
-            LogUtils.severe(e.getMessage());
+            LogUtils.severe(e.getMessage(), e);
             return false;
         }
     }
@@ -32,7 +32,7 @@ public class CommentDaoImpl implements CommentDao{
     public Comment queryCommentById(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Comment.class, new String[]{
-                    "comment_id", "type", "reference_id", "created_by", "content", "score", "parent_id", "created_at", "updated_at"
+                    "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId", "createdAt", "updatedAt"
             }) + " WHERE `comment_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
@@ -64,29 +64,38 @@ public class CommentDaoImpl implements CommentDao{
         List<String> conditions;
         List<Object> params;
 
-        ConditionsAndParams(String kw,String type) {
+        ConditionsAndParams(String kw, String type, Integer referenceId, Integer parentId) {
             conditions = new ArrayList<>();
             params = new ArrayList<>();
             if (kw != null) {
-                conditions.add("(`content` LIKE ? OR `reference_id` LIKE ? OR `parent_id` LIKE ?)");
-                params.add("%" + kw + "%");
-                params.add("%" + kw + "%");
+                conditions.add("(`content` LIKE ?)");
                 params.add("%" + kw + "%");
             }
             if (type != null) {
                 conditions.add("`type` = ?");
                 params.add(type);
             }
+            if (referenceId != null) {
+                conditions.add("`reference_id` = ?");
+                params.add(referenceId);
+            }
+            if (parentId != null) {
+                conditions.add("`parent_id` = ?");
+                params.add(parentId);
+            }
         }
     }
 
     @Override
-    public List<Comment> queryComments(Integer page, Integer pageSize, String kw, String type, String orderBy, Boolean asc) {
+    public List<Comment> queryComments(
+            String kw, String type, Integer referenceId, Integer parentId,
+            Integer page, Integer pageSize, String orderBy, Boolean asc
+    ) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Comment.class, new String[]{
-                "comment_id", "type", "reference_id", "created_by", "content", "score", "parent_id", "created_at", "updated_at"
+                "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId", "createdAt", "updatedAt"
         });
 
-        ConditionsAndParams conditionsAndParams = new ConditionsAndParams(kw,type);
+        ConditionsAndParams conditionsAndParams = new ConditionsAndParams(kw, type, referenceId, parentId);
         List<String> conditions = conditionsAndParams.conditions;
         List<Object> params = conditionsAndParams.params;
 
@@ -124,9 +133,11 @@ public class CommentDaoImpl implements CommentDao{
     }
 
     @Override
-    public Integer queryCommentsCount(String kw,String type) {
+    public Integer queryCommentsCount(
+            String kw, String type, Integer referenceId, Integer parentId
+    ) {
         String sql = "SELECT COUNT(*) FROM " + Hikari.getDbName() + ".`comment`";
-        ConditionsAndParams conditionsAndParams = new ConditionsAndParams(kw,type);
+        ConditionsAndParams conditionsAndParams = new ConditionsAndParams(kw, type, referenceId, parentId);
 
         List<String> conditions = conditionsAndParams.conditions;
         List<Object> params = conditionsAndParams.params;

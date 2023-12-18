@@ -119,6 +119,10 @@ public class SqlStatementUtils {
             int index = i + offset + 1;
             Field field = clazz.getDeclaredField(fields[i]);
             field.setAccessible(true);
+            if (field.get(entity) == null) {
+                preparedStatement.setObject(index, null);
+                continue;
+            }
             // 判断是否是enum类型
             if (field.getType().isEnum()) {
                 preparedStatement.setObject(index, field.get(entity).toString());

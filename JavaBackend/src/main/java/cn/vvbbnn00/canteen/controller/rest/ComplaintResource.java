@@ -4,6 +4,7 @@ import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.request.ComplaintListRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicListResponse;
+import cn.vvbbnn00.canteen.model.Comment;
 import cn.vvbbnn00.canteen.model.Complaint;
 import cn.vvbbnn00.canteen.service.ComplaintService;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
@@ -147,4 +148,28 @@ public class ComplaintResource {
     }
 
 
+    @POST
+    @Path("/complaint/{complaintId}/reply")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicDataResponse restReplyComplaint(
+            @PathParam("complaintId") @NotNull @Min(value = 1, message = "无效的Id") Integer complaintId,
+            Comment complaint
+    ) {
+        // 校验请求参数，请仔细阅读该方法的文档
+        RequestValidatorUtils.doHibernateParamsValidate(complaintId, complaint);
+        RequestValidatorUtils.doHibernateValidate(complaint);
+
+        BasicDataResponse response = new BasicDataResponse();
+        try {
+            complaintService.replyComplaint(complaintId,
+                    Integer.parseInt(securityContext.getUserPrincipal().getName()),
+                    complaint.getContent());
+        } catch (Exception e) {
+            response.setCode(404);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
 }

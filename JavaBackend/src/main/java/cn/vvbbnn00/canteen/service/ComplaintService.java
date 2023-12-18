@@ -3,10 +3,8 @@ package cn.vvbbnn00.canteen.service;
 import cn.vvbbnn00.canteen.dao.ComplaintDao;
 import cn.vvbbnn00.canteen.dao.impl.ComplaintDaoImpl;
 import cn.vvbbnn00.canteen.dto.response.ImageInfoResponse;
-import cn.vvbbnn00.canteen.model.Canteen;
-import cn.vvbbnn00.canteen.model.Complaint;
-import cn.vvbbnn00.canteen.model.Image;
-import cn.vvbbnn00.canteen.model.User;
+import cn.vvbbnn00.canteen.model.*;
+import cn.vvbbnn00.canteen.util.LogUtils;
 
 import java.util.List;
 
@@ -16,6 +14,7 @@ public class ComplaintService {
     private static final CanteenService canteenService = new CanteenService();
     private static final ImageService imageService = new ImageService();
     private static final CanteenAdminService canteenAdminService = new CanteenAdminService();
+    private static final CommentService commentService = new CommentService();
 
     public Complaint createComplaint(Complaint complaint, List<String> fileKeys) {
         User user = userService.getUserById(complaint.getCreatedBy());
@@ -83,8 +82,48 @@ public class ComplaintService {
         List<ImageInfoResponse> images = imageService.getImageInfoList(Image.ImageType.complaint, complaintId, false);
         complaint.setImageInfoList(images);
 
-        // TODO 添加回复
+        List<Comment> comments = commentService.getCommentList(null,
+                Comment.CommentType.complaint, complaintId, null, 1, 200,
+                "createdAt", null);
+        complaint.setComments(comments);
+
         return complaint;
+    }
+
+
+    public void replyComplaint(Integer complaintId, Integer userId, String content) {
+        if (content == null || content.isEmpty()) {
+            throw new RuntimeException("回复内容不能为空");
+        }
+        Complaint complaint = complaintDao.queryById(complaintId);
+        if (complaint == null) {
+            throw new RuntimeException("投诉不存在");
+        }
+        if (!canteenAdminService.checkHasCanteenAdmin(complaint.getCanteenId(), userId) &&
+                !complaint.getCreatedBy().equals(userId)) {
+            throw new RuntimeException("您没有权限回复该投诉");
+        }
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        Comment comment = new Comment();
+        comment.setType(Comment.CommentType.complaint);
+        comment.setReferenceId(complaintId);
+        comment.setCreatedBy(userId);
+        comment.setContent(content);
+        comment.setParentId(null);
+        try {
+            commentService.createComment(comment, userId);
+        } catch (Exception e) {
+            LogUtils.severe(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : "回复失败");
+        }
+        if (canteenAdminService.checkHasCanteenAdmin(complaint.getCanteenId(), userId)) {
+            updateComplaint(complaintId, Complaint.Status.replied);
+        } else {
+            updateComplaint(complaintId, Complaint.Status.processing);
+        }
     }
 
 

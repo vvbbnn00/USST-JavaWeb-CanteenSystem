@@ -17,7 +17,6 @@ public class Comment implements Serializable {
     @Enumerated(EnumType.STRING)
     private CommentType type;
 
-    @NotNull(message = "评论对象ID不能为空")
     private Integer referenceId;
 
     @Column(name = "created_by")
