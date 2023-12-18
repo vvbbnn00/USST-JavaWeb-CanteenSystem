@@ -74,7 +74,7 @@ public class CanteenService {
         if (existCanteen == null) {
             throw new RuntimeException("食堂不存在");
         }
-        if (canteenAdminService.checkHasCanteenAdmin(userId, canteen.getCanteenId())) {
+        if (!canteenAdminService.checkHasCanteenAdmin(canteen.getCanteenId(), userId)) {
             throw new RuntimeException("无权修改食堂信息");
         }
         if (canteen.getLocation() != null) {
