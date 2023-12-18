@@ -74,6 +74,19 @@ public class UserResource {
 
 
     @GET
+    @Path("/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicDataResponse restGetMe() {
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
+        BasicDataResponse response = new BasicDataResponse();
+        User user = userService.getUserById(userId);
+        response.setData(user);
+        return response;
+    }
+
+
+    @GET
     @Path("/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
     @CheckRole("user")
