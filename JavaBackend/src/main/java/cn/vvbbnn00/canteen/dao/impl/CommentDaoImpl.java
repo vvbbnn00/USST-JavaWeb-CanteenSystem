@@ -3,6 +3,7 @@ package cn.vvbbnn00.canteen.dao.impl;
 import cn.vvbbnn00.canteen.dao.CommentDao;
 import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.model.Comment;
+import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
 
@@ -49,7 +50,7 @@ public class CommentDaoImpl implements CommentDao {
     @Override
     public boolean delete(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = "DELETE FROM" + Hikari.getDbName() + ".`comment` WHERE `comment_id` = ?;";
+            String sql = "DELETE FROM " + Hikari.getDbName() + ".`comment` WHERE `comment_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
             ps.executeUpdate();
@@ -92,8 +93,12 @@ public class CommentDaoImpl implements CommentDao {
             Integer page, Integer pageSize, String orderBy, Boolean asc
     ) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Comment.class, new String[]{
-                "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId", "createdAt", "updatedAt"
+                "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId",
+                "(comment.created_at) as created_at", "(comment.updated_at) as updated_at",
+                "(user.`user_id`) AS `user.userId`", "(user.`username`) AS `user.username`",
+                "(user.`email`) AS `user.email`",
         });
+        sql += " LEFT JOIN " + Hikari.getDbName() + ".`user` ON `comment`.`created_by` = `user`.`user_id`";
 
         ConditionsAndParams conditionsAndParams = new ConditionsAndParams(kw, type, referenceId, parentId);
         List<String> conditions = conditionsAndParams.conditions;
@@ -123,7 +128,13 @@ public class CommentDaoImpl implements CommentDao {
             ResultSet rs = ps.executeQuery();
             List<Comment> comments = new ArrayList<>();
             while (rs.next()) {
-                comments.add((Comment) SqlStatementUtils.makeEntityFromResult(rs, Comment.class));
+                Comment comment = (Comment) SqlStatementUtils.makeEntityFromResult(rs, Comment.class);
+                User user = new User();
+                user.setUserId(rs.getInt("user.userId"));
+                user.setUsername(rs.getString("user.username"));
+                user.setEmail(rs.getString("user.email"));
+                comment.setUser(user);
+                comments.add(comment);
             }
             return comments;
         } catch (Exception e) {

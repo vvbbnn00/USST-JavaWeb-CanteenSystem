@@ -5,8 +5,10 @@ import cn.vvbbnn00.canteen.dto.request.TopicListRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicListResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicResponse;
+import cn.vvbbnn00.canteen.model.Comment;
 import cn.vvbbnn00.canteen.model.Topic;
 import cn.vvbbnn00.canteen.model.TopicLike;
+import cn.vvbbnn00.canteen.service.CommentService;
 import cn.vvbbnn00.canteen.service.TopicLikeService;
 import cn.vvbbnn00.canteen.service.TopicService;
 import cn.vvbbnn00.canteen.util.LogUtils;
@@ -30,6 +32,7 @@ public class TopicResource {
 
     TopicService topicService = new TopicService();
     TopicLikeService topicLikeService = new TopicLikeService();
+    CommentService commentService = new CommentService();
 
     @POST
     @Path("/list")
@@ -205,4 +208,97 @@ public class TopicResource {
         }
         return response;
     }
+
+
+    @POST
+    @Path("/{topicId}/comment")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicDataResponse restAddComment(
+            @PathParam("topicId") @NotNull @Min(value = 1, message = "无效的话题Id") Integer topicId,
+            Comment comment
+    ) {
+        RequestValidatorUtils.doHibernateParamsValidate(topicId, comment);
+        RequestValidatorUtils.doHibernateValidate(comment);
+
+        BasicDataResponse response = new BasicDataResponse();
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
+        try {
+            comment.setReferenceId(topicId);
+            comment.setType(Comment.CommentType.topic);
+            comment.setCreatedBy(userId);
+            comment.setScore(null);
+            commentService.createComment(comment, userId);
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+
+    @GET
+    @Path("/{topicId}/comment")
+    @Produces(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicListResponse restGetCommentList(
+            @PathParam("topicId") @NotNull @Min(value = 1, message = "无效的话题Id") Integer topicId
+    ) {
+        RequestValidatorUtils.doHibernateParamsValidate(topicId);
+
+        BasicListResponse response = new BasicListResponse();
+        try {
+            Integer count = commentService.getCommentListCount(
+                    null,
+                    Comment.CommentType.topic,
+                    topicId,
+                    null
+            );
+            response.setTotal(count);
+            response.setPageSize(200);
+            response.setCurrentPage(1);
+
+            List<Comment> commentList = commentService.getCommentList(
+                    null,
+                    Comment.CommentType.topic,
+                    topicId,
+                    null,
+                    1,
+                    200,
+                    "createdAt",
+                    false
+            );
+            response.setList(commentList);
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+
+    @DELETE
+    @Path("/{topicId}/comment/{commentId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicResponse restDeleteComment(
+            @PathParam("topicId") @NotNull @Min(value = 1, message = "无效的话题Id") Integer topicId,
+            @PathParam("commentId") @NotNull @Min(value = 1, message = "无效的评论Id") Integer commentId
+    ) {
+        RequestValidatorUtils.doHibernateParamsValidate(topicId, commentId);
+
+        BasicResponse response = new BasicResponse();
+        try {
+            commentService.deleteComment(
+                    commentId,
+                    Integer.parseInt(securityContext.getUserPrincipal().getName())
+            );
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
 }

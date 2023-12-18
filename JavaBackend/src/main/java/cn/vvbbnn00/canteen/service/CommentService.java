@@ -31,7 +31,7 @@ public class CommentService {
                 if (canteenService.getCanteenById(referenceId) == null) {
                     throw new RuntimeException("食堂不存在");
                 }
-                if (comment.getScore() == null) {
+                if (comment.getScore() == null && comment.getParentId() == null) {
                     throw new RuntimeException("评分不能为空");
                 }
                 break;
@@ -55,6 +55,9 @@ public class CommentService {
             case item:
                 if (itemService.getItemById(referenceId) == null) {
                     throw new RuntimeException("菜品不存在");
+                }
+                if (comment.getScore() == null) {
+                    throw new RuntimeException("评分不能为空");
                 }
                 break;
             default:
@@ -173,5 +176,24 @@ public class CommentService {
                 referenceId,
                 parentId
         );
+    }
+
+
+    public void deleteComment(Integer referenceId) {
+        Comment comment = commentDao.queryCommentById(referenceId);
+        if (comment == null) {
+            throw new RuntimeException("评论不存在");
+        }
+        if (comment.getType().equals(Comment.CommentType.complaint)) {
+            throw new RuntimeException("投诉评论不能删除");
+        }
+        try {
+            boolean success = commentDao.delete(referenceId);
+            if (!success) {
+                throw new RuntimeException("删除评论失败");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("删除评论失败");
+        }
     }
 }

@@ -3,11 +3,9 @@ package cn.vvbbnn00.canteen.service;
 import cn.vvbbnn00.canteen.dao.ItemDao;
 import cn.vvbbnn00.canteen.dao.impl.ItemDaoImpl;
 import cn.vvbbnn00.canteen.dto.response.ImageInfoResponse;
-import cn.vvbbnn00.canteen.model.Canteen;
-import cn.vvbbnn00.canteen.model.Cuisine;
-import cn.vvbbnn00.canteen.model.Image;
-import cn.vvbbnn00.canteen.model.Item;
+import cn.vvbbnn00.canteen.model.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +15,7 @@ public class ItemService {
     private static final ImageService imageService = new ImageService();
     private static final CanteenAdminService canteenAdminService = new CanteenAdminService();
     private static final ItemDao itemDao = new ItemDaoImpl();
+    private static final CommentService commentService = new CommentService();
 
 
     /**
@@ -272,6 +271,34 @@ public class ItemService {
         boolean result = itemDao.delete(itemId);
         if (!result) {
             throw new RuntimeException("删除菜品失败");
+        }
+    }
+
+
+    public void commentItem(String content, Integer itemId, Integer userId, Integer parentId, BigDecimal score) {
+        if (content == null || content.isEmpty()) {
+            throw new RuntimeException("评论内容不能为空");
+        }
+        if (itemId == null) {
+            throw new RuntimeException("评论的菜品不能为空");
+        }
+        if (userId == null) {
+            throw new RuntimeException("用户不能为空");
+        }
+        if (score == null) {
+            throw new RuntimeException("评分不能为空");
+        }
+        Comment commentToInsert = new Comment();
+        commentToInsert.setContent(content);
+        commentToInsert.setReferenceId(itemId);
+        commentToInsert.setParentId(parentId);
+        commentToInsert.setType(Comment.CommentType.item);
+        commentToInsert.setScore(score);
+        commentToInsert.setCreatedBy(userId);
+        try {
+            commentService.createComment(commentToInsert, userId);
+        } catch (Exception e) {
+            throw new RuntimeException("评论失败");
         }
     }
 }

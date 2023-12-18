@@ -4,7 +4,9 @@ import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.request.ItemListRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicListResponse;
+import cn.vvbbnn00.canteen.model.Comment;
 import cn.vvbbnn00.canteen.model.Item;
+import cn.vvbbnn00.canteen.service.CommentService;
 import cn.vvbbnn00.canteen.service.ItemService;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
 import jakarta.enterprise.context.RequestScoped;
@@ -23,6 +25,7 @@ public class ItemResource {
     SecurityContext securityContext;
 
     ItemService itemService = new ItemService();
+    CommentService commentService = new CommentService();
 
     @POST
     @Path("/{canteenId}/cuisine/{cuisineId}/item")
@@ -187,6 +190,101 @@ public class ItemResource {
             Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
             itemService.deleteItem(
                     itemId,
+                    userId
+            );
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+
+    @POST
+    @Path("/item/{itemId}/comment")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicDataResponse restPostItemComment(
+            @PathParam("itemId") @NotNull @Min(value = 1, message = "无效的菜品Id") Integer itemId,
+            Comment comment
+    ) {
+        // 校验请求参数，请仔细阅读该方法的文档
+        RequestValidatorUtils.doHibernateParamsValidate(itemId, comment);
+        RequestValidatorUtils.doHibernateValidate(comment);
+
+        BasicDataResponse response = new BasicDataResponse();
+        try {
+            Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
+            itemService.commentItem(
+                    comment.getContent(),
+                    itemId,
+                    userId,
+                    comment.getParentId(),
+                    comment.getScore()
+            );
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+
+    @GET
+    @Path("/item/{itemId}/comment")
+    @Produces(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicListResponse restGetItemComment(
+            @PathParam("itemId") @NotNull @Min(value = 1, message = "无效的菜品Id") Integer itemId
+    ) {
+        // 校验请求参数，请仔细阅读该方法的文档
+        RequestValidatorUtils.doHibernateParamsValidate(itemId);
+
+        BasicListResponse response = new BasicListResponse();
+        try {
+            response.setList(commentService.getCommentList(
+                    null,
+                    Comment.CommentType.item,
+                    itemId,
+                    null,
+                    1,
+                    200,
+                    "createdAt",
+                    false
+            ));
+            response.setTotal(commentService.getCommentListCount(
+                    null,
+                    Comment.CommentType.item,
+                    itemId,
+                    null
+            ));
+            response.setPageSize(200);
+            response.setCurrentPage(1);
+        } catch (Exception e) {
+            response.setCode(400);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+
+    @DELETE
+    @Path("/item/{itemId}/comment/{commentId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @CheckRole("user")
+    public BasicDataResponse restDeleteItemComment(
+            @PathParam("itemId") @NotNull @Min(value = 1, message = "无效的菜品Id") Integer itemId,
+            @PathParam("commentId") @NotNull @Min(value = 1, message = "无效的评论Id") Integer commentId
+    ) {
+        // 校验请求参数，请仔细阅读该方法的文档
+        RequestValidatorUtils.doHibernateParamsValidate(itemId, commentId);
+
+        BasicDataResponse response = new BasicDataResponse();
+        try {
+            Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
+            commentService.deleteComment(
+                    commentId,
                     userId
             );
         } catch (Exception e) {
