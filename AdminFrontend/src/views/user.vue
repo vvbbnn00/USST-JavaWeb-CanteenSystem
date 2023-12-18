@@ -147,6 +147,20 @@
             <el-radio-button label=false>未认证</el-radio-button>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="用户头像">
+          <el-upload
+              class="avatar-uploader"
+              :action="picUploadUrl"
+              :show-file-list="false"
+              :on-success="handleUploadSuccess"
+              :before-upload="beforeUpload"
+              :http-request="ajaxUpload"
+              method="PUT"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="upload"/>
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <template #footer>
 				<span class="dialog-footer">
@@ -164,8 +178,11 @@
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {getUserList, updateUser, deleteUser} from '../api/user';
-import {Delete, Edit, Search} from '@element-plus/icons-vue';
+import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {parseDateTime} from "../utils/string";
+import type {UploadProps} from 'element-plus'
+import {getUploadUrl} from "../api";
+import {ajaxUpload} from "../api/upload";
 
 interface UserItem {
   user_id: number;
@@ -191,6 +208,9 @@ const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+}{
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
 
 const formRef = ref();
+const picUploadUrl = ref('');
+const uploadFileKey = ref('');
+const imageUrl = ref('');
 
 const validateForm = reactive({
   username: [
@@ -216,6 +236,7 @@ let form = reactive({
   password: '',
   email: '',
   isVerified: null as boolean | null,
+  avatar: ''
 });
 
 // 获取表格数据
@@ -250,10 +271,18 @@ const handlePageChange = (val: number) => {
 
 let idx: number = -1;
 // 修改状态
-const handleState = (index: number, row: any) => {
+const handleState = async (index: number, row: any) => {
   idx = index;
-  form = reactive(JSON.parse(JSON.stringify(row)));;
+  form = reactive(JSON.parse(JSON.stringify(row)));
+  const uploadResp = await getUploadUrl();
+  if (uploadResp.data.code !== 200) {
+    ElMessage.error(uploadResp.data.message);
+    return;
+  }
 
+  picUploadUrl.value = uploadResp.data.url;
+  uploadFileKey.value = uploadResp.data?.fileKey;
+  imageUrl.value = '';
   editVisible.value = true;
 };
 
@@ -299,6 +328,34 @@ const saveEdit = async () => {
   });
 };
 
+// 图片上传前的处理
+const beforeUpload = (file: {
+  type: string;
+  size: number;
+}) => {
+  const isJPG = file.type === 'image/jpeg';
+  const isPNG = file.type === 'image/png';
+  const isLt2M = file.size / 1024 / 1024 < 2;
+
+  if (!isJPG && !isPNG) {
+    ElMessage.error('上传图片只能是 JPG/PNG 格式!');
+  }
+  if (!isLt2M) {
+    ElMessage.error('上传图片大小不能超过 2MB!');
+  }
+
+  return (isJPG || isPNG) && isLt2M;
+}
+
+
+const handleUploadSuccess: UploadProps['onSuccess'] = async (
+    response,
+    uploadFile
+) => {
+  imageUrl.value = URL.createObjectURL(uploadFile.raw!);
+  form.avatar = uploadFileKey.value;
+}
+
 </script>
 
 <style scoped>
@@ -332,5 +389,34 @@ const saveEdit = async () => {
   margin: auto;
   width: 90px;
   height: 90px;
+}
+
+.avatar-uploader .avatar {
+  width: 180px;
+  height: 180px;
+  display: block;
+}
+
+.avatar-uploader{
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  width: 180px;
+  height: 180px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 180px;
+  height: 180px;
+  text-align: center;
 }
 </style>
