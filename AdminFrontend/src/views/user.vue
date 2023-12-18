@@ -125,16 +125,17 @@
         <el-form-item label="用户名" required prop="username">
           <el-input v-model="form.username"></el-input>
         </el-form-item>
-        <el-form-item label="用户权限" required prop="role" v-if="form.role !== 'admin'">
+        <el-form-item label="用户权限" required prop="role">
           <el-radio-group v-model="form.role">
             <el-radio-button label="user">用户</el-radio-button>
             <el-radio-button label="canteen_admin">食堂管理员</el-radio-button>
+            <el-radio-button label="admin">管理员</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="重置密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入新密码" show-password type="password"></el-input>
         </el-form-item>
-        <el-form-item label="用户可用状态" required prop="available" v-if="form.role !== 'admin'">
+        <el-form-item label="用户可用状态" required prop="available">
           <el-radio-group v-model="form.available">
             <el-radio-button label=true>可用</el-radio-button>
             <el-radio-button label=false>不可用</el-radio-button>

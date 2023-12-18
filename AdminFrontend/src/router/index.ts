@@ -40,6 +40,15 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/canteen.vue'),
             },
             {
+                path: '/cuisine',
+                name: 'cuisine',
+                meta: {
+                    title: '菜品管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/cuisine.vue'),
+            },
+            {
                 path: '/comment',
                 name: 'comment',
                 meta: {
