@@ -44,3 +44,30 @@ export const newCanteen = (createForm: any) => {
         data: JSON.stringify(createForm)
     });
 }
+
+export const getCanteenCommentList = (canteenId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/${canteenId}/comment`,
+        method: 'GET',
+    });
+}
+
+export const deleteCanteenComment = (canteenId: number, commentId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/${canteenId}/comment/${commentId}`,
+        method: 'DELETE'
+    });
+}
+
+export const replyCanteenComment = (canteenId: number, commentId: number, content: string) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/${canteenId}/comment/${commentId}/reply`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            content: content
+        })
+    });
+}

@@ -1,10 +1,9 @@
 import request from "../utils/request";
 import {BASE_URL} from "./index";
 
-export const getCommentList = (query: any) => {
+export const getCommentList = () => {
     return request({
-        url: `${BASE_URL}/api/comment/list`,
+        url: `${BASE_URL}/api/rest/topic/list`,
         method: 'POST',
-        data: JSON.stringify(query)
     });
 }
