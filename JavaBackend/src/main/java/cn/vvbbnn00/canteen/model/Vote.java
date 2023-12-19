@@ -28,5 +28,5 @@ public class Vote implements Serializable {
     private LocalDateTime updatedAt;
 
     private User user;
-    private List<VoteOption> voteOptions;
+    // private List<VoteOption> voteOptions;
 }

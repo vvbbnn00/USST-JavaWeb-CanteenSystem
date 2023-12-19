@@ -6,6 +6,7 @@ import cn.vvbbnn00.canteen.model.*;
 
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 
 public class VoteService {
     private final VoteDao voteDao = new VoteDaoImpl();
@@ -15,21 +16,19 @@ public class VoteService {
      *
      * @param vote 投票，由于作为新数据插入数据库，其id、createdAt、updatedAt属性会被忽略
      */
-    public void createVote(Vote vote) {
-        // 检查投票时间是否合法,开始时间必须大于当前时间，结束时间必须大于开始时间
-        if (vote.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < System.currentTimeMillis()) {
-            throw new RuntimeException("开始时间必须大于当前时间");
-        }
+    public Vote createVote(Vote vote) {
+        // 检查投票时间是否合法，结束时间必须大于开始时间
         if (vote.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < vote.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) {
             throw new RuntimeException("结束时间必须大于开始时间");
         }
         if (vote.getVoteName() == null || vote.getVoteName().isBlank()) {
             throw new RuntimeException("投票名称不能为空");
         }
-        boolean result = voteDao.insert(vote);
-        if (!result) {
-            throw new RuntimeException("投票失败");
+        Vote result = voteDao.insert(vote);
+        if (result == null) {
+            throw new RuntimeException("创建投票失败");
         }
+        return result;
     }
 
     /**
@@ -59,10 +58,11 @@ public class VoteService {
     /**
      * 返回投票选项列表
      *
+     * @param voteId 投票id
      * @return 投票选项列表
      */
-    public List<VoteOption> getVoteOptionList() {
-        return voteDao.getVoteOptionList();
+    public List<VoteOption> getVoteOptionList(Integer voteId) {
+        return voteDao.getVoteOptionList(voteId);
     }
 
     public void createVoteOption(VoteOption voteOption) {
@@ -82,13 +82,19 @@ public class VoteService {
         }
     }
 
-    public boolean updateVoteOption(VoteOption voteOption) {
+    public boolean updateVoteOption(VoteOption voteOption, Integer userId) {
         if (voteOption.getVoteOptionId() == null) {
             throw new RuntimeException("投票选项id不能为空");
         }
-        if (voteOption.getName() == null || voteOption.getName().isBlank()) {
-            throw new RuntimeException("投票选项名称不能为空");
+        VoteOption oldVoteOption = queryVoteOptionById(voteOption.getVoteOptionId());
+        if (oldVoteOption == null) {
+            throw new RuntimeException("投票选项不存在");
         }
+
+        if (!Objects.equals(oldVoteOption.getVoteId(), voteOption.getVoteId())) {
+            throw new RuntimeException("投票选项id与投票id不匹配");
+        }
+
         Vote vote = queryVoteById(voteOption.getVoteId());
         if (vote == null) {
             throw new RuntimeException("投票不存在");
@@ -96,20 +102,53 @@ public class VoteService {
         if (vote.getIsStarted()) {
             throw new RuntimeException("投票已经开始，不能修改投票选项");
         }
-        boolean success = voteDao.updateVoteOption(voteOption);
+
+        User user = new UserService().getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        if (!vote.getCreatedBy().equals(user.getUserId()) && !user.getRole().equals(User.Role.admin)) {
+            throw new RuntimeException("您不是投票创建者，不能修改投票选项");
+        }
+
+        if (voteOption.getName() != null && !voteOption.getName().isBlank()) {
+            oldVoteOption.setName(voteOption.getName());
+        }
+
+        boolean success = voteDao.updateVoteOption(oldVoteOption);
         if (!success) {
             throw new RuntimeException("投票选项更新失败");
         }
         return true;
     }
 
-    public boolean deleteVoteOption(VoteOption voteOption) {
+    public boolean deleteVoteOption(VoteOption voteOption, Integer userId) {
         if (voteOption.getVoteOptionId() == null) {
             throw new RuntimeException("投票选项id不能为空");
         }
         if (queryVoteById(voteOption.getVoteId()).getIsStarted()) {
             throw new RuntimeException("投票已经开始，不能删除投票选项");
         }
+
+        VoteOption oldVoteOption = queryVoteOptionById(voteOption.getVoteOptionId());
+        if (!Objects.equals(oldVoteOption.getVoteId(), voteOption.getVoteId())) {
+            throw new RuntimeException("投票选项id与投票id不匹配");
+        }
+
+        User user = new UserService().getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        Vote vote = queryVoteById(voteOption.getVoteId());
+        if (vote == null) {
+            throw new RuntimeException("投票不存在");
+        }
+
+        if (!vote.getCreatedBy().equals(user.getUserId()) && !user.getRole().equals(User.Role.admin)) {
+            throw new RuntimeException("您不是投票创建者，不能删除投票选项");
+        }
+
         boolean success = voteDao.deleteVoteOption(voteOption);
         if (!success) {
             throw new RuntimeException("投票选项删除失败");
@@ -121,33 +160,62 @@ public class VoteService {
         return voteDao.queryVoteOptionById(id);
     }
 
-    public boolean updateVote(Vote vote) {
+    public boolean updateVote(Vote vote, Integer userId) {
         if (vote.getVoteId() == null) {
             throw new RuntimeException("投票id不能为空");
         }
-        if (vote.getVoteName() == null || vote.getVoteName().isBlank()) {
-            throw new RuntimeException("投票名称不能为空");
+        Vote oldVote = queryVoteById(vote.getVoteId());
+        if (oldVote == null) {
+            throw new RuntimeException("投票不存在");
         }
-        if (vote.getStartTime() == null) {
-            throw new RuntimeException("投票开始时间不能为空");
+
+        User user = new UserService().getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
         }
-        if (vote.getEndTime() == null) {
-            throw new RuntimeException("投票结束时间不能为空");
+        if (!oldVote.getCreatedBy().equals(user.getUserId()) && !user.getRole().equals(User.Role.admin)) {
+            throw new RuntimeException("您不是投票创建者，不能修改投票");
         }
-        if (vote.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < System.currentTimeMillis()) {
-            throw new RuntimeException("开始时间必须大于当前时间");
+
+        if (vote.getVoteName() != null && !vote.getVoteName().isBlank()) {
+            oldVote.setVoteName(vote.getVoteName());
         }
-        if (vote.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < vote.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) {
+        if (vote.getStartTime() != null) {
+            oldVote.setStartTime(vote.getStartTime());
+        }
+        if (vote.getEndTime() != null) {
+            oldVote.setEndTime(vote.getEndTime());
+        }
+        if (vote.getVoteIntro() != null && !vote.getVoteIntro().isBlank()) {
+            oldVote.setVoteIntro(vote.getVoteIntro());
+        }
+        if (vote.getIsStarted() != null) {
+            oldVote.setIsStarted(vote.getIsStarted());
+        }
+
+        if (oldVote.getEndTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() < oldVote.getStartTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) {
             throw new RuntimeException("结束时间必须大于开始时间");
         }
-        boolean success = voteDao.updateVote(vote);
+        boolean success = voteDao.updateVote(oldVote);
         if (!success) {
             throw new RuntimeException("投票信息更新失败");
         }
         return true;
     }
 
-    public boolean deleteVote(Vote vote) {
+    public boolean deleteVote(Vote vote, Integer userId) {
+        Vote oldVote = queryVoteById(vote.getVoteId());
+        if (oldVote == null) {
+            throw new RuntimeException("投票不存在");
+        }
+        User user = new UserService().getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (!oldVote.getCreatedBy().equals(user.getUserId()) && !user.getRole().equals(User.Role.admin)) {
+            throw new RuntimeException("您不是投票创建者，不能删除投票");
+        }
+
         boolean success = voteDao.deleteVote(vote);
         if (!success) {
             throw new RuntimeException("投票删除失败");
@@ -155,16 +223,35 @@ public class VoteService {
         return true;
     }
 
-    public List<VoteOptionInfo> getVoteOptionStat(Integer voteId) {
+    public List<VoteOptionInfo> getVoteOptionStat(Integer voteId, Integer userId) {
+        Vote vote = queryVoteById(voteId);
+        if (vote == null) {
+            throw new RuntimeException("投票不存在");
+        }
+        User user = new UserService().getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (!vote.getCreatedBy().equals(userId) && !user.getRole().equals(User.Role.admin)) {
+            throw new RuntimeException("您不是投票创建者，不能查看投票结果");
+        }
         return voteDao.queryVoteResultStat(voteId);
     }
 
-    public boolean createVoteResult(Voter voter) {
-        if (voteDao.queryVoteById(voter.getVoteId()) == null) {
+    public void createVoteResult(Voter voter) {
+        Vote vote = queryVoteById(voter.getVoteId());
+        if (vote == null) {
             throw new RuntimeException("投票不存在");
         }
-        if (voteDao.queryVoteOptionById(voter.getOptionId()) == null) {
+        if (!vote.getIsStarted()) {
+            throw new RuntimeException("投票未开始");
+        }
+        VoteOption voteOption = queryVoteOptionById(voter.getOptionId());
+        if (voteOption == null) {
             throw new RuntimeException("投票选项不存在");
+        }
+        if (!voteOption.getVoteId().equals(vote.getVoteId())) {
+            throw new RuntimeException("投票选项id与投票id不匹配");
         }
         if (voteDao.queryVoteResultByUserId(voter.getUserId(), voter.getVoteId()) != null) {
             throw new RuntimeException("您已经投过票了");
@@ -173,7 +260,6 @@ public class VoteService {
         if (!success) {
             throw new RuntimeException("投票失败");
         }
-        return true;
     }
 
     public VoteOption getVoteResultByVoteId(Integer voteId, Integer userId) {

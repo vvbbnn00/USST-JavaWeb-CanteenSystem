@@ -16,17 +16,25 @@ import java.util.List;
 public class VoteDaoImpl implements VoteDao {
 
     @Override
-    public boolean insert(Vote vote) {
+    public Vote insert(Vote vote) {
         try (Connection connection = Hikari.getConnection()) {
             PreparedStatement ps = SqlStatementUtils.generateInsertStatement(connection, vote, new String[]{
-                    "voteName", "startTime", "endTime", "isStarted", "voteIntro"
+                    "voteName", "startTime", "endTime", "isStarted", "voteIntro", "createdBy"
             });
             ps.executeUpdate();
-            return true;
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+
+            if (generatedKeys.next()) {
+                vote.setVoteId(generatedKeys.getInt(1));
+                return vote;
+            } else {
+                // Handle the case where no key was generated
+                throw new SQLException("Insertion failed, no ID obtained.");
+            }
         } catch (Exception e) {
             LogUtils.severe(e.getMessage(), e);
-            return false;
         }
+        return null;
     }
 
     @Override
@@ -35,12 +43,11 @@ public class VoteDaoImpl implements VoteDao {
                 "voteId", "voteName", "startTime", "endTime", "isStarted", "voteIntro", "createdBy", "createdAt", "updatedAt"
         });
 
-        List<String> conditions = new ArrayList<>();
-        conditions.add("`is_started` = ?");
         List<Object> params = new ArrayList<>();
-
-        params.add(status);
-        sql += SqlStatementUtils.generateWhereSql(conditions);
+        if (status != null) {
+            sql += " WHERE `is_started` = ?";
+            params.add(status);
+        }
 
         if (orderBy != null) {
             sql += " ORDER BY " + SqlStatementUtils.camelToSnakeQuote(orderBy);
@@ -93,13 +100,18 @@ public class VoteDaoImpl implements VoteDao {
     }
 
     @Override
-    public List<VoteOption> getVoteOptionList() {
+    public List<VoteOption> getVoteOptionList(Integer voteId) {
         try {
             Connection connection = Hikari.getConnection();
             String sql = SqlStatementUtils.generateBasicSelectSql(VoteOption.class, new String[]{
                     "vote_option_id", "vote_id", "name", "created_at", "updated_at"
             });
+            sql += " WHERE `vote_id` = ?;";
+
             PreparedStatement ps = connection.prepareStatement(sql);
+
+            ps.setInt(1, voteId);
+
             ResultSet rs = ps.executeQuery();
             List<VoteOption> voteOptions = new ArrayList<>();
             while (rs.next()) {

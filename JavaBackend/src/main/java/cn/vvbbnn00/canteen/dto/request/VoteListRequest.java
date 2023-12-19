@@ -14,5 +14,5 @@ public class VoteListRequest extends BasicListRequest {
     @Pattern(regexp = "^(startTime|endTime|status)$",
             message = "orderBy必须是startTime,endTime,status中的一个")
     private String orderBy;
-    private Integer status;
+    private Boolean isStarted;
 }

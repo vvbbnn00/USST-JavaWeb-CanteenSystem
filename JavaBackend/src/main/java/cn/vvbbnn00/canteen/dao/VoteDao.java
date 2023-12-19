@@ -13,7 +13,7 @@ public interface VoteDao {
      *
      * @param vote 投票，由于作为新数据插入数据库，其id、createdAt、updatedAt属性会被忽略
      */
-    boolean insert(Vote vote);
+    Vote insert(Vote vote);
 
     /**
      * 获取投票列表
@@ -40,7 +40,7 @@ public interface VoteDao {
      *
      * @return 投票选项列表
      */
-    List<VoteOption> getVoteOptionList();
+    List<VoteOption> getVoteOptionList(Integer voteId);
 
     /**
      * 新建投票选项

@@ -33,11 +33,14 @@ public class VoteResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @CheckRole("canteen_admin")
-    public BasicResponse restPostVote(Vote vote) {
+    public BasicDataResponse restPostVote(Vote vote) {
         RequestValidatorUtils.doHibernateValidate(vote);
-        BasicResponse response = new BasicResponse();
+        BasicDataResponse response = new BasicDataResponse();
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
+
         try {
-            voteService.createVote(vote);
+            vote.setCreatedBy(userId);
+            response.setData(voteService.createVote(vote));
         } catch (Exception e) {
             response.setCode(500);
             response.setMessage(e.getMessage());
@@ -63,7 +66,12 @@ public class VoteResource {
             return response;
         }
         response.setData(vote);
-        response.setList(voteService.getVoteOptionList());
+        try {
+            response.setList(voteService.getVoteOptionList(voteId));
+        } catch (Exception e) {
+            response.setCode(500);
+            response.setMessage(e.getMessage());
+        }
         return response;
     }
 
@@ -75,10 +83,14 @@ public class VoteResource {
     public BasicListResponse restGetVoteList(VoteListRequest voteListRequest) {
         RequestValidatorUtils.doHibernateValidate(voteListRequest);
         BasicListResponse response = new BasicListResponse();
+        Integer status = null;
+        if (voteListRequest.getIsStarted() != null) {
+            status = voteListRequest.getIsStarted() ? 1 : 0;
+        }
         response.setList(voteService.getVoteList(
                 voteListRequest.getCurrentPage(),
                 voteListRequest.getPageSize(),
-                voteListRequest.getStatus(),
+                status,
                 voteListRequest.getOrderBy(),
                 voteListRequest.getAsc()
         ));
@@ -94,9 +106,12 @@ public class VoteResource {
     @CheckRole("canteen_admin")
     public BasicResponse restPostVoteOption(
             @PathParam("voteId") @NotNull Integer voteId,
-            String name
+            VoteOption newVoteOption
     ) {
-        RequestValidatorUtils.doHibernateParamsValidate(voteId, name);
+        RequestValidatorUtils.doHibernateParamsValidate(voteId, newVoteOption);
+        RequestValidatorUtils.doHibernateValidate(newVoteOption);
+
+        String name = newVoteOption.getName();
         BasicResponse response = new BasicResponse();
         try {
             VoteOption voteOption = new VoteOption();
@@ -122,6 +137,7 @@ public class VoteResource {
     ) {
         RequestValidatorUtils.doHibernateParamsValidate(voteId, voteOptionId, newVoteOption);
         RequestValidatorUtils.doHibernateValidate(newVoteOption);
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
 
         BasicDataResponse response = new BasicDataResponse();
         try {
@@ -129,7 +145,7 @@ public class VoteResource {
             voteOption.setVoteId(voteId);
             voteOption.setVoteOptionId(voteOptionId);
             voteOption.setName(newVoteOption.getName());
-            response.setData(voteService.updateVoteOption(voteOption));
+            response.setData(voteService.updateVoteOption(voteOption, userId));
         } catch (Exception e) {
             response.setCode(500);
             response.setMessage(e.getMessage());
@@ -149,11 +165,14 @@ public class VoteResource {
     ) {
         RequestValidatorUtils.doHibernateParamsValidate(voteId, voteOptionId);
         BasicDataResponse response = new BasicDataResponse();
+
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
+
         try {
             VoteOption voteOption = new VoteOption();
             voteOption.setVoteId(voteId);
             voteOption.setVoteOptionId(voteOptionId);
-            response.setData(voteService.deleteVoteOption(voteOption));
+            response.setData(voteService.deleteVoteOption(voteOption, userId));
         } catch (Exception e) {
             response.setCode(500);
             response.setMessage(e.getMessage());
@@ -172,9 +191,10 @@ public class VoteResource {
     ) {
         RequestValidatorUtils.doHibernateParamsValidate(voteId, vote);
         BasicDataResponse response = new BasicDataResponse();
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
         try {
             vote.setVoteId(voteId);
-            response.setData(voteService.updateVote(vote));
+            response.setData(voteService.updateVote(vote, userId));
         } catch (Exception e) {
             response.setCode(500);
             response.setMessage(e.getMessage());
@@ -192,10 +212,11 @@ public class VoteResource {
     ) {
         RequestValidatorUtils.doHibernateParamsValidate(voteId);
         BasicDataResponse response = new BasicDataResponse();
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
         try {
             Vote vote = new Vote();
             vote.setVoteId(voteId);
-            response.setData(voteService.deleteVote(vote));
+            response.setData(voteService.deleteVote(vote, userId));
         } catch (Exception e) {
             response.setCode(500);
             response.setMessage(e.getMessage());
@@ -213,11 +234,13 @@ public class VoteResource {
     ) {
         RequestValidatorUtils.doHibernateParamsValidate(voteId);
         BasicListResponse response = new BasicListResponse();
+        Integer userId = Integer.parseInt(securityContext.getUserPrincipal().getName());
         try {
-            response.setList(voteService.getVoteOptionStat(voteId));
+            response.setList(voteService.getVoteOptionStat(voteId, userId));
         } catch (Exception e) {
             response.setCode(500);
             response.setMessage(e.getMessage());
+            LogUtils.severe(e.getMessage(), e);
         }
         return response;
     }
