@@ -16,19 +16,15 @@ import java.io.IOException;
 public class AllowCorsFilter extends HttpFilter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String env = ConfigUtils.getEnv("ENV", "development");
-
-        if (env.equals("development")) {
-            // 开发环境下允许跨域
-            HttpServletResponse response = (HttpServletResponse) servletResponse;
-            HttpServletRequest request = (HttpServletRequest) servletRequest;
-            String origin = request.getHeader("Origin");
-            response.setHeader("Access-Control-Allow-Origin", origin);
-            response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-            response.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-            response.setHeader("Access-Control-Allow-Credentials", "true");
-        }
-
+        // 允许跨域
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        String origin = request.getHeader("Origin");
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }
