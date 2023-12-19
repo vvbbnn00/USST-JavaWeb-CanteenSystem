@@ -48,7 +48,7 @@ public class TopicDaoImpl implements TopicDao {
     public Topic queryTopicById(Integer topicId, Integer queryUserId) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Topic.class, new String[]{
-                    "topicId", "title", "content", "createdBy", "createdAt", "updatedAt",
+                    "topicId", "title", "content", "createdBy", "createdAt", "updatedAt", "flagged",
                     "(SELECT COUNT(*) FROM topic_like WHERE topic_id = ?) AS like_count",
                     "(SELECT COUNT(*) FROM comment WHERE reference_id = ? AND type = 'topic') AS comment_count",
                     "(SELECT COUNT(*) FROM topic_like WHERE topic_id = ? AND user_id = ?) AS is_liked",
@@ -97,7 +97,7 @@ public class TopicDaoImpl implements TopicDao {
         try (Connection connection = Hikari.getConnection()) {
             ConditionAndParam conditionAndParam = new ConditionAndParam(userId);
             String sql = SqlStatementUtils.generateBasicSelectSql(Topic.class, new String[]{
-                    "topicId", "title", "content", "createdBy", "(topic.created_at) as created_at", "(topic.updated_at) as updated_at",
+                    "topicId", "title", "content", "createdBy", "(topic.created_at) as created_at", "(topic.updated_at) as updated_at", "flagged",
                     "(SELECT COUNT(*) FROM topic_like WHERE topic_id = topic.topic_id) AS like_count",
                     "(SELECT COUNT(*) FROM comment WHERE reference_id = topic.topic_id AND type = 'topic') AS comment_count",
                     "(SELECT COUNT(*) FROM topic_like WHERE topic_id = topic.topic_id AND user_id = ?) AS is_liked",
