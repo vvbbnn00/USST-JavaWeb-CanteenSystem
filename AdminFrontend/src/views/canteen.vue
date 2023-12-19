@@ -17,10 +17,10 @@
             </el-button>
 
             <el-button v-if="isAdmin === 'admin'"
-                text
-                :icon="Delete"
-                class="red"
-                @click="handleDelete(scope.row)"
+                       text
+                       :icon="Delete"
+                       class="red"
+                       @click="handleDelete(scope.row)"
             >
               删除
             </el-button>
@@ -31,6 +31,13 @@
           <template #default="scope">
             <el-button class="el-icon-lx-skinfill" @click="handleInfo(scope.$index, scope.row)">
               查看介绍
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="评论" width="150" align="center">
+          <template #default="scope">
+            <el-button class="el-icon-lx-calendar" @click="handleComment(scope.row)">
+              查看评论
             </el-button>
           </template>
         </el-table-column>
@@ -107,17 +114,81 @@
       </template>
     </el-dialog>
 
+    <!-- 食堂评论 弹出框 -->
+    <el-dialog title="食堂评论" v-model="commentVisible">
+      <el-form label-width="400px">
+        <el-table :data="commentData" border class="table" ref="multipleTable">
+          <el-table-column prop="commentId" label="评论ID"></el-table-column>
+          <el-table-column prop="content" label="评论内容"></el-table-column>
+          <el-table-column prop="user.username" label="评论用户"></el-table-column>
+          <el-table-column prop="createdAt" label="评论时间" width="160px">
+            <template #default="scope">
+              <div>
+                {{ parseDateTime(scope.row.createdAt) }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200" align="center" fixed="right">
+            <template #default="scope">
+              <el-button v-if="isAdmin === 'canteen_admin' && scope.row.user.userId === userId" text :icon="ChatDotSquare" @click="handleReply(scope.row)">
+                回复
+              </el-button>
+
+              <el-button v-if="isAdmin === 'admin'"
+                         text
+                         :icon="Delete"
+                         class="red"
+                         @click="handleCommentDelete(scope.row)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="commentVisible = false">返 回</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!--  食堂回复  -->
+    <el-dialog title="回复" v-model="commentReplyVisible" width="40%">
+      <el-form label-width="90px" :model="commentForm" :rules="validateForm">
+        <el-form-item label="回复内容" required prop="message">
+          <el-input v-model="commentForm.message" placeholder="请输入回复内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+				<span class="dialog-footer">
+					<el-button @click="commentReplyVisible = false">取 消</el-button>
+					<el-button type="primary" @click="saveReply">确 定</el-button>
+				</span>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
-import {Search, Plus, Edit, Delete} from '@element-plus/icons-vue';
-import {getCanteenList, deleteCanteen, updateCanteen, newCanteen, getUserCanteen} from "../api/canteen";
+import {Search, Plus, Edit, Delete, ChatDotSquare} from '@element-plus/icons-vue';
+import {
+  getCanteenList,
+  deleteCanteen,
+  updateCanteen,
+  newCanteen,
+  getUserCanteen,
+  getCanteenCommentList,
+  deleteCanteenComment,
+  replyCanteenComment
+} from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 
 const isAdmin = localStorage.getItem('ms_role');
+const userId = localStorage.getItem('ms_user_id');
 
 const query = reactive({
   canteen_id: undefined as unknown as number,
@@ -138,6 +209,10 @@ const validateForm = reactive({
   introduction: [
     {message: '请输入食堂介绍', trigger: 'blur'},
     {max: 250, message: '最多输入250个字符', trigger: 'blur'}
+  ],
+  message: [
+    {required: true, message: '请输入回复内容', trigger: 'blur'},
+    {max: 30, message: '最多输入30个字符', trigger: 'blur'}
   ],
 });
 
@@ -195,6 +270,32 @@ const handleInfo = (index: number, row: any) => {
   infoVisible.value = true;
 };
 
+const commentVisible = ref(false);
+const commentData = ref([]);
+const chooseCanteenId = ref(0);
+const getCommentData = async () => {
+  try {
+    const response = await getCanteenCommentList(chooseCanteenId.value);
+    let data = response.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+
+    commentData.value = data?.list;
+  } catch (error) {
+    console.error("获取数据错误:", error);
+    ElMessage.error("获取数据错误");
+  }
+};
+
+const handleComment = (row: any) => {
+  chooseCanteenId.value = row.canteenId;
+  getCommentData();
+  commentVisible.value = true;
+};
+
+
 const createVisible = ref(false);
 const handleDelete = (row: any) => {
   console.log(row.canteenId)
@@ -248,6 +349,12 @@ const handleEdit = async (index: number, row: any) => {
   createVisible.value = true;
 };
 
+const chooseCommentId = ref(0);
+const handleReply = (row: any) => {
+  chooseCommentId.value = row.commentId;
+  commentReplyVisible.value = true;
+};
+
 
 const clearForm = () => {
   createForm = reactive({
@@ -257,6 +364,40 @@ const clearForm = () => {
     introduction: '',
   });
 }
+
+const handleCommentDelete = (row: any) => {
+  // 二次确认删除
+  ElMessageBox.confirm('确定要删除评论吗？', '提示', {
+    type: 'warning'
+  })
+      .then(async () => {
+        try {
+          await deleteCanteenComment(chooseCanteenId.value, row.commentId)
+          ElMessage.success(`删除评论成功`);
+          await getCommentData();
+        } catch (e) {
+          ElMessage.error(`删除评论失败`);
+        }
+      })
+      .catch(() => {
+      });
+};
+
+const commentForm = reactive({
+  message: '',
+});
+const commentReplyVisible = ref(false);
+const saveReply = async () => {
+  commentReplyVisible.value = false;
+  try {
+    await replyCanteenComment(chooseCanteenId.value, chooseCommentId.value, commentForm.message);
+    ElMessage.success(`回复成功`);
+    await getCommentData();
+  } catch (e) {
+    ElMessage.error(`回复失败`);
+  }
+  commentForm.message = '';
+};
 
 </script>
 
