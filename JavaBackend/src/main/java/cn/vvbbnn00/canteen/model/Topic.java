@@ -31,5 +31,6 @@ public class Topic implements Serializable {
     private Long likeCount;
     private Long commentCount;
     private Boolean isLiked;
+    private Boolean flagged;
     private BigDecimal compValue; // 综合评分，用于排序
 }

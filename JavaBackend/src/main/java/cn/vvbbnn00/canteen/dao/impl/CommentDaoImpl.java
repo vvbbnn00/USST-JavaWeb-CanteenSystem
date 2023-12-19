@@ -33,7 +33,8 @@ public class CommentDaoImpl implements CommentDao {
     public Comment queryCommentById(Integer id) {
         try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Comment.class, new String[]{
-                    "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId", "createdAt", "updatedAt"
+                    "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId", "createdAt", "updatedAt",
+                    "flagged"
             }) + " WHERE `comment_id` = ?;";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
@@ -93,7 +94,7 @@ public class CommentDaoImpl implements CommentDao {
             Integer page, Integer pageSize, String orderBy, Boolean asc
     ) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Comment.class, new String[]{
-                "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId",
+                "commentId", "type", "referenceId", "createdBy", "content", "score", "parentId", "flagged",
                 "(comment.created_at) as created_at", "(comment.updated_at) as updated_at",
                 "(user.`user_id`) AS `user.userId`", "(user.`username`) AS `user.username`",
                 "(user.`email`) AS `user.email`",

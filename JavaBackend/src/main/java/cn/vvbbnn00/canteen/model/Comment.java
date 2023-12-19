@@ -38,4 +38,5 @@ public class Comment implements Serializable {
 
     private User user;
     private Canteen canteen;
+    private Boolean flagged;
 }
