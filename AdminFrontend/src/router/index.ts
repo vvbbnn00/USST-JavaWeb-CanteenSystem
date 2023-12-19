@@ -43,7 +43,7 @@ const routes: RouteRecordRaw[] = [
                 path: '/cuisine',
                 name: 'cuisine',
                 meta: {
-                    title: '菜品管理',
+                    title: '菜系管理',
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/cuisine.vue'),

@@ -83,7 +83,7 @@ const items: {
       },
       {
         index: '/cuisine',
-        title: '菜品管理',
+        title: '菜系管理',
       }
     ],
   },
