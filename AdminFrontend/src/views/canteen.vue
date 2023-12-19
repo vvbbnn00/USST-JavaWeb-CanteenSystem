@@ -34,10 +34,13 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="评论" width="150" align="center">
+        <el-table-column label="评论" align="center">
           <template #default="scope">
-            <el-button class="el-icon-lx-calendar" @click="handleComment(scope.row)">
+            <el-button class="el-icon-lx-calendar mb5" @click="handleComment(scope.row, false)">
               查看评论
+            </el-button>
+            <el-button class="el-icon-lx-questionfill" @click="handleComment(scope.row, true)">
+              查看未回复评论
             </el-button>
           </template>
         </el-table-column>
@@ -117,7 +120,7 @@
     <!-- 食堂评论 弹出框 -->
     <el-dialog title="食堂评论" v-model="commentVisible">
       <el-form label-width="400px">
-        <el-table :data="commentData" border class="table" ref="multipleTable">
+        <el-table :data="showNonReplyCommentsOnly ? nonReplyCommentData : commentData" border class="table" ref="multipleTable">
           <el-table-column prop="commentId" label="评论ID"></el-table-column>
           <el-table-column prop="content" label="评论内容"></el-table-column>
           <el-table-column prop="user.username" label="评论用户"></el-table-column>
@@ -188,7 +191,9 @@ import {
 import {parseDateTime} from "../utils/string";
 
 const isAdmin = localStorage.getItem('ms_role');
-const userId = localStorage.getItem('ms_user_id');
+const userId = Number(localStorage.getItem('ms_user_id'));
+const showNonReplyCommentsOnly = ref(false);
+
 
 const query = reactive({
   canteen_id: undefined as unknown as number,
@@ -272,6 +277,7 @@ const handleInfo = (index: number, row: any) => {
 
 const commentVisible = ref(false);
 const commentData = ref([]);
+const nonReplyCommentData = ref([]);
 const chooseCanteenId = ref(0);
 const getCommentData = async () => {
   try {
@@ -283,17 +289,23 @@ const getCommentData = async () => {
     }
 
     commentData.value = data?.list;
+    // 筛选未回复的评论
+    nonReplyCommentData.value = commentData.value.filter(comment =>
+        comment.user.userId !== userId && !commentData.value.some(otherComment => otherComment.parentId === comment.commentId)
+    );
   } catch (error) {
     console.error("获取数据错误:", error);
     ElMessage.error("获取数据错误");
   }
 };
 
-const handleComment = (row: any) => {
+const handleComment = (row: any, showNonReply = false) => {
   chooseCanteenId.value = row.canteenId;
+  showNonReplyCommentsOnly.value = showNonReply;
   getCommentData();
   commentVisible.value = true;
 };
+
 
 
 const createVisible = ref(false);
@@ -421,6 +433,10 @@ const saveReply = async () => {
 
 .mr10 {
   margin-right: 10px;
+}
+
+.mb5 {
+  margin-bottom: 5px;
 }
 
 </style>
