@@ -10,6 +10,7 @@ import java.util.List;
 
 public class UserService {
     private static final UserDao userDao = new UserDaoImpl();
+    private static final UserPointLogService userPointLogService = new UserPointLogService();
 
     /**
      * 获取用户列表
@@ -146,6 +147,11 @@ public class UserService {
         throw new RuntimeException("更新用户失败");
     }
 
+    /**
+     * 删除用户
+     *
+     * @param id 用户id
+     */
     public void deleteUser(Integer id) {
         User user = userDao.queryUserById(id);
         if (user == null) {
@@ -210,4 +216,55 @@ public class UserService {
         throw new RuntimeException("创建用户失败");
     }
 
+
+    /**
+     * 验证用户
+     *
+     * @param id         用户id
+     * @param employeeId 工号
+     * @param name       姓名
+     */
+    public void verifyUser(Integer id, String employeeId, String name) {
+        User user = userDao.queryUserById(id);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (user.getIsVerified()) {
+            throw new RuntimeException("用户已验证");
+        }
+
+        user.setEmployeeId(employeeId);
+        user.setName(name);
+        user.setIsVerified(true);
+
+        boolean success = userDao.update(user);
+        if (!success) {
+            throw new RuntimeException("验证用户失败");
+        }
+
+        userPointLogService.changeUserPoint(user.getUserId(), 20, "验证用户" + user.getUserId());
+    }
+
+
+    /**
+     * 修改用户密码
+     *
+     * @param userId      用户id
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     */
+    public void changeUserPassword(Integer userId, String oldPassword, String newPassword) {
+        User user = userDao.queryUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (!SafetyUtils.passwordCheckBCrypt(oldPassword, user.getPassword())) {
+            throw new RuntimeException("旧密码错误");
+        }
+        user.setPassword(SafetyUtils.passwordDoBCrypt(newPassword));
+        boolean success = userDao.update(user);
+        if (!success) {
+            throw new RuntimeException("修改密码失败");
+        }
+    }
 }

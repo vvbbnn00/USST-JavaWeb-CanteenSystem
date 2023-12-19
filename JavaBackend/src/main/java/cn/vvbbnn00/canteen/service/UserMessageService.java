@@ -13,7 +13,7 @@ public class UserMessageService {
     /**
      * 获取消息列表
      *
-     * @param UserId   接收者id
+     * @param UserId 接收者id
      * @return 消息列表
      */
     public List<User> getMessagedUserList(Integer UserId) {
@@ -21,10 +21,11 @@ public class UserMessageService {
                 UserId
         );
     }
+
     /**
      * 获取消息列表数量
      *
-     * @param toUserId   接收者id
+     * @param toUserId 接收者id
      * @return 消息列表数量
      */
     public List<UserMessage> getMessageList(Integer toUserId, Integer fromUserId) {
@@ -40,28 +41,28 @@ public class UserMessageService {
      * @return 是否成功
      */
     public boolean sendMessage(UserMessage message) {
-        if(message.getFromUserId()==null){
+        if (message.getFromUserId() == null) {
             throw new RuntimeException("发送者不能为空");
         }
         User fromUser = new UserService().getUserById(message.getFromUserId());
-        if(fromUser==null){
+        if (fromUser == null) {
             throw new RuntimeException("发送者不存在");
         }
-        if(message.getToUserId()==null){
+        if (message.getToUserId() == null) {
             throw new RuntimeException("接收者不能为空");
         }
         User toUser = new UserService().getUserById(message.getToUserId());
-        if(toUser==null){
+        if (toUser == null) {
             throw new RuntimeException("接收者不存在");
         }
-        if(message.getContent()==null){
+        if (message.getContent() == null) {
             throw new RuntimeException("消息内容不能为空");
         }
-        if(message.getContent().length()>200){
+        if (message.getContent().length() > 200) {
             throw new RuntimeException("消息内容长度不能超过200个字符");
         }
         boolean result = messageDao.insert(message);
-        if(!result){
+        if (!result) {
             throw new RuntimeException("发送失败");
         }
         return true;

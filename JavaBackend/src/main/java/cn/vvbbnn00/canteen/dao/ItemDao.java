@@ -12,7 +12,7 @@ public interface ItemDao {
      * @param item 要插入的条目
      * @return 插入的条目
      */
-    public Item insert(Item item);
+    Item insert(Item item);
 
     /**
      * 根据ID查询菜品
@@ -20,7 +20,7 @@ public interface ItemDao {
      * @param itemId 要查询的菜品的ID
      * @return 查询的菜品
      */
-    public Item queryById(Integer itemId);
+    Item queryById(Integer itemId);
 
     /**
      * 删除菜品
@@ -28,7 +28,7 @@ public interface ItemDao {
      * @param itemId 要删除的菜品的ID
      * @return 是否删除成功
      */
-    public boolean delete(Integer itemId);
+    boolean delete(Integer itemId);
 
     /**
      * 更新菜品
@@ -36,7 +36,7 @@ public interface ItemDao {
      * @param item 要更新的菜品
      * @return 是否更新成功
      */
-    public boolean update(Item item);
+    boolean update(Item item);
 
     /**
      * 查询菜品列表
@@ -51,8 +51,8 @@ public interface ItemDao {
      * @param asc           是否升序
      * @return 返回查询到的菜品列表
      */
-    public List<Item> query(String kw, Integer cuisineId, Integer canteenId, Boolean isRecommended,
-                            Integer page, Integer pageSize, String orderBy, Boolean asc);
+    List<Item> query(String kw, Integer cuisineId, Integer canteenId, Boolean isRecommended,
+                     Integer page, Integer pageSize, String orderBy, Boolean asc);
 
 
     /**
@@ -64,5 +64,5 @@ public interface ItemDao {
      * @param isRecommended 是否推荐
      * @return 返回查询到的菜品数量
      */
-    public Integer count(String kw, Integer cuisineId, Integer canteenId, Boolean isRecommended);
+    Integer count(String kw, Integer cuisineId, Integer canteenId, Boolean isRecommended);
 }

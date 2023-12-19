@@ -4,7 +4,6 @@ import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.dao.UserDao;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.util.LogUtils;
-import cn.vvbbnn00.canteen.util.SafetyUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
 
 import java.sql.Connection;
@@ -45,6 +44,22 @@ public class UserDaoImpl implements UserDao {
             LogUtils.severe(e.getMessage());
         }
         return null;
+    }
+
+
+    @Override
+    public boolean changeUserPoint(Integer id, Integer delta) {
+        try (Connection connection = Hikari.getConnection()) {
+            String sql = "UPDATE " + Hikari.getDbName() + ".`user` SET `point` = `point` + ? WHERE `user_id` = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, delta);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            LogUtils.severe(e.getMessage());
+        }
+        return false;
     }
 
     @Override

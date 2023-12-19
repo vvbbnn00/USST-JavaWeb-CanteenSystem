@@ -10,6 +10,7 @@ import java.util.Objects;
 
 public class VoteService {
     private final VoteDao voteDao = new VoteDaoImpl();
+    private final UserPointLogService userPointLogService = new UserPointLogService();
 
     /**
      * 发起一个投票
@@ -82,6 +83,13 @@ public class VoteService {
         }
     }
 
+    /**
+     * 更新投票选项
+     *
+     * @param voteOption 投票选项
+     * @param userId     用户id
+     * @return 是否成功
+     */
     public boolean updateVoteOption(VoteOption voteOption, Integer userId) {
         if (voteOption.getVoteOptionId() == null) {
             throw new RuntimeException("投票选项id不能为空");
@@ -123,6 +131,13 @@ public class VoteService {
         return true;
     }
 
+    /**
+     * 删除投票选项
+     *
+     * @param voteOption 投票选项
+     * @param userId     用户id
+     * @return 是否成功
+     */
     public boolean deleteVoteOption(VoteOption voteOption, Integer userId) {
         if (voteOption.getVoteOptionId() == null) {
             throw new RuntimeException("投票选项id不能为空");
@@ -156,10 +171,23 @@ public class VoteService {
         return true;
     }
 
+    /**
+     * 根据id查询投票选项
+     *
+     * @param id 投票选项id
+     * @return 投票选项
+     */
     public VoteOption queryVoteOptionById(Integer id) {
         return voteDao.queryVoteOptionById(id);
     }
 
+    /**
+     * 更新投票信息
+     *
+     * @param vote   投票
+     * @param userId 用户id
+     * @return 是否成功
+     */
     public boolean updateVote(Vote vote, Integer userId) {
         if (vote.getVoteId() == null) {
             throw new RuntimeException("投票id不能为空");
@@ -203,6 +231,13 @@ public class VoteService {
         return true;
     }
 
+    /**
+     * 删除投票
+     *
+     * @param vote   投票
+     * @param userId 用户id
+     * @return 是否成功
+     */
     public boolean deleteVote(Vote vote, Integer userId) {
         Vote oldVote = queryVoteById(vote.getVoteId());
         if (oldVote == null) {
@@ -223,6 +258,13 @@ public class VoteService {
         return true;
     }
 
+    /**
+     * 获取投票结果
+     *
+     * @param voteId 投票id
+     * @param userId 用户id
+     * @return 投票结果
+     */
     public List<VoteOptionInfo> getVoteOptionStat(Integer voteId, Integer userId) {
         Vote vote = queryVoteById(voteId);
         if (vote == null) {
@@ -238,6 +280,11 @@ public class VoteService {
         return voteDao.queryVoteResultStat(voteId);
     }
 
+    /**
+     * 创建投票结果
+     *
+     * @param voter 投票结果
+     */
     public void createVoteResult(Voter voter) {
         Vote vote = queryVoteById(voter.getVoteId());
         if (vote == null) {
@@ -260,8 +307,20 @@ public class VoteService {
         if (!success) {
             throw new RuntimeException("投票失败");
         }
+        userPointLogService.changeUserPoint(
+                voter.getUserId(),
+                3,
+                "参与投票" + vote.getVoteId()
+        );
     }
 
+    /**
+     * 获取投票结果
+     *
+     * @param voteId 投票id
+     * @param userId 用户id
+     * @return 投票结果
+     */
     public VoteOption getVoteResultByVoteId(Integer voteId, Integer userId) {
         return voteDao.queryVoteOptionById(voteDao.queryVoteResultByUserId(userId, voteId).getOptionId());
     }

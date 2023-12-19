@@ -10,7 +10,6 @@ import cn.vvbbnn00.canteen.service.CommentService;
 import cn.vvbbnn00.canteen.service.ItemService;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.persistence.Basic;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CanteenService {
     private static final CanteenDao canteenDao = new CanteenDaoImpl();
-    private CanteenAdminService canteenAdminService = new CanteenAdminService();
+    private static final CanteenAdminService canteenAdminService = new CanteenAdminService();
 
 
     /**
@@ -121,6 +121,11 @@ public class CanteenService {
         throw new RuntimeException("创建食堂失败");
     }
 
+    /**
+     * 删除食堂
+     *
+     * @param canteenId 食堂id
+     */
     public void deleteCanteen(Integer canteenId) {
         Canteen existCanteen = getCanteenById(canteenId);
         if (existCanteen == null) {

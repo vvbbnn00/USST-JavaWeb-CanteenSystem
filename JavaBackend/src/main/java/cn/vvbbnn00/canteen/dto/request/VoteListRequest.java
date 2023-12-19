@@ -1,6 +1,5 @@
 package cn.vvbbnn00.canteen.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

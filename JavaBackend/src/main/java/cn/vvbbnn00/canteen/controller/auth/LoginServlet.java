@@ -6,14 +6,12 @@ import cn.vvbbnn00.canteen.dto.response.UserLoginResponse;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.service.LoginService;
 import cn.vvbbnn00.canteen.util.GsonFactory;
-import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
 import cn.vvbbnn00.canteen.util.SafetyUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.ws.rs.core.SecurityContext;
 
 import java.io.IOException;
 

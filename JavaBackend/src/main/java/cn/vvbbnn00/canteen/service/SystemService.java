@@ -5,7 +5,10 @@ import cn.vvbbnn00.canteen.util.ConfigUtils;
 import cn.vvbbnn00.canteen.util.LogUtils;
 
 public class SystemService {
-    public void init(){
+    /**
+     * 初始化系统
+     */
+    public void init() {
         LogUtils.info("System init start...");
         UserService userService = new UserService();
         User user = userService.getUserByUsername(ConfigUtils.getEnv("ADMIN_USERNAME", "admin"));

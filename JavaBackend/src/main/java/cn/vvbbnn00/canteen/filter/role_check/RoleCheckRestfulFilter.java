@@ -10,7 +10,6 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.Context;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class RoleCheckRestfulFilter implements ContainerRequestFilter {
@@ -22,7 +21,7 @@ public class RoleCheckRestfulFilter implements ContainerRequestFilter {
     private HttpServletRequest request;
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext) {
         HttpSession session = request.getSession();
 
         // 获取资源类和方法
@@ -39,7 +38,6 @@ public class RoleCheckRestfulFilter implements ContainerRequestFilter {
                     return;
                 case 0:
                     requestContext.abortWith(GsonFactory.generateErrorResponse(403, "Forbidden"));
-                    return;
             }
         }
     }

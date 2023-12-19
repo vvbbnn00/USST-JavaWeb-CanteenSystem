@@ -3,7 +3,6 @@ package cn.vvbbnn00.canteen.dto.request;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.beans.JavaBean;
 

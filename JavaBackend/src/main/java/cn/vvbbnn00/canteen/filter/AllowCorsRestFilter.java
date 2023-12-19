@@ -4,7 +4,6 @@ import jakarta.ws.rs.container.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
-import java.io.IOException;
 
 @Provider
 @PreMatching
@@ -14,7 +13,7 @@ public class AllowCorsRestFilter implements ContainerRequestFilter, ContainerRes
      * Method for ContainerRequestFilter.
      */
     @Override
-    public void filter(ContainerRequestContext request) throws IOException {
+    public void filter(ContainerRequestContext request) {
 
         // If it's a preflight request, we abort the request with
         // a 200 status, and the CORS headers are added in the
@@ -40,11 +39,10 @@ public class AllowCorsRestFilter implements ContainerRequestFilter, ContainerRes
      * Method for ContainerResponseFilter.
      */
     @Override
-    public void filter(ContainerRequestContext request, ContainerResponseContext response)
-            throws IOException {
+    public void filter(ContainerRequestContext request, ContainerResponseContext response) {
 
         // if there is no Origin header, then it is not a
-        // cross origin request. We don't do anything.
+        // cross-origin request. We don't do anything.
         if (request.getHeaderString("Origin") == null) {
             return;
         }
@@ -62,7 +60,7 @@ public class AllowCorsRestFilter implements ContainerRequestFilter, ContainerRes
                     "X-Requested-With, Content-Type");
         }
 
-        // Cross origin requests can be either simple requests
+        // Cross-origin requests can be either simple requests
         // or preflight request. We need to add this header
         // to both type of requests. Only preflight requests
         // need the previously added headers.

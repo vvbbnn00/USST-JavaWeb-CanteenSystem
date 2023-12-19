@@ -11,7 +11,7 @@ public interface ComplaintDao {
      * @param complaint 投诉信息
      * @return 新投诉的完整信息
      */
-    public Complaint insert(Complaint complaint);
+    Complaint insert(Complaint complaint);
 
     /**
      * 更新投诉状态
@@ -20,7 +20,7 @@ public interface ComplaintDao {
      * @param status      投诉的新状态
      * @return 更新后的投诉信息
      */
-    public Complaint update(Integer complaintId, Complaint.Status status);
+    Complaint update(Integer complaintId, Complaint.Status status);
 
     /**
      * 通过id查询投诉
@@ -28,7 +28,7 @@ public interface ComplaintDao {
      * @param complaintId 投诉的id
      * @return 对应id的投诉信息
      */
-    public Complaint queryById(Integer complaintId);
+    Complaint queryById(Integer complaintId);
 
     /**
      * 查询投诉列表
@@ -43,7 +43,7 @@ public interface ComplaintDao {
      * @param pageSize  分页查询的每页数量
      * @return 投诉信息列表
      */
-    public List<Complaint> queryComplaintList(String kw, Integer userId, Integer canteenId,
+    List<Complaint> queryComplaintList(String kw, Integer userId, Integer canteenId,
                                               Complaint.Status status, String orderBy, Boolean asc,
                                               Integer page, Integer pageSize);
 
@@ -56,12 +56,12 @@ public interface ComplaintDao {
      * @param status    投诉的状态
      * @return 总投诉量
      */
-    public Integer countComplaintList(String kw, Integer userId, Integer canteenId,
+    Integer countComplaintList(String kw, Integer userId, Integer canteenId,
                                       Complaint.Status status);
 
     /**
      * 删除投诉
      * @param complaintId 投诉的id
      */
-    public void delete(Integer complaintId);
+    void delete(Integer complaintId);
 }

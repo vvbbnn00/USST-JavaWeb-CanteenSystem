@@ -275,6 +275,16 @@ public class ItemService {
     }
 
 
+    /**
+     * 评论菜品
+     *
+     * @param content  评论内容
+     * @param itemId   菜品ID
+     * @param userId   用户ID
+     * @param parentId 父评论ID
+     * @param score    评分
+     * @throws RuntimeException 当评论内容为空、菜品ID为空、用户ID为空、评分为空或者评论失败时，会抛出RuntimeException。
+     */
     public void commentItem(String content, Integer itemId, Integer userId, Integer parentId, BigDecimal score) {
         if (content == null || content.isEmpty()) {
             throw new RuntimeException("评论内容不能为空");

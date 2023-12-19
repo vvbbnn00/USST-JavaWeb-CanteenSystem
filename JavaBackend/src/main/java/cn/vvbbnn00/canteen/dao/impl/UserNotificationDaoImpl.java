@@ -3,7 +3,6 @@ package cn.vvbbnn00.canteen.dao.impl;
 
 import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.dao.UserNotificationDao;
-import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.model.UserNotification;
 import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
@@ -65,24 +64,6 @@ public class UserNotificationDaoImpl implements UserNotificationDao {
             LogUtils.severe(e.getMessage());
         }
         return null;
-    }
-
-    private static class ConditionAndParam {
-        List<String> conditions;
-        List<Object> params;
-
-        ConditionAndParam(Integer notificationId, Boolean isRead) {
-            conditions = new ArrayList<>();
-            params = new ArrayList<>();
-            if (notificationId != null) {
-                conditions.add("`notification_id` = ?");
-                params.add(notificationId);
-            }
-            if (isRead != null) {
-                conditions.add("`is_read` = ?");
-                params.add(isRead);
-            }
-        }
     }
 
 

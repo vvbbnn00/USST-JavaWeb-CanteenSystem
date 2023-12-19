@@ -78,4 +78,13 @@ public interface UserDao {
      */
     List<User> batchQueryUsers(List<Integer> userIds);
 
+
+    /**
+     * 修改用户积分
+     *
+     * @param id    用户id
+     * @param delta 变化量
+     * @return 是否成功
+     */
+    boolean changeUserPoint(Integer id, Integer delta);
 }

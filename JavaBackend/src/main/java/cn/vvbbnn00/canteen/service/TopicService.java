@@ -13,7 +13,14 @@ import java.util.List;
 public class TopicService {
     private static final TopicDao topicDao = new TopicDaoImpl();
     private static final ImageService imageService = new ImageService();
+    private static final UserPointLogService userPointLogService = new UserPointLogService();
 
+    /**
+     * 添加话题
+     *
+     * @param topic 话题
+     * @return 话题
+     */
     public Topic addTopic(Topic topic) {
         if (topic.getTitle() == null || topic.getTitle().isBlank()) {
             throw new RuntimeException("标题不能为空");
@@ -54,10 +61,18 @@ public class TopicService {
         }
         newTopic.setImageInfoList(imageInfoList);
 
+        userPointLogService.changeUserPoint(topic.getCreatedBy(), 5, "发布话题" + topic.getTopicId());
+
         return newTopic;
     }
 
 
+    /**
+     * 删除话题
+     *
+     * @param topicId 话题id
+     * @param userId  用户id
+     */
     public void deleteTopic(Integer topicId, Integer userId) {
         Topic topic = topicDao.queryTopicById(topicId, userId);
         if (topic == null) {
@@ -70,10 +85,20 @@ public class TopicService {
         if (!topic.getCreatedBy().equals(user.getUserId()) && !user.getRole().equals(User.Role.admin)) {
             throw new RuntimeException("只能删除自己的话题");
         }
+
+        userPointLogService.changeUserPoint(topic.getCreatedBy(), -5, "删除话题" + topic.getTopicId());
+
         topicDao.delete(topicId);
     }
 
 
+    /**
+     * 根据id获取话题
+     *
+     * @param topicId 话题id
+     * @param userId  用户id
+     * @return 话题
+     */
     public Topic getTopicById(Integer topicId, Integer userId) {
         Topic topic = topicDao.queryTopicById(topicId, userId);
         if (topic == null) {
@@ -93,6 +118,17 @@ public class TopicService {
     }
 
 
+    /**
+     * 获取话题列表
+     *
+     * @param userId      用户id
+     * @param page        页码
+     * @param pageSize    页大小
+     * @param orderBy     排序字段
+     * @param asc         是否升序
+     * @param queryUserId 查询用户id
+     * @return 话题列表
+     */
     public List<Topic> getTopicList(
             Integer userId, Integer page, Integer pageSize, String orderBy, Boolean asc,
             Integer queryUserId
@@ -113,6 +149,12 @@ public class TopicService {
     }
 
 
+    /**
+     * 获取话题列表数量
+     *
+     * @param userId 用户id
+     * @return 话题列表数量
+     */
     public Integer getTopicListCount(Integer userId) {
         return topicDao.count(userId);
     }

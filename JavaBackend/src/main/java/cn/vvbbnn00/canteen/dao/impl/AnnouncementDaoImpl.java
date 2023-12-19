@@ -3,7 +3,6 @@ package cn.vvbbnn00.canteen.dao.impl;
 import cn.vvbbnn00.canteen.dao.AnnouncementDao;
 import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.model.Announcement;
-import cn.vvbbnn00.canteen.model.Cuisine;
 import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
 

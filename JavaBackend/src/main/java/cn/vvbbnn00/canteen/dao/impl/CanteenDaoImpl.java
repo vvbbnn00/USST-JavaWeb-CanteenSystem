@@ -4,7 +4,6 @@ import cn.vvbbnn00.canteen.dao.CanteenDao;
 import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.model.Canteen;
 import cn.vvbbnn00.canteen.util.LogUtils;
-import cn.vvbbnn00.canteen.util.SafetyUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
 
 import java.sql.Connection;

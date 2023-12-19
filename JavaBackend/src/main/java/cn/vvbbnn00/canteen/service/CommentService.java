@@ -6,6 +6,7 @@ import cn.vvbbnn00.canteen.model.Comment;
 import cn.vvbbnn00.canteen.model.Complaint;
 import cn.vvbbnn00.canteen.model.Topic;
 import cn.vvbbnn00.canteen.model.User;
+import cn.vvbbnn00.canteen.util.TagUtils;
 
 import java.util.List;
 
@@ -16,7 +17,14 @@ public class CommentService {
     private static final TopicService topicService = new TopicService();
     private static final ComplaintService complaintService = new ComplaintService();
     private static final UserService userService = new UserService();
+    private static final UserPointLogService userPointLogService = new UserPointLogService();
+    private static final UserNotificationService userNotificationService = new UserNotificationService();
 
+    /**
+     * 检查评论是否合法
+     *
+     * @param comment 评论
+     */
     private void checkComment(Comment comment, Integer userId) {
         if (comment.getContent() == null || comment.getContent().isEmpty()) {
             throw new RuntimeException("评论内容不能为空");
@@ -34,11 +42,21 @@ public class CommentService {
                 if (comment.getScore() == null && comment.getParentId() == null) {
                     throw new RuntimeException("评分不能为空");
                 }
+                userPointLogService.changeUserPoint(userId, 3, "评论食堂" + referenceId);
                 break;
             case topic:
-                if (topicService.getTopicById(referenceId, userId) == null) {
+                Topic topic = topicService.getTopicById(referenceId, userId);
+                if (topic == null) {
                     throw new RuntimeException("话题不存在");
                 }
+                userPointLogService.changeUserPoint(userId, 3, "评论话题" + referenceId);
+                userNotificationService.addUserNotification(
+                        topic.getCreatedBy(),
+                        "用户" +
+                                TagUtils.generateTag(userService.getUserById(userId)) +
+                                "评论了你的话题" +
+                                TagUtils.generateTag(topic) +
+                                "。");
                 comment.setScore(null);
                 break;
             case complaint:
@@ -59,6 +77,7 @@ public class CommentService {
                 if (comment.getScore() == null) {
                     throw new RuntimeException("评分不能为空");
                 }
+                userPointLogService.changeUserPoint(userId, 3, "评论菜品" + referenceId);
                 break;
             default:
                 throw new RuntimeException("评论类型错误");
@@ -123,6 +142,9 @@ public class CommentService {
         if (!comment.getCreatedBy().equals(userId) && !user.getRole().equals(User.Role.admin)) {
             throw new RuntimeException("您没有权限删除该评论");
         }
+        if (comment.getType().equals(Comment.CommentType.complaint) && !user.getRole().equals(User.Role.admin)) {
+            throw new RuntimeException("投诉评论不能删除");
+        }
         try {
             boolean success = commentDao.delete(id);
             if (!success) {
@@ -131,6 +153,7 @@ public class CommentService {
         } catch (Exception e) {
             throw new RuntimeException("删除评论失败");
         }
+        userPointLogService.changeUserPoint(userId, -3, "删除评论" + id);
     }
 
     /**
@@ -176,24 +199,5 @@ public class CommentService {
                 referenceId,
                 parentId
         );
-    }
-
-
-    public void deleteComment(Integer referenceId) {
-        Comment comment = commentDao.queryCommentById(referenceId);
-        if (comment == null) {
-            throw new RuntimeException("评论不存在");
-        }
-        if (comment.getType().equals(Comment.CommentType.complaint)) {
-            throw new RuntimeException("投诉评论不能删除");
-        }
-        try {
-            boolean success = commentDao.delete(referenceId);
-            if (!success) {
-                throw new RuntimeException("删除评论失败");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("删除评论失败");
-        }
     }
 }

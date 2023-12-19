@@ -2,13 +2,11 @@ package cn.vvbbnn00.canteen.controller.rest;
 
 import cn.vvbbnn00.canteen.annotation.CheckRole;
 import cn.vvbbnn00.canteen.dto.request.AnnouncementListRequest;
-import cn.vvbbnn00.canteen.dto.request.UserIdRequest;
 import cn.vvbbnn00.canteen.dto.response.BasicDataResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicListResponse;
 import cn.vvbbnn00.canteen.dto.response.BasicResponse;
 import cn.vvbbnn00.canteen.model.Announcement;
 import cn.vvbbnn00.canteen.service.AnnouncementService;
-import cn.vvbbnn00.canteen.service.CanteenAdminService;
 import cn.vvbbnn00.canteen.util.RequestValidatorUtils;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.validation.constraints.Min;

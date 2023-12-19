@@ -12,6 +12,7 @@ public interface CuisineDao {
      * @return 是否成功
      */
     boolean insert(Cuisine cuisine);
+
     /**
      * 根据id查询菜品
      *
@@ -19,6 +20,7 @@ public interface CuisineDao {
      * @return 菜品
      */
     Cuisine queryCuisineById(Integer id);
+
     /**
      * 更新菜品信息
      *
@@ -26,6 +28,7 @@ public interface CuisineDao {
      * @return 是否成功
      */
     boolean update(Cuisine cuisine);
+
     /**
      * 根据id删除菜品
      *
@@ -33,20 +36,22 @@ public interface CuisineDao {
      * @return 是否成功
      */
     boolean delete(Integer id);
+
     /**
      * 查询菜品列表，参数为空可忽略这个条件
      *
-     * @param kw       关键词，模糊匹配菜品名称
-     * @param orderBy  排序字段，支持：id、name、createdAt、updatedAt
-     * @param asc      是否升序
+     * @param kw        关键词，模糊匹配菜品名称
+     * @param orderBy   排序字段，支持：id、name、createdAt、updatedAt
+     * @param asc       是否升序
      * @param canteenId 食堂id
      * @return 菜品列表
      */
     List<Cuisine> queryCuisines(Integer page, Integer pageSize, String kw, String orderBy, Boolean asc, Integer canteenId);
+
     /**
      * 查询菜品数量，参数为空可忽略这个条件
      *
-     * @param kw 关键词，模糊匹配菜品名称
+     * @param kw        关键词，模糊匹配菜品名称
      * @param canteenId 食堂id
      * @return 菜品数量
      */
