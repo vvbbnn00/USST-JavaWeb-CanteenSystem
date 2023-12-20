@@ -110,10 +110,11 @@ public class TopicDaoImpl implements TopicDao {
             sql += " LEFT JOIN user ON topic.created_by = user.user_id ";
             sql += SqlStatementUtils.generateWhereSql(conditionAndParam.conditions);
             if (orderBy != null) {
-                sql += " ORDER BY " + SqlStatementUtils.camelToSnakeQuote(orderBy);
+                sql += " ORDER BY ?";
                 if (asc != null && !asc) {
                     sql += " DESC";
                 }
+                conditionAndParam.params.add(SqlStatementUtils.camelToSnakeQuote(orderBy));
             }
             sql += " LIMIT ?, ?";
 

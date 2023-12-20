@@ -102,12 +102,13 @@ public class ComplaintDaoImpl implements ComplaintDao {
         ConditionAndParam conditionAndParam = new ConditionAndParam(kw, userId, canteenId, status);
         sql += SqlStatementUtils.generateWhereSql(conditionAndParam.conditions);
         if (orderBy != null && !orderBy.isEmpty()) {
-            sql += " ORDER BY " + SqlStatementUtils.camelToSnakeQuote(orderBy);
+            sql += " ORDER BY ?";
             if (Boolean.TRUE.equals(asc)) {
                 sql += " ASC";
             } else {
                 sql += " DESC";
             }
+            conditionAndParam.params.add(SqlStatementUtils.camelToSnakeQuote(orderBy));
         }
 
         if (page != null && pageSize != null) {
