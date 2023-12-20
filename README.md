@@ -38,6 +38,7 @@ USST JavaWeb大作业：上海理工大学食堂点评交流社区
 - nginx: Nginx配置文件
 - mariadb: 数据库文件映射目录（保留目录）
 - minio-autoscript: Minio自动文件处理脚本
+- audit-script: 评论审核、评分更新脚本
 
 ## 开发环境
 
@@ -50,4 +51,4 @@ USST JavaWeb大作业：上海理工大学食堂点评交流社区
 
 ## 文件存储服务
 
-文件存储服务使用基于`lua`脚本编写的`openresty-file-server`，代码见：[openresty-file-server](https://github.com/vvbbnn00/openresty-file-server)
+文件存储服务使用[MinIO](https://min.io/)
