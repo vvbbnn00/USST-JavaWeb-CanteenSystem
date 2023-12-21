@@ -15,7 +15,12 @@ const sessionStore = {
         if (value === null) {
             return null;
         }
-        return JSON.parse(value);
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            window.sessionStorage.removeItem(key);
+            return value;
+        }
     },
     set(key, value) {
         key = getKey(key);
@@ -55,7 +60,12 @@ const localStore = {
         if (value === null) {
             return null;
         }
-        return JSON.parse(value);
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            window.localStorage.removeItem(key);
+            return value;
+        }
     },
     set(key, value) {
         key = getKey(key);

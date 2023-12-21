@@ -22,7 +22,7 @@ export default function Home() {
             setUser(meUserData);
             return;
         }
-        fetch("/api/rest/user/me").then(userData => {
+        fetchApi("/api/rest/user/me").then(userData => {
             const {data} = userData;
             store.session.set("meUserData", data);
             setUser(data);

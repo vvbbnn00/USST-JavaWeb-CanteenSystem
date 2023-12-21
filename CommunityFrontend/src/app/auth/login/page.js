@@ -70,7 +70,9 @@ export default function Login() {
                             <Button color={"primary"} className={"w-full mb-3"} onClick={() => {
                                 setForm("login")
                             }}>登录</Button>
-                            <Button color={"primary"} className={"w-full"}>注册</Button>
+                            <Button color={"primary"} className={"w-full"} onClick={() => {
+                                setForm("register")
+                            }}>注册</Button>
                         </div>
                     </div>
                     <div
