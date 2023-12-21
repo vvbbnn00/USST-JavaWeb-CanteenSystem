@@ -6,4 +6,7 @@
     <error-page>
         <location>/error</location>
     </error-page>
+    <session-config>
+        <session-timeout>10080</session-timeout>
+    </session-config>
 </web-app>
