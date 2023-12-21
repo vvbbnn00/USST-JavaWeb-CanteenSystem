@@ -306,8 +306,6 @@ const handleComment = (row: any, showNonReply = false) => {
   commentVisible.value = true;
 };
 
-
-
 const createVisible = ref(false);
 const handleDelete = (row: any) => {
   console.log(row.canteenId)

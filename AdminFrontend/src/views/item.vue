@@ -16,6 +16,7 @@
         </el-select>
         <el-input v-model="query.kw" placeholder="关键词" class="handle-input mr10"></el-input>
         <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+        <el-button type="primary" :icon="Plus" @click="handleCreate">新增</el-button>
       </div>
       <el-table :data="itemData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="itemId" label="菜品Id" width="100px"></el-table-column>
@@ -43,6 +44,13 @@
             >
               {{ scope.row.recommended === true ? '推荐' : '非推荐' }}
             </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="菜品评论" width="150" align="center">
+          <template #default="scope">
+            <el-button class="el-icon-lx-calendar mb5" @click="handleComment(scope.row)">
+              查看评论
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="介绍" width="150" align="center">
@@ -118,14 +126,13 @@
         <el-form-item label="菜品Id" required prop="itemId" v-if="form.itemId">
           <el-input v-model="form.itemId" placeholder="请输入菜品ID" disabled></el-input>
         </el-form-item>
-
         <el-form-item label="所属菜系" required prop="cuisineId">
-          <el-select v-model="form.canteenId" placeholder="食堂名称" class="handle-select mr10" v-if="!form.cuisineId" clearable>
+          <el-select v-model="editCanteenId" placeholder="食堂名称" class="handle-select mr10" clearable>
             <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
                        :value="item.canteenId"></el-option>
           </el-select>
-          <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="cuisineList.length > 0">
-            <el-option v-for="item in cuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
+          <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="editCuisineList.length > 0">
+            <el-option v-for="item in editCuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="菜品名称" required prop="name">
@@ -172,6 +179,51 @@
 				</span>
       </template>
     </el-dialog>
+
+    <!-- 菜品评论 弹出框 -->
+    <el-dialog title="菜品评论" v-model="commentVisible">
+      <el-form label-width="400px">
+        <el-table :data="commentData" border class="table" ref="multipleTable">
+          <el-table-column prop="commentId" label="评论ID"></el-table-column>
+          <el-table-column prop="content" label="评论内容"></el-table-column>
+          <el-table-column prop="user.username" label="评论用户"></el-table-column>
+          <el-table-column prop="createdAt" label="评论时间" width="160px">
+            <template #default="scope">
+              <div>
+                {{ parseDateTime(scope.row.createdAt) }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200" align="center" fixed="right">
+            <template #default="scope">
+              <el-button v-if="isAdmin === 'admin'"
+                         text
+                         :icon="Delete"
+                         class="red"
+                         @click="handleCommentDelete(scope.row)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="不良评论标记" align="center">
+            <template #default="scope">
+              <el-tag
+                  :type="scope.row.flagged === true ? 'danger' : scope.row.flagged === false ? 'success' : ''"
+              >
+                {{ scope.row.flagged === true ? '不良' : '正常' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="commentVisible = false">返 回</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -186,8 +238,8 @@ import type {UploadProps} from 'element-plus'
 import {getUploadUrl} from "../api";
 import {getCuisineList} from "../api/cuisine";
 import {ajaxUpload} from "../api/upload";
-import {getCanteenList, getUserCanteen} from "../api/canteen";
-import {getItemList, deleteItem} from "../api/item";
+import {deleteCanteenComment, getCanteenCommentList, getCanteenList, getUserCanteen} from "../api/canteen";
+import {getItemList, deleteItem, createItem, updateItem, getItemComment} from "../api/item";
 
 const query = reactive({
   kw: '',
@@ -198,7 +250,6 @@ const query = reactive({
   pageSize: 15,
 });
 const isAdmin = localStorage.getItem('ms_role');
-const canteenSelect = ref(false);
 const canteenList = ref([]);
 
 watch(() => query.canteenId, (newCanteenId) => {
@@ -210,7 +261,6 @@ watch(() => query.canteenId, (newCanteenId) => {
     cuisineList.value = [];
   }
 });
-
 
 const getCanteen = () => {
   if (isAdmin === 'admin') {
@@ -249,6 +299,20 @@ const getCuisine = (canteenId: number) => {
   });
 };
 
+const editCanteenId = ref();
+const editCuisineList = ref([])
+const getEditCuisine = (canteenId : number) => {
+  // 这里根据传入的食堂ID来获取相关的菜系列表
+  getCuisineList({canteenId, currentPage: 1, pageSize: 100}).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+    editCuisineList.value = data?.list;
+  });
+};
+
 
 const formRef = ref();
 const picUploadUrl = ref('');
@@ -265,7 +329,6 @@ const validateForm = reactive({
   ],
   price: [
     { required: true, message: '请输入菜品价格', trigger: 'blur' },
-    { type: 'number', message: '菜品价格必须为数字值', trigger: 'blur' }
   ],
   recommended: [
     { required: true, message: '请选择是否推荐', trigger: 'change' }
@@ -283,8 +346,20 @@ let form = reactive({
   promotionPrice: undefined as unknown as number,
   introduction: '',
   recommended: false,
-  image: ''
+  fileKey: ''
 });
+
+watch(() => editCanteenId.value, () => {
+  if (editCanteenId.value) {
+    // 当选择了一个食堂时
+    getEditCuisine(editCanteenId.value); // 调用函数更新菜系列表
+  } else {
+    // 如果没有选择食堂，清空菜系列表
+    editCuisineList.value = [];
+  }
+});
+
+
 
 // 获取表格数据
 const getData = () => {
@@ -307,12 +382,6 @@ getData();
 // 查询操作
 const handleSearch = () => {
   getData();
-  // if (query.canteenId) {
-  //   canteenSelect.value = true;
-  //   getCuisine();
-  // } else {
-  //   canteenSelect.value = false;
-  // }
 };
 
 // 分页导航
@@ -326,6 +395,7 @@ let idx: number = -1;
 const handleState = async (index: number, row: any) => {
   idx = index;
   form = reactive(JSON.parse(JSON.stringify(row)));
+  console.log(form)
   const uploadResp = await getUploadUrl();
   if (uploadResp.data.code !== 200) {
     ElMessage.error(uploadResp.data.message);
@@ -378,14 +448,14 @@ const saveEdit = async () => {
       if (form.itemId) {
         await updateItem(form);
       } else {
-        await createItem(form);
+        await createItem(form, editCanteenId.value);
       }
 
-      ElMessage.success(`修改成功`);
+      ElMessage.success(`新增/修改成功`);
       getData();
       editVisible.value = false;
     } catch (e) {
-      ElMessage.error(`更新失败`);
+      ElMessage.error(`新增/修改失败`);
     }
   });
 };
@@ -409,14 +479,76 @@ const beforeUpload = (file: {
   return (isJPG || isPNG) && isLt2M;
 }
 
-
 const handleUploadSuccess: UploadProps['onSuccess'] = async (
     response,
     uploadFile
 ) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!);
-  form.image = uploadFileKey.value;
+  form.fileKey = uploadFileKey.value;
 }
+
+const handleCreate = () => {
+  clearForm();
+  editCanteenId.value = undefined;
+  imageUrl.value = '';
+  editVisible.value = true;
+};
+
+const clearForm = () => {
+  form = reactive({
+    itemId: undefined as unknown as number,
+    name: '',
+    canteenId: undefined as unknown as number,
+    cuisineId: undefined as unknown as number,
+    price: undefined as unknown as number,
+    promotionPrice: undefined as unknown as number,
+    introduction: '',
+    recommended: false,
+    fileKey: ''
+  });
+}
+
+const commentData = ref([]);
+const chooseItemId = ref(0);
+const getCommentData = async () => {
+  try {
+    const response = await getItemComment(chooseItemId.value);
+    let data = response.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+
+    commentData.value = data?.list;
+  } catch (error) {
+    console.error("获取数据错误:", error);
+    ElMessage.error("获取数据错误");
+  }
+};
+const commentVisible = ref(false);
+const handleComment = (row: any) => {
+  chooseItemId.value = row.itemId;
+  getCommentData();
+  commentVisible.value = true;
+};
+
+const handleCommentDelete = (row: any) => {
+  // 二次确认删除
+  ElMessageBox.confirm('确定要删除评论吗？', '提示', {
+    type: 'warning'
+  })
+      .then(async () => {
+        try {
+          await deleteCanteenComment(chooseItemId.value, row.commentId)
+          ElMessage.success(`删除评论成功`);
+          await getCommentData();
+        } catch (e) {
+          ElMessage.error(`删除评论失败`);
+        }
+      })
+      .catch(() => {
+      });
+};
 
 </script>
 
