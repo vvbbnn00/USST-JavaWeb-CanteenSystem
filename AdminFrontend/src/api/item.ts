@@ -9,3 +9,9 @@ export const getItemList = (query: any) => {
     });
 };
 
+export const deleteItem = (itemId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/item/${itemId}`,
+        method: 'DELETE'
+    });
+}

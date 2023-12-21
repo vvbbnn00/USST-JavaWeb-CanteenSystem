@@ -6,7 +6,7 @@
           <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
                      :value="item.canteenId"></el-option>
         </el-select>
-        <el-select v-model="query.cuisineId" placeholder="菜系名称" class="handle-select mr10" v-if="canteenSelect" clearable>
+        <el-select v-model="query.cuisineId" placeholder="菜系名称" class="handle-select mr10" v-if="cuisineList.length > 0" clearable>
           <el-option v-for="item in cuisineList" :key="item.cuisineId" :label="item.name"
                      :value="item.cuisineId"></el-option>
         </el-select>
@@ -25,9 +25,9 @@
           <template #default="scope">
             <el-image
                 class="Pic"
-                :src="scope.row.image.originalUrl"
+                :src="scope.row.image.x256Url"
                 :z-index="10"
-                :preview-src-list="[scope.row.x128Url]"
+                :preview-src-list="[scope.row.image.originalUrl]"
                 preview-teleported
             >
             </el-image>
@@ -115,38 +115,29 @@
     <!-- 编辑弹出框 -->
     <el-dialog title="编辑" v-model="editVisible">
       <el-form label-width="120px" :model="form" :rules="validateForm" ref="formRef">
-        <el-form-item label="用户ID" required prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户ID" disabled></el-input>
+        <el-form-item label="菜品Id" required prop="itemId" v-if="form.itemId">
+          <el-input v-model="form.itemId" placeholder="请输入菜品ID" disabled></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email" disabled></el-input>
+
+        <el-form-item label="所属菜系" required prop="cuisineId">
+          <el-select v-model="form.canteenId" placeholder="食堂名称" class="handle-select mr10" v-if="!form.cuisineId" clearable>
+            <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
+                       :value="item.canteenId"></el-option>
+          </el-select>
+          <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="cuisineList.length > 0">
+            <el-option v-for="item in cuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="用户名" required prop="username">
-          <el-input v-model="form.username"></el-input>
+        <el-form-item label="菜品名称" required prop="name">
+          <el-input v-model="form.name" placeholder="请输入菜品名字"></el-input>
         </el-form-item>
-        <el-form-item label="用户权限" required prop="role">
-          <el-radio-group v-model="form.role">
-            <el-radio-button label="user">用户</el-radio-button>
-            <el-radio-button label="canteen_admin">食堂管理员</el-radio-button>
-            <el-radio-button label="admin">管理员</el-radio-button>
-          </el-radio-group>
+        <el-form-item label="菜品价格" required prop="price">
+          <el-input v-model="form.price" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="重置密码" prop="password">
-          <el-input v-model="form.password" placeholder="请输入新密码" show-password type="password"></el-input>
+        <el-form-item label="菜品推荐价格">
+          <el-input v-model="form.promotionPrice" required prop="promotionPrice" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="用户可用状态" required prop="available">
-          <el-radio-group v-model="form.available">
-            <el-radio-button label=true>可用</el-radio-button>
-            <el-radio-button label=false>不可用</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="用户认证状态" required prop="available">
-          <el-radio-group v-model="form.isVerified">
-            <el-radio-button label=true>已认证</el-radio-button>
-            <el-radio-button label=false>未认证</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="用户头像">
+        <el-form-item label="菜品图片">
           <el-upload
               class="avatar-uploader"
               :action="picUploadUrl"
@@ -159,6 +150,19 @@
             <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="upload"/>
             <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
+        </el-form-item>
+        <el-form-item label="菜品介绍">
+          <el-input type="textarea" v-model="form.introduction" placeholder="请输入菜品介绍" rows="5"
+                    maxlength="250"></el-input>
+          <div>
+            介绍最多 250 字符
+          </div>
+        </el-form-item>
+        <el-form-item label="是否推荐" required prop="recommended">
+          <el-radio-group v-model="form.recommended">
+            <el-radio-button label=true>推荐</el-radio-button>
+            <el-radio-button label=false>不推荐</el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -174,7 +178,7 @@
 <script setup lang="ts">
 
 
-import {ref, reactive} from 'vue';
+import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
 import {parseDateTime} from "../utils/string";
@@ -183,7 +187,7 @@ import {getUploadUrl} from "../api";
 import {getCuisineList} from "../api/cuisine";
 import {ajaxUpload} from "../api/upload";
 import {getCanteenList, getUserCanteen} from "../api/canteen";
-import {getItemList} from "../api/item";
+import {getItemList, deleteItem} from "../api/item";
 
 const query = reactive({
   kw: '',
@@ -196,6 +200,18 @@ const query = reactive({
 const isAdmin = localStorage.getItem('ms_role');
 const canteenSelect = ref(false);
 const canteenList = ref([]);
+
+watch(() => query.canteenId, (newCanteenId) => {
+  if (newCanteenId) {
+    // 当选择了一个食堂时
+    getCuisine(newCanteenId); // 调用函数更新菜系列表
+  } else {
+    // 如果没有选择食堂，清空菜系列表
+    cuisineList.value = [];
+  }
+});
+
+
 const getCanteen = () => {
   if (isAdmin === 'admin') {
     getCanteenList({currentPage:1,pageSize:100}).then(res => {
@@ -221,8 +237,9 @@ const getCanteen = () => {
 getCanteen();
 
 const cuisineList = ref([]);
-const getCuisine = () => {
-  getCuisineList({canteenId:query.canteenId,currentPage:1,pageSize:100}).then(res => {
+const getCuisine = (canteenId: number) => {
+  // 这里根据传入的食堂ID来获取相关的菜系列表
+  getCuisineList({canteenId, currentPage: 1, pageSize: 100}).then(res => {
     let data = res.data;
     if (data.code !== 200) {
       ElMessage.error(data.message);
@@ -232,26 +249,41 @@ const getCuisine = () => {
   });
 };
 
+
 const formRef = ref();
 const picUploadUrl = ref('');
 const uploadFileKey = ref('');
 const imageUrl = ref('');
 
 const validateForm = reactive({
-
+  itemId: [
+    { required: true, message: '请输入菜品ID', trigger: 'blur' },
+  ],
+  name: [
+    { required: true, message: '请输入菜品名称', trigger: 'blur' },
+    { min: 2, max: 30, message: '菜品名称长度在 2 到 30 个字符', trigger: 'blur' }
+  ],
+  price: [
+    { required: true, message: '请输入菜品价格', trigger: 'blur' },
+    { type: 'number', message: '菜品价格必须为数字值', trigger: 'blur' }
+  ],
+  recommended: [
+    { required: true, message: '请选择是否推荐', trigger: 'change' }
+  ]
 });
 
 const itemData = ref([]);
 const pageTotal = ref(0);
 let form = reactive({
-  userId: undefined as unknown as number,
-  username: '',
-  role: '',
-  available: null as boolean | null,
-  password: '',
-  email: '',
-  isVerified: null as boolean | null,
-  avatar: ''
+  itemId: undefined as unknown as number,
+  name: '',
+  canteenId: undefined as unknown as number,
+  cuisineId: undefined as unknown as number,
+  price: undefined as unknown as number,
+  promotionPrice: undefined as unknown as number,
+  introduction: '',
+  recommended: false,
+  image: ''
 });
 
 // 获取表格数据
@@ -275,12 +307,12 @@ getData();
 // 查询操作
 const handleSearch = () => {
   getData();
-  if (query.canteenId) {
-    canteenSelect.value = true;
-    getCuisine();
-  } else {
-    canteenSelect.value = false;
-  }
+  // if (query.canteenId) {
+  //   canteenSelect.value = true;
+  //   getCuisine();
+  // } else {
+  //   canteenSelect.value = false;
+  // }
 };
 
 // 分页导航
@@ -302,7 +334,7 @@ const handleState = async (index: number, row: any) => {
 
   picUploadUrl.value = uploadResp.data.url;
   uploadFileKey.value = uploadResp.data?.fileKey;
-  imageUrl.value = '';
+  imageUrl.value = row.image.originalUrl || '';
   editVisible.value = true;
 };
 
@@ -323,7 +355,7 @@ const handleDelete = (row: any) => {
   })
       .then(async () => {
         try {
-          await deleteUser(row.userId);
+          await deleteItem(row.itemId);
           ElMessage.success(`删除成功`);
           getData();
         } catch (e) {
@@ -343,11 +375,12 @@ const saveEdit = async () => {
       return false;
     }
     try {
-      const result = await updateUser(form);
-      if (result.data.code !== 200) {
-        ElMessage.error(result.data.message);
-        return;
+      if (form.itemId) {
+        await updateItem(form);
+      } else {
+        await createItem(form);
       }
+
       ElMessage.success(`修改成功`);
       getData();
       editVisible.value = false;
@@ -382,7 +415,7 @@ const handleUploadSuccess: UploadProps['onSuccess'] = async (
     uploadFile
 ) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!);
-  form.avatar = uploadFileKey.value;
+  form.image = uploadFileKey.value;
 }
 
 </script>
