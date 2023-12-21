@@ -11,10 +11,15 @@ const sessionStore = {
         if (typeof window === "undefined") {
             return null;
         }
-        return window.sessionStorage.getItem(key);
+        const value = window.sessionStorage.getItem(key);
+        if (value === null) {
+            return null;
+        }
+        return JSON.parse(value);
     },
     set(key, value) {
         key = getKey(key);
+        value = JSON.stringify(value);
         if (typeof window === "undefined") {
             return null;
         }
@@ -31,7 +36,12 @@ const sessionStore = {
         if (typeof window === "undefined") {
             return null;
         }
-        return window.sessionStorage.clear();
+        for (let i = 0; i < window.sessionStorage.length; i++) {
+            const key = window.sessionStorage.key(i);
+            if (key.startsWith(KEY_PREFIX)) {
+                window.sessionStorage.removeItem(key);
+            }
+        }
     }
 }
 
@@ -41,10 +51,15 @@ const localStore = {
         if (typeof window === "undefined") {
             return null;
         }
-        return window.localStorage.getItem(key);
+        const value = window.localStorage.getItem(key);
+        if (value === null) {
+            return null;
+        }
+        return JSON.parse(value);
     },
     set(key, value) {
         key = getKey(key);
+        value = JSON.stringify(value);
         if (typeof window === "undefined") {
             return null;
         }
@@ -61,7 +76,12 @@ const localStore = {
         if (typeof window === "undefined") {
             return null;
         }
-        return window.localStorage.clear();
+        for (let i = 0; i < window.localStorage.length; i++) {
+            const key = window.localStorage.key(i);
+            if (key.startsWith(KEY_PREFIX)) {
+                window.localStorage.removeItem(key);
+            }
+        }
     }
 }
 
