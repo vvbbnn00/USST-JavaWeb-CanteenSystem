@@ -1,14 +1,14 @@
-import {Avatar, Button, Textarea} from "@nextui-org/react";
+import {Image, Button, Textarea} from "@nextui-org/react";
 import {CameraIcon} from "@/components/icons/CameraIcon";
 
 export default function PublishForm({user}) {
     return (
         <div className={"bg-white rounded-md p-5 w-full shadow-xl"}>
             <div className={"flex flex-row"}>
-                <div className={"pr-2 pt-2"}>
-                    <Avatar src={user?.avatar} size={"lg"} className={"mb-5"}/>
+                <div className={"mr-2 mt-2 rounded-full overflow-hidden h-[56px] w-[56px] bg-gray-100"}>
+                    <Image src={user?.avatar} width={"56px"} height={"56px"} className={"rounded-full"}/>
                 </div>
-                <div className={"w-full"}>
+                <div className={"grow"}>
                     <div className={"mb-3"}>
                         <Textarea
                             className={"w-full"}

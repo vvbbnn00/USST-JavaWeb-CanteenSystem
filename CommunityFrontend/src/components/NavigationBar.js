@@ -6,9 +6,8 @@ import {
     DropdownTrigger, Navbar,
     NavbarBrand,
     NavbarContent,
-    NavbarItem, Progress
+    NavbarItem, Progress, Image
 } from "@nextui-org/react";
-import Image from "next/image";
 import Link from "next/link";
 import {fetchApiWithAuth} from "@/utils/api";
 import {useEffect, useState} from "react";
@@ -59,8 +58,8 @@ export default function NavigationBar() {
         <div className={"text-red-500 bg-red-100 bg-red-500"}></div>
         <NavbarBrand className={"pointer-events-none select-none"}>
             <Image src={"/logo.png"} alt={"食堂点评交流社区"} width={48} height={48}
-                   className={"rounded-xl mr-2.5"}/>
-            <p className="font-bold text-inherit">食堂点评交流社区</p>
+                   className={"rounded-xl"} loading={"lazy"}/>
+            <p className="pl-2 font-bold text-inherit">食堂点评交流社区</p>
         </NavbarBrand>
 
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -97,13 +96,17 @@ export default function NavigationBar() {
             </NavbarItem>
             <Dropdown placement="bottom-end">
                 <DropdownTrigger>
-                    <Avatar
-                        as="button"
-                        className="transition-transform"
-                        name={user?.username}
-                        size="md"
-                        src={user?.avatar}
-                    />
+                    <div className={"w-[40px] h-[40px] rounded-full overflow-hidden bg-gray-200"}>
+                        <Image
+                            className="transition-transform rounded-full cursor-pointer"
+                            alt={user?.username}
+                            src={user?.avatar}
+                            width={40}
+                            height={40}
+                            style={{transform: "rotate(0deg)"}}
+                            loading={"lazy"}
+                        />
+                    </div>
                 </DropdownTrigger>
                 <DropdownMenu
                     aria-label="Profile Actions"

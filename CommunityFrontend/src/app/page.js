@@ -1,6 +1,6 @@
 "use client"
-import NavigationBar from "@/components/navbar";
-import {Avatar, Button, Chip, Image, Skeleton, Textarea, User} from "@nextui-org/react";
+import NavigationBar from "@/components/NavigationBar";
+import {Avatar, Button, Chip, Skeleton, Textarea, User} from "@nextui-org/react";
 import store from "@/utils/store";
 import {useEffect, useState} from "react";
 import PublishForm from "@/components/community/PublishForm";
@@ -51,12 +51,12 @@ export default function Home() {
         <>
             <NavigationBar/>
             <main className={"max-w-screen-lg mx-auto"}>
-                <div className="flex justify-center p-5 flex-row gap-5">
-                    <div className={"flex flex-col items-center w-2/3"}>
+                <div className="flex justify-center p-5 flex-row gap-5 flex-wrap">
+                    <div className={"flex flex-col items-center lg:w-2/3 w-full"}>
                         <PublishForm user={user}/>
                         <div className={"bg-white mt-5 w-full rounded shadow-xl pb-5"}>
-                            <div className={"p-5 font-bold text-lg text-gray-700 pb-0"}>
-                                热门话题
+                            <div className={"p-5 font-bold text-lg text-gray-700 pb-5 border-b border-gray-200"}>
+                                社区话题
                             </div>
                             {
                                 !hotTopic ?
@@ -70,12 +70,13 @@ export default function Home() {
                                             <Skeleton className="h-3 w-4/5 rounded-lg"/>
                                         </div>
                                     </div> :
-
-                                    <div className={"flex flex-row"}>
+                                    <div className={"flex flex-row hover:bg-gray-50 cursor-pointer transition-background pb-3"}>
                                         <div className={"p-5 w-fit flex items-start justify-center"}>
-                                            <Avatar src={hotTopic?.user?.avatar} size={"lg"}/>
+                                            <Link href={"/user/" + hotTopic?.user?.userId}>
+                                                <Avatar src={hotTopic?.user?.avatar} size={"lg"}/>
+                                            </Link>
                                         </div>
-                                        <div className={"flex-col pt-5 pr-5"}>
+                                        <div className={"flex-col pt-5 pr-5 grow"}>
                                             <div className={"text-gray-500 text-base font-normal"}>
                                                 <Chip color="warning" variant={"flat"}>热门</Chip>
                                                 <span
@@ -105,13 +106,13 @@ export default function Home() {
                                                 hotTopic?.imageInfoList?.length > 0 &&
                                                 <div className={"pt-2 pb-3"}>
                                                     <ImageLayout
-                                                        imageInfoList={hotTopic?.imageInfoList}/>
+                                                        imageInfoList={[...hotTopic?.imageInfoList]}/>
                                                 </div>
                                             }
                                             <div className={"flex flex-row items-center gap-5"}>
                                                 <div
                                                     className={"text-gray-500 flex items-center gap-2 hover:bg-gray-100 rounded-full p-2 cursor-pointer transition-all active:bg-gray-200"}>
-                                                    <CommentIcon/> {hotTopic?.commentCount}
+                                                    <CommentIcon/> <span className={"select-none"}>{hotTopic?.commentCount}</span>
                                                 </div>
                                                 <div
                                                     className={
@@ -120,7 +121,7 @@ export default function Home() {
                                                     }
                                                 >
                                                     {hotTopic?.isLiked ? <LikeFilledIcon/> :
-                                                        <LikeFilledIcon/>} {hotTopic?.likeCount}
+                                                        <LikeFilledIcon/>} <span className={"select-none"}>{hotTopic?.likeCount}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -128,7 +129,7 @@ export default function Home() {
                             }
                         </div>
                     </div>
-                    <div className={"w-1/3"}>
+                    <div className={"grow"}>
                         <div className={"bg-white rounded p-5 font-bold text-lg text-gray-700"}>
                             最新食堂排名
                         </div>

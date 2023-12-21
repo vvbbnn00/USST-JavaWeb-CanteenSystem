@@ -1,5 +1,6 @@
 import './globals.css'
 import {Providers} from "./providers";
+import StyledComponentsRegistry from "@/lib/AntdRegistry";
 
 export const metadata = {
     title: '食堂点评交流社区',
@@ -11,7 +12,9 @@ export default function RootLayout({children}) {
         <html lang="zh" className='light'>
         <body>
         <Providers>
-            {children}
+            <StyledComponentsRegistry>
+                {children}
+            </StyledComponentsRegistry>
         </Providers>
         </body>
         </html>
