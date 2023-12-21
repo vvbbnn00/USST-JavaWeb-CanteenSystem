@@ -84,6 +84,10 @@ const items: {
       {
         index: '/cuisine',
         title: '菜系管理',
+      },
+      {
+        index: '/item',
+        title: '菜品管理',
       }
     ],
   },

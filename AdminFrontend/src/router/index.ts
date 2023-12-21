@@ -56,6 +56,15 @@ const routes: RouteRecordRaw[] = [
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/comment.vue'),
+            },
+            {
+                path: '/item',
+                name: 'item',
+                meta: {
+                    title: '菜品管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/item.vue'),
             }
         ],
     },
