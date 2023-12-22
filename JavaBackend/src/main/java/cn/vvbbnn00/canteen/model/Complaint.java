@@ -37,4 +37,5 @@ public class Complaint implements Serializable {
     private List<String> imageList;
     private List<Comment> comments;
     private List<ImageInfoResponse> imageInfoList;
+    private Canteen canteen;
 }
