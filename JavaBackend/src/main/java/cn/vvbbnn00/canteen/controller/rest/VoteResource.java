@@ -75,7 +75,7 @@ public class VoteResource {
         return response;
     }
 
-    @GET
+    @POST
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
