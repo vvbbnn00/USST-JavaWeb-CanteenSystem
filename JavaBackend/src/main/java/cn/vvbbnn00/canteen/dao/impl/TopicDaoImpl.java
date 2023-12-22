@@ -127,7 +127,7 @@ public class TopicDaoImpl implements TopicDao {
             ps.setInt(i++, (page - 1) * pageSize);
             ps.setInt(i, pageSize);
 
-             LogUtils.info(ps.toString());
+            // LogUtils.info(ps.toString());
 
             ResultSet rs = ps.executeQuery();
             List<Topic> topics = new ArrayList<>();

@@ -2,6 +2,7 @@ package cn.vvbbnn00.canteen.dao.impl;
 
 import cn.vvbbnn00.canteen.dao.ComplaintDao;
 import cn.vvbbnn00.canteen.dao.Hikari;
+import cn.vvbbnn00.canteen.model.Canteen;
 import cn.vvbbnn00.canteen.model.Complaint;
 import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
@@ -96,9 +97,13 @@ public class ComplaintDaoImpl implements ComplaintDao {
                                               Complaint.Status status, String orderBy, Boolean asc,
                                               Integer page, Integer pageSize) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Complaint.class, new String[]{
-                "complaintId", "createdBy", "title", "(LEFT(content,50)) as content", "status", "createdAt", "updatedAt",
-                "canteenId"
+                "complaintId",
+                "(complaint.canteen_id) as canteen_id", "createdBy", "title", "(LEFT(content,50)) as content", "status",
+                "(complaint.created_at) as created_at",
+                "(complaint.updated_at) as updated_at",
+                "(canteen.name) as canteenName"
         });
+        sql += " LEFT JOIN canteen ON complaint.canteen_id = canteen.canteen_id";
         ConditionAndParam conditionAndParam = new ConditionAndParam(kw, userId, canteenId, status);
         sql += SqlStatementUtils.generateWhereSql(conditionAndParam.conditions);
         if (orderBy != null && !orderBy.isEmpty()) {
@@ -125,7 +130,12 @@ public class ComplaintDaoImpl implements ComplaintDao {
             ResultSet rs = ps.executeQuery();
             List<Complaint> complaints = new ArrayList<>();
             while (rs.next()) {
-                complaints.add((Complaint) SqlStatementUtils.makeEntityFromResult(rs, Complaint.class));
+                Complaint complaint = (Complaint) SqlStatementUtils.makeEntityFromResult(rs, Complaint.class);
+                Canteen canteen = new Canteen();
+                canteen.setName(rs.getString("canteenName"));
+                canteen.setCanteenId(rs.getInt("canteen_id"));
+                complaint.setCanteen(canteen);
+                complaints.add(complaint);
             }
             return complaints;
         } catch (Exception e) {
