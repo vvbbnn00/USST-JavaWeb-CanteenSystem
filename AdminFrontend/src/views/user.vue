@@ -33,7 +33,7 @@
             </el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="权限">
+        <el-table-column prop="role" label="权限" width="100px">
           <template #default="scope">
             <el-tag
                 :type="scope.row.role === 'admin' ? 'primary' : scope.row.role === 'canteen_admin' ? 'success' : ''"
@@ -42,10 +42,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱地址"></el-table-column>
+        <el-table-column prop="email" label="邮箱地址" width="120px"></el-table-column>
         <el-table-column prop="level" label="等级" width="60px"></el-table-column>
         <el-table-column prop="point" label="评分" width="60px"></el-table-column>
-        <el-table-column prop="name" label="用户昵称"></el-table-column>
+        <el-table-column prop="name" label="用户昵称" width="100px"></el-table-column>
         <el-table-column prop="createdAt" label="注册时间" width="160px">
           <template #default="scope">
             <div>
