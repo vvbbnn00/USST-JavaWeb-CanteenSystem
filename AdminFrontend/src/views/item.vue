@@ -243,7 +243,7 @@ import {getUploadUrl} from "../api";
 import {getCuisineList} from "../api/cuisine";
 import {ajaxUpload} from "../api/upload";
 import {deleteCanteenComment, getCanteenCommentList, getCanteenList, getUserCanteen} from "../api/canteen";
-import {getItemList, deleteItem, createItem, updateItem, getItemComment} from "../api/item";
+import {getItemList, deleteItem, createItem, updateItem, getItemComment, deleteItemComment} from "../api/item";
 
 const query = reactive({
   kw: '',
@@ -543,7 +543,7 @@ const handleCommentDelete = (row: any) => {
   })
       .then(async () => {
         try {
-          await deleteCanteenComment(chooseItemId.value, row.commentId)
+          await deleteItemComment(chooseItemId.value, row.commentId)
           ElMessage.success(`删除评论成功`);
           await getCommentData();
         } catch (e) {
