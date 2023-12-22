@@ -1,6 +1,6 @@
 "use client";
 import NavigationBar from "@/components/NavigationBar";
-import {ArrowLeftOutlined, ExclamationCircleFilled, MoreOutlined} from "@ant-design/icons";
+import {ExclamationCircleFilled, MoreOutlined} from "@ant-design/icons";
 import {useRouter} from "next/navigation";
 import {
     Dropdown,
@@ -118,9 +118,11 @@ export default function TopicDetailPage({params}) {
                             {data?.content}
                         </pre>
                     </div>
-                    <div className={"pl-5 pr-5 pb-5"}>
-                        <ImageLayout imageInfoList={data?.imageInfoList}/>
-                    </div>
+                    {(data?.imageInfoList && data?.imageInfoList.length > 0) &&
+                        <div className={"pl-5 pr-5 pb-5"}>
+                            <ImageLayout imageInfoList={data?.imageInfoList}/>
+                        </div>
+                    }
                     <BottomToolbox data={data}/>
                     <CommentPanel topicId={params?.topicId}/>
                 </div>}

@@ -11,9 +11,12 @@
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.1",
     "@ant-design/icons": "^5.2.6",
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@nextui-org/react": "^2.2.9",
     "antd": "^5.12.4",
     "dompurify": "^3.0.6",
+    "emoji-mart": "^5.5.2",
     "framer-motion": "^10.16.16",
     "js-sha256": "^0.10.1",
     "next": "14.0.4",

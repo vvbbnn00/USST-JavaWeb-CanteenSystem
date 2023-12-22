@@ -9,6 +9,7 @@ import {formatDateTimeFromNow} from "@/utils/string";
 import {message, Modal} from "antd";
 import {useFormStatus} from "react-dom";
 import {DeleteOutlined, ExclamationCircleFilled} from "@ant-design/icons";
+import EmojiButton from "@/components/common/EmojiButton";
 
 const {confirm} = Modal;
 
@@ -59,6 +60,7 @@ export default function CommentPanel({topicId}) {
                 content: '回复成功'
             });
             textareaRef.current.reset();
+            setContent("");
             setRefresh(refresh + 1);
         }).catch(e => {
             messageApi.open({
@@ -101,6 +103,22 @@ export default function CommentPanel({topicId}) {
         });
     };
 
+    const contentRef = useRef();
+    const [content, setContent] = useState("");
+
+    const inputEmoji = (emoji) => {
+        if (!emoji) return;
+        const content = contentRef.current;
+        if (!content) return;
+        const start = content.selectionStart;
+        const end = content.selectionEnd;
+        setContent(content.value.substring(0, start) + emoji + content.value.substring(end));
+        content.focus();
+        content.selectionStart = start + emoji.length;
+        content.selectionEnd = start + emoji.length;
+    }
+
+
     return <div>
         {contextHolder}
         <div className={"flex pl-5 pr-5"}>
@@ -112,8 +130,18 @@ export default function CommentPanel({topicId}) {
             </div>
             <div className={"flex-grow p-5"}>
                 <form action={doCommentTopic} ref={textareaRef}>
-                    <Textarea className={"w-full"} placeholder={"发布你的回复"} name={"content"}/>
-                    <div className={"text-right"}>
+                    <Textarea className={"w-full"}
+                              placeholder={"发布你的回复"}
+                              name={"content"}
+                              value={content}
+                              onChange={(e) => {
+                                  setContent(e.target.value);
+                              }}
+                              isRequired={true}
+                              ref={contentRef}
+                    />
+                    <div className={"flex items-center justify-between"}>
+                        <EmojiButton inputEmoji={inputEmoji}/>
                         <SubmitButton/>
                     </div>
                 </form>

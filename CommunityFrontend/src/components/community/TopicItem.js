@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import {Avatar, Chip} from "@nextui-org/react";
 import {formatDateTimeFromNow} from "@/utils/string";

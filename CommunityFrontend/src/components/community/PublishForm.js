@@ -1,11 +1,15 @@
-import {Image, Button, Textarea, Input} from "@nextui-org/react";
+"use client";
+import {Image, Button, Textarea, Input, Popover, PopoverTrigger, PopoverContent} from "@nextui-org/react";
 import {CameraIcon} from "@/components/icons/CameraIcon";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {CloseOutlined} from "@ant-design/icons";
 import {message} from 'antd';
 import {fetchApiWithAuth} from "@/utils/api";
 import {useFormStatus} from "react-dom";
 import {useRouter} from 'next/navigation'
+import {EmojiIcon} from "@/components/icons/EmojiIcon";
+import EmojiPicker from "@/components/common/EmojiPicker";
+import EmojiButton from "@/components/common/EmojiButton";
 
 const selectFile = (maxFileCount) => {
     const SUPPORT_FILE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
@@ -49,6 +53,20 @@ export default function PublishForm({user}) {
     const [messageApi, contextHolder] = message.useMessage();
     const [tmpFiles, setTmpFiles] = useState([]);
     const router = useRouter();
+    const contentRef = useRef(null);
+    const [content, setContent] = useState("");
+
+    const inputEmoji = (emoji) => {
+        if (!emoji) return;
+        const content = contentRef.current;
+        if (!content) return;
+        const start = content.selectionStart;
+        const end = content.selectionEnd;
+        setContent(content.value.substring(0, start) + emoji + content.value.substring(end));
+        content.focus();
+        content.selectionStart = start + emoji.length;
+        content.selectionEnd = start + emoji.length;
+    }
 
     const batchUpload = async (uploadFiles) => {
         try {
@@ -136,7 +154,7 @@ export default function PublishForm({user}) {
         <div className={"bg-white rounded-md p-5 w-full shadow-xl"}>
             {contextHolder}
             <div className={"flex flex-row"}>
-                <div className={"mr-2 mt-2 rounded-full overflow-hidden h-[56px] w-[56px] bg-gray-100"}>
+                <div className={"mr-5 mt-2 rounded-full overflow-hidden h-[56px] w-[56px] bg-gray-100"}>
                     <Image src={user?.avatar} width={"56px"} height={"56px"} className={"rounded-full"}/>
                 </div>
                 <div className={"grow"}>
@@ -154,14 +172,23 @@ export default function PublishForm({user}) {
                                 className={"w-full"}
                                 placeholder={"有什么新鲜事想告诉大家？"}
                                 isRequired={true}
+                                ref={contentRef}
+                                onChange={(e) => {
+                                    setContent(e.target.value);
+                                }}
+                                value={content}
                             />
                         </div>
                         <div className={"flex flex-row justify-between pl-1 pr-1"}>
-                            <div
-                                className={"hover:bg-blue-100 rounded-full p-2 text-blue-700 cursor-pointer transition-all"}
-                                onClick={addFiles}
-                            >
-                                <CameraIcon/>
+                            <div className={"flex gap-1"}>
+                                <EmojiButton inputEmoji={inputEmoji}/>
+
+                                <div
+                                    className={"hover:bg-blue-100 rounded-full p-2 text-blue-700 cursor-pointer transition-all"}
+                                    onClick={addFiles}
+                                >
+                                    <CameraIcon/>
+                                </div>
                             </div>
                             <div>
                                 <SubmitButton/>
