@@ -48,6 +48,9 @@ export default function ImageLayout({imageInfoList}) {
                         className={"object-cover"}
                         width={"100%"}
                         height={sliceCount === 1 ? 384 : 200}
+                        preview={{
+                            src: image?.originalUrl,
+                        }}
                     />
                 </div>
             ))}

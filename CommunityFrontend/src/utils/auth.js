@@ -58,7 +58,19 @@ export const register = async (username, password, email) => {
         sign: sign
     }
 
-    console.log(data);
+    try {
+        const result = await fetchApi("/auth/register", {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
+        const userData = result.data;
+        store.local.set("userData", userData);
+        location.href = "/";
+
+        return result;
+    } catch (e) {
+        return {error: e.message || "注册失败"}
+    }
 }
 
 

@@ -1,11 +1,12 @@
 export const formatDateTime = (date) => {
-    const year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+    const dateObj = new Date(date);
+    const year = dateObj.getFullYear();
+    let month = dateObj.getMonth() + 1;
+    let day = dateObj.getDate();
 
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
+    let hour = dateObj.getHours();
+    let minute = dateObj.getMinutes();
+    let second = dateObj.getSeconds();
 
     if (month < 10) month = "0" + month;
     if (day < 10) day = "0" + day;
@@ -23,7 +24,7 @@ export const formatDateTimeFromNow = (date) => {
     date = new Date(date);
     const diff = now.getTime() - date.getTime();
 
-    if (diff > 24 * 3600 * 1000) {
+    if (diff > 24 * 3600 * 1000 * 30) {
         return formatDateTime(date);
     }
     if (diff < 0) {
