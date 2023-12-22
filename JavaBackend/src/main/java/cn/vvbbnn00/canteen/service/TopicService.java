@@ -53,7 +53,8 @@ public class TopicService {
         List<ImageInfoResponse> imageInfoList = new ArrayList<>();
         for (String fileKey : fileKeyList) {
             if (!imageService.ifImageExist(fileKey)) {
-                continue;
+                topicDao.delete(newTopic.getTopicId());
+                throw new RuntimeException("图片仍在转码中，请稍后再试");
             }
             Image image = new Image();
             image.setFileId(fileKey);
