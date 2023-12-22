@@ -1,14 +1,13 @@
 "use client"
 import NavigationBar from "@/components/NavigationBar";
-import {Button, Skeleton} from "@nextui-org/react";
-import store from "@/utils/store";
+import {Button} from "@nextui-org/react";
 import {useEffect, useState} from "react";
 import PublishForm from "@/components/community/PublishForm";
-import {fetchApi} from "@/utils/api";
 import CanteenRankList from "@/components/canteen/CanteenRankList";
 import {ClockCircleFilled, FireFilled} from "@ant-design/icons";
 import TopicList from "@/components/community/TopicList";
 import LatestVote from "@/components/vote/LatestVote";
+import {getMe} from "@/utils/auth";
 
 
 export default function Home() {
@@ -17,15 +16,8 @@ export default function Home() {
 
 
     useEffect(() => {
-        const meUserData = store.session.get("meUserData");
-        if (meUserData) {
-            setUser(meUserData);
-            return;
-        }
-        fetchApi("/api/rest/user/me").then(userData => {
-            const {data} = userData;
-            store.session.set("meUserData", data);
-            setUser(data);
+        getMe().then(userData => {
+            setUser(userData);
         });
     }, []);
 

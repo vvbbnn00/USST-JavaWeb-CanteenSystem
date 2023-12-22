@@ -14,7 +14,7 @@ import {useEffect, useState} from "react";
 import store from "@/utils/store";
 import {calcLevelAndProgress, calcLevelColor} from "@/utils/level";
 import {usePathname} from 'next/navigation'
-import {logout} from "@/utils/auth";
+import {getMe, logout} from "@/utils/auth";
 import useSWR from "swr";
 import {NotificationIcon} from "@/components/icons/NotificationIcon";
 
@@ -26,15 +26,8 @@ export default function NavigationBar() {
     const {data: notification} = useSWR("/api/rest/user/notification/unread/count", fetchApiWithAuth);
 
     useEffect(() => {
-        const meUserData = store.session.get("meUserData");
-        if (meUserData) {
-            setUser(meUserData);
-            return;
-        }
-        fetchApiWithAuth("/api/rest/user/me").then(userData => {
-            const {data} = userData;
-            store.session.set("meUserData", data);
-            setUser(data);
+        getMe().then(userData => {
+            setUser(userData);
         });
     }, []);
 

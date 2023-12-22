@@ -3,7 +3,7 @@
 import TopicItem from "@/components/community/TopicItem";
 import {Button} from "@nextui-org/react";
 import useSWRInfinite from "swr/infinite";
-import {fetchApi} from "@/utils/api";
+import {fetchApi, fetchApiWithAuth} from "@/utils/api";
 import {useEffect} from "react";
 
 const getKey = (pageIndex, previousPageData, sort) => {
@@ -29,7 +29,7 @@ export default function TopicList({sort}) {
         setSize: setTopicSize
     } = useSWRInfinite(
         (pageIndex, previousPageData) => getKey(pageIndex, previousPageData, sort),
-        (args) => fetchApi(...args),
+        (args) => fetchApiWithAuth(...args),
         {
             revalidateAll: true
         }

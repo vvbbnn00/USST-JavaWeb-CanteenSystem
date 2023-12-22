@@ -4,7 +4,7 @@ import Link from "next/link";
 import {Rate} from "antd";
 import {EnvironmentFilled} from "@ant-design/icons";
 import useSWR from "swr";
-import {fetchApi} from "@/utils/api";
+import {fetchApiWithAuth} from "@/utils/api";
 
 export default function CanteenRankList() {
     const {data: canteenList, error: canteenError, isLoading: isCanteenListLoading} = useSWR(
@@ -17,7 +17,7 @@ export default function CanteenRankList() {
                 asc: false
             })
         }],
-        (args) => fetchApi(...args)
+        (args) => fetchApiWithAuth(...args)
     )
     return (
         <div className={"bg-white rounded shadow-xl h-fit"}>

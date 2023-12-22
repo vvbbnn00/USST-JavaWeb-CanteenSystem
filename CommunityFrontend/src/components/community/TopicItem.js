@@ -5,17 +5,18 @@ import ImageLayout from "@/components/community/ImageLayout";
 import {CommentIcon} from "@/components/icons/CommentIcon";
 import {LikeFilledIcon} from "@/components/icons/LikeFilledIcon";
 import {LikeIcon} from "@/components/icons/LikeIcon";
-import {fetchApi} from "@/utils/api";
+import {fetchApiWithAuth} from "@/utils/api";
 import {message} from "antd";
+import {useRouter} from "next/navigation";
 
 export default function TopicItem({topic, isHot = false, topicPage = 0, onLikeChange}) {
     const [messageApi, contextHolder] = message.useMessage();
+    const router = useRouter();
 
     const toggleLike = () => {
         const likeStatus = topic?.isLiked;
-        console.log(likeStatus);
         const requestMethod = likeStatus ? "DELETE" : "POST";
-        fetchApi(`/api/rest/topic/${topic?.topicId}/like`, {
+        fetchApiWithAuth(`/api/rest/topic/${topic?.topicId}/like`, {
             method: requestMethod
         }).catch(e => {
             messageApi.open({
@@ -30,7 +31,7 @@ export default function TopicItem({topic, isHot = false, topicPage = 0, onLikeCh
     }
 
     return <div
-        className={"flex flex-row hover:bg-gray-50 cursor-pointer transition-background pb-3"}>
+        className={"flex flex-row hover:bg-gray-50 transition-background pb-3"}>
         {contextHolder}
         <div className={"p-5 w-fit flex items-start justify-center"}>
             <Link href={"/user/" + topic?.user?.userId}>
@@ -53,7 +54,9 @@ export default function TopicItem({topic, isHot = false, topicPage = 0, onLikeCh
                                         </span>
             </div>
             <div className={"text-gray-700 text-base pt-1 line-clamp-5"}>
-                {topic?.content}
+                <pre className={"font-sans"}>
+                    {topic?.content}
+                </pre>
             </div>
             <div className={"pt-2"}>
                 <Link href={"/topic/" + topic?.topicId}>
@@ -72,9 +75,15 @@ export default function TopicItem({topic, isHot = false, topicPage = 0, onLikeCh
             }
             <div className={"flex flex-row items-center gap-5"}>
                 <div
-                    className={"text-gray-500 flex items-center gap-2 hover:bg-gray-100 rounded-full p-2 cursor-pointer transition-all active:bg-gray-200"}>
-                    <CommentIcon/> <span
-                    className={"select-none"}>{topic?.commentCount}</span>
+                    className={"text-gray-500 flex items-center gap-2 hover:bg-gray-100 rounded-full p-2 cursor-pointer transition-all active:bg-gray-200"}
+                    onClick={() => {
+                        router.push("/topic/" + topic?.topicId);
+                    }}
+                >
+                    <CommentIcon/>
+                    <span className={"select-none"}>
+                        {topic?.commentCount}
+                    </span>
                 </div>
                 <div
                     className={

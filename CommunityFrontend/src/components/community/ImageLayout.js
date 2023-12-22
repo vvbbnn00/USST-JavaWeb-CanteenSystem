@@ -2,7 +2,7 @@
 import {Image} from "antd"
 import {useEffect, useRef, useState} from "react";
 
-export default function ImageLayout({imageInfoList}) {
+export default function ImageLayout({imageInfoList, maxSlice = 4}) {
     if (!imageInfoList) {
         return <></>;
     }
@@ -30,8 +30,26 @@ export default function ImageLayout({imageInfoList}) {
             case 2:
                 tmpContainerClass = "grid grid-cols-2 gap-1.5";
                 break;
-            default:
+            case 3:
+                tmpContainerClass = "grid grid-cols-3 gap-1.5";
+                break;
+            case 4:
                 tmpContainerClass = "grid grid-cols-2 grid-rows-2 gap-1.5";
+                break;
+            case 5:
+                tmpContainerClass = "grid grid-cols-3 grid-rows-2 gap-1.5";
+                break;
+            case 6:
+                tmpContainerClass = "grid grid-cols-3 grid-rows-2 gap-1.5";
+                break;
+            case 7:
+                tmpContainerClass = "grid grid-cols-3 grid-rows-3 gap-1.5";
+                break;
+            case 8:
+                tmpContainerClass = "grid grid-cols-3 grid-rows-3 gap-1.5";
+                break;
+            default:
+                tmpContainerClass = "grid grid-cols-3 grid-rows-3 gap-1.5";
                 break;
         }
         setContainerClass(tmpContainerClass);
@@ -39,15 +57,15 @@ export default function ImageLayout({imageInfoList}) {
 
     return <div className={"rounded-md overflow-hidden"}>
         <div className={containerClass}>
-            {imageInfoList?.slice(0, sliceCount).map((image, index) => (
+            {imageInfoList?.slice(0, maxSlice).map((image, index) => (
                 <div key={index}
-                     className={`relative ${sliceCount === 3 && index === 0 ? 'col-span-2' : ''} ${sliceCount === 1 ? 'h-auto max-h-[384px]' : 'h-[200px]'}`}>
+                     className={`relative max-h-[500px] ${sliceCount === 1 ? 'h-auto max-h-[384px]' : 'h-auto'}`}>
                     <Image
                         src={image?.x384Url}
                         alt={image.name}
-                        className={"object-cover"}
-                        width={"100%"}
-                        height={sliceCount === 1 ? 384 : 200}
+                        width={sliceCount === 1 ? 'auto' : '100%'}
+                        className={sliceCount === 1 ? 'object-contain' : 'object-cover'}
+                        height={sliceCount === 1 ? 'auto' : '100%'}
                         preview={{
                             src: image?.originalUrl,
                         }}

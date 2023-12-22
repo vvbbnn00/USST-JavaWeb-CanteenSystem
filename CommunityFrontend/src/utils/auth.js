@@ -1,5 +1,5 @@
 "use client";
-import {fetchApi} from "@/utils/api";
+import {fetchApi, fetchApiWithAuth} from "@/utils/api";
 import {sha256} from 'js-sha256'
 import store from "@/utils/store";
 
@@ -81,4 +81,18 @@ export const logout = async () => {
     store.local.clear();
     store.session.clear();
     location.href = "/auth/login";
+}
+
+
+
+export const getMe = async () => {
+    const meUserData = store.session.get("meUserData");
+    if (meUserData) {
+        return meUserData;
+    }
+    return fetchApiWithAuth("/api/rest/user/me").then(userData => {
+        const {data} = userData;
+        store.session.set("meUserData", data);
+        return data;
+    });
 }

@@ -16,6 +16,7 @@
     "framer-motion": "^10.16.16",
     "js-sha256": "^0.10.1",
     "next": "14.0.4",
+    "next-nprogress-bar": "^2.1.2",
     "react": "^18",
     "react-dom": "^18",
     "swr": "^2.2.4"
