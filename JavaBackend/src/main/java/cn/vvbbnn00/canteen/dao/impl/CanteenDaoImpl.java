@@ -101,11 +101,10 @@ public class CanteenDaoImpl implements CanteenDao {
         sql += SqlStatementUtils.generateWhereSql(conditions);
 
         if (orderBy != null) {
-            sql += " ORDER BY ?";
+            sql += " ORDER BY " + SqlStatementUtils.camelToSnakeQuote(orderBy);
             if (asc != null && !asc) {
                 sql += " DESC";
             }
-            params.add(SqlStatementUtils.camelToSnakeQuote(orderBy));
         }
 
         if (page != null && pageSize != null) {

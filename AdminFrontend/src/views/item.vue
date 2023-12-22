@@ -134,7 +134,11 @@
           <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="editCuisineList.length > 0">
             <el-option v-for="item in editCuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
           </el-select>
+          <div v-if="form.itemId" class="tips">
+            不需要更改菜系不做选择
+          </div>
         </el-form-item>
+
         <el-form-item label="菜品名称" required prop="name">
           <el-input v-model="form.name" placeholder="请输入菜品名字"></el-input>
         </el-form-item>
@@ -239,7 +243,7 @@ import {getUploadUrl} from "../api";
 import {getCuisineList} from "../api/cuisine";
 import {ajaxUpload} from "../api/upload";
 import {deleteCanteenComment, getCanteenCommentList, getCanteenList, getUserCanteen} from "../api/canteen";
-import {getItemList, deleteItem, createItem, updateItem, getItemComment} from "../api/item";
+import {getItemList, deleteItem, createItem, updateItem, getItemComment, deleteItemComment} from "../api/item";
 
 const query = reactive({
   kw: '',
@@ -539,7 +543,7 @@ const handleCommentDelete = (row: any) => {
   })
       .then(async () => {
         try {
-          await deleteCanteenComment(chooseItemId.value, row.commentId)
+          await deleteItemComment(chooseItemId.value, row.commentId)
           ElMessage.success(`删除评论成功`);
           await getCommentData();
         } catch (e) {
@@ -612,5 +616,9 @@ const handleCommentDelete = (row: any) => {
   width: 180px;
   height: 180px;
   text-align: center;
+}
+
+.tips {
+  margin-left: 10px;
 }
 </style>
