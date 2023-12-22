@@ -110,11 +110,10 @@ public class TopicDaoImpl implements TopicDao {
             sql += " LEFT JOIN user ON topic.created_by = user.user_id ";
             sql += SqlStatementUtils.generateWhereSql(conditionAndParam.conditions);
             if (orderBy != null) {
-                sql += " ORDER BY ?";
+                sql += " ORDER BY " + SqlStatementUtils.camelToSnakeQuote(orderBy);
                 if (asc != null && !asc) {
                     sql += " DESC";
                 }
-                conditionAndParam.params.add(SqlStatementUtils.camelToSnakeQuote(orderBy));
             }
             sql += " LIMIT ?, ?";
 
@@ -128,7 +127,7 @@ public class TopicDaoImpl implements TopicDao {
             ps.setInt(i++, (page - 1) * pageSize);
             ps.setInt(i, pageSize);
 
-            // LogUtils.info(ps.toString());
+             LogUtils.info(ps.toString());
 
             ResultSet rs = ps.executeQuery();
             List<Topic> topics = new ArrayList<>();
