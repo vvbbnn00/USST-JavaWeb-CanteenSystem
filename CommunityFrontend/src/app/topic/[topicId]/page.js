@@ -17,7 +17,8 @@ import ImageLayout from "@/components/community/ImageLayout";
 import BottomToolbox from "@/app/topic/[topicId]/BottomToolbox";
 import CommentPanel from "@/app/topic/[topicId]/CommentPanel";
 import UserInfo from "@/app/topic/[topicId]/UserInfo";
-import {Modal} from "antd";
+import {Empty, Modal} from "antd";
+import BackButton from "@/components/common/BackButton";
 
 const {confirm} = Modal;
 
@@ -60,14 +61,20 @@ export default function TopicDetailPage({params}) {
         <NavigationBar/>
         <main className={"flex justify-center min-h-[100vh]"}>
             <div className={"w-full lg:w-[768px] bg-white m-5 rounded-md shadow-xl overflow-hidden"}>
-                <div className={"flex flex-col"}>
+                {error && <div>
                     <div className={"flex flex-row items-center"}>
-                        <div
-                            className={"rounded-full w-10 h-10 m-5 items-center justify-center flex text-lg hover:bg-gray-100 active:bg-gray-200 transition-background cursor-pointer"}
-                            onClick={() => router.back()}
-                        >
-                            <ArrowLeftOutlined/>
+                        <BackButton/>
+                        <div className={"flex-grow"}>
+                            <h1 className={"text-lg font-bold truncate line-clamp-1 w-fit"}>
+                                出错了
+                            </h1>
                         </div>
+                    </div>
+                    <Empty description={error?.message || "加载失败"} className={"mt-5"}/>
+                </div>}
+                {!error && <div className={"flex flex-col"}>
+                    <div className={"flex flex-row items-center"}>
+                        <BackButton/>
                         <div className={"flex-grow"}>
                             {isLoading && <Skeleton className={"h-10 w-3/5 rounded-lg"}/>}
                             <h1 className={"text-lg font-bold truncate line-clamp-1 w-fit"}>
@@ -77,7 +84,7 @@ export default function TopicDetailPage({params}) {
                     </div>
                     <div className={"flex justify-between"}>
                         <div className={"pl-5"}>
-                            <UserInfo user={data?.user} isLoading={isLoading} dateTime={data?.createdAt} />
+                            <UserInfo user={data?.user} isLoading={isLoading} dateTime={data?.createdAt}/>
                         </div>
                         <div className={"pr-5"}>
                             {data?.user && <Dropdown>
@@ -115,9 +122,8 @@ export default function TopicDetailPage({params}) {
                         <ImageLayout imageInfoList={data?.imageInfoList}/>
                     </div>
                     <BottomToolbox data={data}/>
-                </div>
-
-                <CommentPanel topicId={params?.topicId}/>
+                    <CommentPanel topicId={params?.topicId}/>
+                </div>}
             </div>
         </main>
     </>

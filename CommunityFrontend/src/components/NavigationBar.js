@@ -137,13 +137,13 @@ export default function NavigationBar() {
                         </div>
                     </DropdownItem>
 
-                    {(!user?.isVerified) && <DropdownItem key="verify" color={"primary"}>
+                    {(!user?.isVerified) && <DropdownItem key="verify" color={"primary"} as={Link} href={"/user/verify"}>
                         <span className={"text-blue-500 font-bold"}>🪪 认证账户，提升等级</span>
                     </DropdownItem>}
-                    <DropdownItem key="settings">用户信息</DropdownItem>
+                    <DropdownItem key="profile">用户信息</DropdownItem>
                     <DropdownItem key="change_password">修改密码</DropdownItem>
-                    <DropdownItem key="analytics">通知中心</DropdownItem>
-                    <DropdownItem key="system">短消息</DropdownItem>
+                    <DropdownItem key="notification" as={Link} href={"/user/notification"}>通知中心</DropdownItem>
+                    <DropdownItem key="message">短消息</DropdownItem>
                     <DropdownItem key="logout" color="danger" className={"text-red-500"} onClick={doLogout}>
                         退出登录
                     </DropdownItem>

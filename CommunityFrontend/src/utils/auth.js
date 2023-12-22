@@ -86,6 +86,11 @@ export const logout = async () => {
 
 
 export const getMe = async () => {
+    const lastTimeGetMe = store.session.get("lastTimeGetMe");
+    if (!lastTimeGetMe || Date.now() - lastTimeGetMe > 1000 * 60) {
+        store.session.set("lastTimeGetMe", Date.now());
+        store.session.set("meUserData", null);
+    }
     const meUserData = store.session.get("meUserData");
     if (meUserData) {
         return meUserData;
