@@ -59,8 +59,8 @@ export default function TopicDetailPage({params}) {
 
     return <>
         <NavigationBar/>
-        <main className={"flex justify-center min-h-[100vh]"}>
-            <div className={"w-full lg:w-[768px] bg-white m-5 rounded-md shadow-xl overflow-hidden"}>
+        <main className={"flex justify-center"}>
+            <div className={"w-full lg:w-[768px] bg-white m-5 rounded-md shadow-xl overflow-hidden pb-10"}>
                 {error && <div>
                     <div className={"flex flex-row items-center"}>
                         <BackButton/>

@@ -126,6 +126,7 @@ export default function CommentPanel({topicId}) {
                 <Avatar
                     src={user?.avatar}
                     size={"lg"}
+                    className={"pointer-events-none select-none"}
                 />
             </div>
             <div className={"flex-grow p-5"}>
