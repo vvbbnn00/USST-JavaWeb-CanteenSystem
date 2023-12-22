@@ -108,8 +108,8 @@ const items: {
     index: '3',
     subs: [
       {
-        index: '/comment',
-        title: '评论管理',
+        index: '/complaint',
+        title: '投诉管理',
       },
       {
         index: '/community',
