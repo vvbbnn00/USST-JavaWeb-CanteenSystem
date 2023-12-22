@@ -1,15 +1,13 @@
 "use client";
-import {Image, Button, Textarea, Input, Popover, PopoverTrigger, PopoverContent} from "@nextui-org/react";
-import {CameraIcon} from "@/components/icons/CameraIcon";
+import {Image, Button, Textarea, Input} from "@nextui-org/react";
 import {useRef, useState} from "react";
 import {CloseOutlined} from "@ant-design/icons";
 import {message} from 'antd';
 import {fetchApiWithAuth} from "@/utils/api";
 import {useFormStatus} from "react-dom";
 import {useRouter} from 'next/navigation'
-import {EmojiIcon} from "@/components/icons/EmojiIcon";
-import EmojiPicker from "@/components/common/EmojiPicker";
 import EmojiButton from "@/components/common/EmojiButton";
+import {ImageIcon} from "@/components/icons/ImageIcon";
 
 const selectFile = (maxFileCount) => {
     const SUPPORT_FILE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
@@ -187,7 +185,7 @@ export default function PublishForm({user}) {
                                     className={"hover:bg-blue-100 rounded-full p-2 text-blue-700 cursor-pointer transition-all"}
                                     onClick={addFiles}
                                 >
-                                    <CameraIcon/>
+                                    <ImageIcon/>
                                 </div>
                             </div>
                             <div>
