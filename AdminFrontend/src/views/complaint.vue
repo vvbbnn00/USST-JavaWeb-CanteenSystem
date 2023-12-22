@@ -12,6 +12,7 @@
       </div>
       <el-table :data="complaintData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="complaintId" label="投诉信息ID"></el-table-column>
+        <el-table-column prop="canteen.name" label="所属食堂"></el-table-column>
         <el-table-column label="投诉处理状态" align="center">
           <template #default="scope">
             <el-tag
@@ -25,13 +26,6 @@
           <template #default="scope">
             <el-button class="el-icon-lx-skinfill" @click="handleInfo(scope.$index, scope.row)">
               查看详情
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="投诉详情" align="center">
-          <template #default="scope">
-            <el-button class="el-icon-lx-skinfill" @click="handleInfo(scope.$index, scope.row)">
-              投诉详情
             </el-button>
           </template>
         </el-table-column>
@@ -128,6 +122,7 @@ import {Edit, Search, Check} from '@element-plus/icons-vue';
 import {parseDateTime} from "../utils/string";
 import {complaintReply, getComplaintList, shutComplaint} from "../api/complain";
 import {MdPreview} from "md-editor-v3";
+import {getUserCanteen} from "../api/canteen";
 
 const query = reactive({
   kw: '',
@@ -136,6 +131,22 @@ const query = reactive({
   pageSize: 10
 });
 
+const canteenData = ref([]);
+const isAdmin = localStorage.getItem('ms_role');
+if (isAdmin !== 'admin') {
+  getUserCanteen().then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+    canteenData.value = data?.data;
+    pageTotal.value = data?.data?.length;
+    query.currentPage = data?.currentPage || 1;
+    query.pageSize = data?.pageSize;
+  });
+  getUserCanteen();
+}
 
 const validateForm = reactive({
   content: [
@@ -155,11 +166,22 @@ const getData = () => {
       ElMessage.error(data.message);
       return;
     }
-    console.log(data)
-    complaintData.value = data?.list;
-    pageTotal.value = data?.total || 0;
-    query.currentPage = data?.currentPage || 1;
-    query.pageSize = data?.pageSize;
+    if (isAdmin !== 'admin') {
+      const complaintList = data?.list || [];
+      const filteredComplaints = complaintList.filter(complaint => {
+        return canteenData.value.some(item => item.canteenId === complaint.canteenId);
+      });
+
+      complaintData.value = filteredComplaints;
+      pageTotal.value = filteredComplaints.length;
+      query.currentPage = data?.currentPage || 1;
+      query.pageSize = data?.pageSize;
+    } else {
+      complaintData.value = data?.list;
+      pageTotal.value = data?.total || 0;
+      query.currentPage = data?.currentPage || 1;
+      query.pageSize = data?.pageSize;
+    }
   });
 };
 getData();
@@ -184,7 +206,6 @@ const handleInfo = (index: number, row: any) => {
   console.log(complaintText.value)
   complaintInfoVisible.value = true;
 };
-
 
 
 const handleCheck = (row: any) => {
