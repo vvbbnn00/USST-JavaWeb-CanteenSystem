@@ -47,6 +47,7 @@ const SubmitButton = () => {
 export default function PublishForm({user}) {
     const [files, setFiles] = useState([]);
     const [messageApi, contextHolder] = message.useMessage();
+    const [tmpFiles, setTmpFiles] = useState([]);
     const router = useRouter();
 
     const batchUpload = async (uploadFiles) => {
@@ -70,7 +71,7 @@ export default function PublishForm({user}) {
     const doPublish = async (formData) => {
         const title = formData.get("title");
         const content = formData.get("content");
-        let images = [];
+        let images = tmpFiles;
 
         if (!title || !content) {
             messageApi.open({
@@ -80,7 +81,7 @@ export default function PublishForm({user}) {
             return {};
         }
 
-        if (files.length > 0) {
+        if (files.length > 0 && tmpFiles.length === 0) {
             images = await batchUpload(files);
             if (!images) {
                 messageApi.open({
@@ -89,6 +90,7 @@ export default function PublishForm({user}) {
                 });
                 return {}
             }
+            setTmpFiles(images);
         }
 
         try {
@@ -103,7 +105,7 @@ export default function PublishForm({user}) {
                 content: '发布成功',
                 duration: 2
             });
-            console.log(result)
+            setTmpFiles([]);
             router.push(`/topic/${result?.data?.topicId}`);
         } catch (err) {
             messageApi.open({
