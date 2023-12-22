@@ -6,14 +6,17 @@ import cn.vvbbnn00.canteen.dto.response.ImageInfoResponse;
 import cn.vvbbnn00.canteen.model.Image;
 import cn.vvbbnn00.canteen.model.Topic;
 import cn.vvbbnn00.canteen.model.User;
+import cn.vvbbnn00.canteen.util.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TopicService {
     private static final TopicDao topicDao = new TopicDaoImpl();
     private static final ImageService imageService = new ImageService();
     private static final UserPointLogService userPointLogService = new UserPointLogService();
+    private static final UserService userService = new UserService();
 
     /**
      * 添加话题
@@ -106,6 +109,9 @@ public class TopicService {
         }
         List<String> imageList = topic.getImages();
         List<ImageInfoResponse> imageInfoList = new ArrayList<>();
+        User user = userService.getUserById(topic.getCreatedBy());
+        topic.setUser(user);
+
         if (imageList == null || imageList.isEmpty()) {
             topic.setImageInfoList(imageInfoList);
             return topic;

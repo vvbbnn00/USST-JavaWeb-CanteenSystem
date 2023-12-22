@@ -98,6 +98,8 @@ public class CommentDaoImpl implements CommentDao {
                 "(comment.created_at) as created_at", "(comment.updated_at) as updated_at",
                 "(user.`user_id`) AS `user.userId`", "(user.`username`) AS `user.username`",
                 "(user.`email`) AS `user.email`",
+                "(user.`level`) AS `user.level`",
+                "(user.`is_verified`) AS `user.isVerified`",
         });
         sql += " LEFT JOIN " + Hikari.getDbName() + ".`user` ON `comment`.`created_by` = `user`.`user_id`";
 
@@ -134,6 +136,8 @@ public class CommentDaoImpl implements CommentDao {
                 user.setUserId(rs.getInt("user.userId"));
                 user.setUsername(rs.getString("user.username"));
                 user.setEmail(rs.getString("user.email"));
+                user.setLevel(rs.getInt("user.level"));
+                user.setIsVerified(rs.getBoolean("user.isVerified"));
                 comment.setUser(user);
                 comments.add(comment);
             }

@@ -106,7 +106,7 @@ public class TopicResource {
         try {
             topic.setCreatedBy(Integer.parseInt(securityContext.getUserPrincipal().getName()));
             Topic newTopic = topicService.addTopic(topic);
-            response.setData(List.of(newTopic));
+            response.setData(newTopic);
         } catch (Exception e) {
             response.setCode(400);
             response.setMessage(e.getMessage());
@@ -130,7 +130,7 @@ public class TopicResource {
                     topicId,
                     Integer.parseInt(securityContext.getUserPrincipal().getName())
             );
-            response.setData(List.of(topic));
+            response.setData(topic);
         } catch (Exception e) {
             response.setCode(400);
             response.setMessage(e.getMessage());
