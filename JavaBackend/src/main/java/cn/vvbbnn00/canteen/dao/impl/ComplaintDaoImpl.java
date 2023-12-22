@@ -98,7 +98,7 @@ public class ComplaintDaoImpl implements ComplaintDao {
                                               Integer page, Integer pageSize) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Complaint.class, new String[]{
                 "complaintId",
-                "(complaint.complaint_id) as canteen_id", "createdBy", "title", "(LEFT(content,50)) as content", "status",
+                "(complaint.canteen_id) as canteen_id", "createdBy", "title", "(LEFT(content,50)) as content", "status",
                 "(complaint.created_at) as created_at",
                 "(complaint.updated_at) as updated_at",
                 "(canteen.name) as canteenName"
