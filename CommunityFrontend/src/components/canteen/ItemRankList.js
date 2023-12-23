@@ -42,16 +42,17 @@ export default function FoodRankList() {
                                     key={index}>
                                     <div className={"flex items-start flex-col w-[150px]"}>
                                         <Image src={item?.image?.x256Url} alt={item?.name} loading={"lazy"}
-                                               className={"object-cover w-full h-[150px]"} isZoomed={true}/>
+                                               className={"object-cover w-[150px] h-[150px]"} isZoomed={true}/>
                                         <div
                                             className={"text-left text-gray-800 text-sm mt-1 pl-1 flex items-center gap-1 w-full line-clamp-1 break-all "}>
-                                            <text className={"truncate"}>{item?.name}</text>
-                                            {item?.recommended && <LikeFilled className={"text-red-500"}/>}
+                                            <text className={"truncate font-bold text-medium"}>{item?.name}</text>
+                                            {item?.recommended && <span className={"text-red-500"}><LikeFilled/></span>}
                                         </div>
                                         <div
                                             className={"text-left text-gray-800 text-sm pl-1 flex items-center gap-1 w-full line-clamp-1 break-all "}>
-                                            <StarFilled className={"text-orange-500"}/>
-                                            <text className={"text-gray-500"}>{item?.compScore?.toFixed(2)}</text>
+                                            <span className={"text-orange-500"}><StarFilled/></span>
+                                            <text
+                                                className={"text-gray-500"}>{item?.compScore > 0 ? item?.compScore?.toFixed(2) : "暂无评分"}</text>
                                         </div>
                                         <div>
                                             <text className={"text-red-500 text-medium font-bold"}>
@@ -60,7 +61,6 @@ export default function FoodRankList() {
                                             <text className={"text-gray-500 text-sm ml-1 line-through"}>
                                                 ￥{item?.price?.toFixed(2)}
                                             </text>
-
                                         </div>
                                     </div>
                                 </div>

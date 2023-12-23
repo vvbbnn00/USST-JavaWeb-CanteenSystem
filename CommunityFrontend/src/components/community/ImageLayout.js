@@ -1,6 +1,7 @@
 "use client";
 import {Image} from "antd"
 import {useEffect, useRef, useState} from "react";
+import {FALLBACK_IMG} from "@/utils/fallback";
 
 export default function ImageLayout({imageInfoList, maxSlice = 4}) {
     if (!imageInfoList) {
@@ -66,6 +67,7 @@ export default function ImageLayout({imageInfoList, maxSlice = 4}) {
                         width={sliceCount === 1 ? 'auto' : '100%'}
                         className={sliceCount === 1 ? 'object-contain' : 'object-cover'}
                         height={sliceCount === 1 ? 'auto' : '100%'}
+                        fallback={FALLBACK_IMG}
                         preview={{
                             src: image?.originalUrl,
                         }}
