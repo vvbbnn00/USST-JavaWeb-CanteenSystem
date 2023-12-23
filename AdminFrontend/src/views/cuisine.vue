@@ -8,7 +8,7 @@
                      :value="item.canteenId"></el-option>
         </el-select>
         <el-button type="primary" :icon="Pointer" @click="handleSearch">确认</el-button>
-        <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end">新增菜品</el-button>
+        <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end" v-if="query.canteenId">新增菜品</el-button>
       </div>
       <el-table :data="cuisineData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column prop="cuisineId" label="菜品ID"></el-table-column>
