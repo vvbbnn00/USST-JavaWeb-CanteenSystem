@@ -59,7 +59,7 @@ export default function MessagePage({searchParams}) {
                                                 Lv{user?.level}
                                             </div>
                                             {
-                                                !user?.isVerified &&
+                                                user?.isVerified &&
                                                 <div className={"text-green-500 text-xl flex items-center"}>
                                                     <Tooltip content="认证用户">
                                                         <VerifiedOutlined/>
