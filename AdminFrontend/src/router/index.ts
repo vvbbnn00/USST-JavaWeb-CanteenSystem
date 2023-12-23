@@ -74,6 +74,15 @@ const routes: RouteRecordRaw[] = [
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/topic.vue'),
+            },
+            {
+                path: '/announcement',
+                name: 'announcement',
+                meta: {
+                    title: '公告管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/announcement.vue'),
             }
         ],
     },
@@ -113,6 +122,12 @@ router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_keys');
     const permiss = usePermissStore();
     if (!role && to.path !== '/login') {
+        localStorage.removeItem('ms_username');
+        localStorage.removeItem('ms_user_id');
+        localStorage.removeItem('ms_email');
+        localStorage.removeItem('ms_avatar');
+        localStorage.removeItem('ms_role');
+        permiss.handleRemove();
         next('/login');
     } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
         // 如果没有权限，则进入403

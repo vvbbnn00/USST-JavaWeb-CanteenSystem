@@ -3,7 +3,7 @@
     <div class="container">
       <div class="handle-box">
         点击此处选择食堂:
-        <el-select v-model="query.canteenId" placeholder="食堂选择" class="handle-select mr10" clearable>
+        <el-select v-model="query.canteenId" placeholder="食堂选择" class="mr10" clearable>
           <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
                      :value="item.canteenId"></el-option>
         </el-select>

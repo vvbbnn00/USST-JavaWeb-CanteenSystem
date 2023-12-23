@@ -115,6 +115,10 @@ const items: {
         index: '/topic',
         title: '社区信息管理',
       },
+      {
+        index: '/announcement',
+        title: '公告管理',
+      }
     ]
   }
 ];

@@ -68,7 +68,7 @@
     <!-- 话题内容详情 -->
     <el-dialog title="话题内容" v-model="topicContentVisible">
       <el-form label-width="200px">
-        <el-table :data="topicContentInfo" style="width: 100%">
+        <el-table :data="topicContentInfo" style="width: 100%" :show-header="false">
           <el-table-column align="left">
             <template #default="scope">
               <MdPreview :modelValue="scope.row.content"/>
