@@ -134,7 +134,7 @@ export default function ItemPage({params}) {
                     </div>
                 </div>
                 <div className={"max-w-[1024px] w-auto bg-white rounded-lg overflow-hidden shadow-xl m-5 mt-0"}>
-                    <div className={"flex flex-row items-center border-b justify-between"}>
+                    <div className={"flex flex-row items-center border-b justify-between flex-wrap"}>
                         <div className={"flex flex-row items-center gap-2 p-5 text-gray-500"}>
                             <span>🔍 共找到</span>
                             {isLoading ?
@@ -143,8 +143,8 @@ export default function ItemPage({params}) {
                             }
                             <span>份美食。</span>
                         </div>
-                        <div className={"flex flex-row items-center gap-2 p-5 border-b"}>
-                            <div className={"flex items-center gap-2"}>
+                        <div className={"flex flex-row items-center gap-2 p-5 border-b flex-wrap"}>
+                            <div className={"flex items-center gap-2 flex-wrap"}>
                                 <Cascader
                                     options={canteenOptions}
                                     onChange={onFilterChanged}
@@ -222,13 +222,13 @@ export default function ItemPage({params}) {
                     {!isLoading && !error && data?.list?.length === 0 && <div className={"w-full p-10 h-[200px] flex items-center justify-center"}>
                         <Empty description={"没有找到相关美食"} className={"text-gray-500"}/>
                     </div>}
-                    <div className={"grid grid-cols-4 gap-5 p-5 border-b"}>
+                    <div className={"grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-5 p-5 border-b"}>
                         {data?.list?.map(item => {
                             return <Link key={item?.itemId} href={`/item/${item?.itemId}`}>
                                 <div
-                                    className={"flex flex-row items-center gap-2 p-5 cursor-pointer hover:bg-gray-50 transition-background rounded-md"}
+                                    className={"flex flex-row items-center gap-2 p-5 cursor-pointer hover:bg-gray-50 transition-background rounded-md justify-center text-center"}
                                 >
-                                    <div className={"flex items-start flex-col w-full"}>
+                                    <div className={"flex items-start flex-col text-center"}>
                                         <Image src={item?.image?.x256Url} alt={item?.name} loading={"lazy"}
                                                className={"object-cover w-[180px] h-[180px]"} isZoomed={true}/>
                                         <div
