@@ -129,6 +129,10 @@ GROUP BY
         for row in result:
             avgScore = row.get('avg_score')
             maxWeight = row.get('max_weight')
+            if avgScore is None:
+                avgScore = 0
+            if maxWeight is None:
+                maxWeight = 0
             count += float(avgScore) * float(maxWeight)
             total += float(maxWeight) * 5
         score = count / total * 5
@@ -168,6 +172,10 @@ GROUP BY
         for row in result:
             avgScore = row.get('avg_score')
             maxWeight = row.get('max_weight')
+            if avgScore is None:
+                avgScore = 0
+            if maxWeight is None:
+                maxWeight = 0
             count += float(avgScore) * float(maxWeight)
             total += float(maxWeight) * 5
         if total == 0:
@@ -193,8 +201,8 @@ WHERE cuisine.canteen_id = %s AND item.comp_score > 0) AS sel;
 
 # 计算食堂得分
 def calcCanteenScore(canteenId):
-    part1 = calcCanteenScorePart1(canteenId)
-    part2 = calcCanteenScorePart2(canteenId)
+    part1 = calcCanteenScorePart1(canteenId) or 0
+    part2 = calcCanteenScorePart2(canteenId) or 0
     part1 = float(part1)
     part2 = float(part2)
     if part1 == 0:
