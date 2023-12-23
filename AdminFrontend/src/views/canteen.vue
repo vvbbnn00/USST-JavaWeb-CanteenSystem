@@ -90,8 +90,8 @@
             介绍最多 250 字符
           </div>
         </el-form-item>
-        <el-form-item label="食堂管理员" v-if="isAdmin === 'admin' && createForm.canteenId">
-          <el-select v-model="createForm.userId" placeholder="请选择食堂管理员">
+        <el-form-item label="食堂管理员" v-if="isAdmin === 'admin'">
+          <el-select v-model="canteenAdminAdd" placeholder="请选择食堂管理员">
             <el-option
                 v-for="item in userList"
                 :key="item.userId"
@@ -102,7 +102,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="删除管理员" v-if="isAdmin === 'admin' && createForm.canteenId">
-          <el-select v-model="createForm.deleteUserId" placeholder="请选择删除管理员">
+          <el-select v-model="canteenAdminDelete" placeholder="请选择删除管理员">
             <el-option
                 v-for="item in canteenAdminList"
                 :key="item.userId"
@@ -217,6 +217,8 @@ import {getUserList} from "../api/user";
 const isAdmin = localStorage.getItem('ms_role');
 const userId = Number(localStorage.getItem('ms_user_id'));
 const showNonReplyCommentsOnly = ref(false);
+const canteenAdminAdd = ref();
+const canteenAdminDelete = ref();
 
 
 const query = reactive({
@@ -380,14 +382,15 @@ const handleCreate = () => {
 const saveNewCanteen = async () => {
   createVisible.value = false;
   try {
-    console.log(createForm)
     if (createForm.canteenId) {
       await updateCanteen(createForm);
-      if (createForm.userId){
-        await addCanteenAdmin(createForm.canteenId, createForm.userId);
+      if (canteenAdminAdd.value){
+        await addCanteenAdmin(createForm.canteenId, canteenAdminAdd.value);
+        canteenAdminAdd.value = null;
       }
-      if (createForm.deleteUserId){
-        await deleteCanteenAdmin(createForm.canteenId, createForm.deleteUserId);
+      if (canteenAdminDelete.value){
+        await deleteCanteenAdmin(createForm.canteenId, canteenAdminDelete.value);
+        canteenAdminDelete.value = null;
       }
     } else {
       await newCanteen(createForm);
