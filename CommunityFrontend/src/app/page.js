@@ -42,6 +42,7 @@ export default function Home() {
                                         size={"sm"}
                                         startContent={sort === "compValue" ? <FireFilled/> : <ClockCircleFilled/>}
                                         onClick={toggleSort}
+                                        variant={"flat"}
                                     >
                                         {
                                             sort === "compValue" ? "按热度" : "按时间"

@@ -59,7 +59,7 @@ export default function ComplaintPage() {
                 </div>
 
                 <div className={"max-w-[1024px] w-auto bg-white rounded-lg overflow-hidden shadow-xl m-5 mb-5 mt-0"}>
-                    <div className={"flex items-center"}>
+                    <div className={"flex items-center border-b"}>
                         <div className={"flex flex-grow"}>
                             <Button
                                 color={"danger"}
@@ -73,7 +73,7 @@ export default function ComplaintPage() {
                                 我要投诉
                             </Button>
                         </div>
-                        <div className={"flex justify-end border-b items-center"}>
+                        <div className={"flex justify-end items-center"}>
                             <CanteenSelect onChange={setCanteenId}/>
                             <Select
                                 label="投诉状态"
