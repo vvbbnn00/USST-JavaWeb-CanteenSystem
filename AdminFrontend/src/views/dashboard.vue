@@ -140,6 +140,7 @@ import {ElMessage} from "element-plus";
 import {getCanteenList, getUserCanteen} from "../api/canteen";
 import {getUserList} from "../api/user";
 import {getComplaintList} from "../api/complain";
+import {getTopicList} from "../api/topic";
 
 const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
@@ -195,7 +196,11 @@ if (role === 'admin') {
       return;
     }
     query.canteenCount = response.data?.total;
-    // 获取交流社区评价条数
+    const response2 = await getTopicList({
+      currentPage: 1,
+      pageSize: 100,
+    })
+    query.commentCount = response2.data?.total;
     const response3 = await getUserList({
       currentPage: 1,
       pageSize: 100
