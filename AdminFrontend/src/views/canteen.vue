@@ -36,7 +36,7 @@
         </el-table-column>
         <el-table-column label="评论" align="center">
           <template #default="scope">
-            <el-button class="el-icon-lx-calendar mb5" @click="handleComment(scope.row, false)">
+            <el-button class="el-icon-lx-calendar" @click="handleComment(scope.row, false)">
               查看评论
             </el-button>
             <el-button class="el-icon-lx-questionfill" @click="handleComment(scope.row, true)">
@@ -90,8 +90,8 @@
             介绍最多 250 字符
           </div>
         </el-form-item>
-        <el-form-item label="食堂管理员" v-if="isAdmin === 'admin'">
-          <el-select v-model="canteenAdminAdd" placeholder="请选择食堂管理员">
+        <el-form-item label="添加管理员" v-if="isAdmin === 'admin'">
+          <el-select v-model="canteenAdminAdd" placeholder="请选择用户">
             <el-option
                 v-for="item in userList"
                 :key="item.userId"
@@ -155,7 +155,7 @@
           </el-table-column>
           <el-table-column label="操作" width="200" align="center" fixed="right">
             <template #default="scope">
-              <el-button v-if="isAdmin === 'canteen_admin' && scope.row.user.userId === userId" text :icon="ChatDotSquare" @click="handleReply(scope.row)">
+              <el-button v-if="isAdmin === 'canteen_admin' && scope.row.user.userId !== userId" text :icon="ChatDotSquare" @click="handleReply(scope.row)">
                 回复
               </el-button>
 

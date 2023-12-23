@@ -62,7 +62,7 @@
                 <el-icon class="grid-con-icon"><WarningFilled /></el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.complaintCount }}</div>
-                  <div>举报信息</div>
+                  <div>未处理投诉信息</div>
                 </div>
               </div>
             </el-card>
@@ -225,7 +225,10 @@ if (role === 'admin') {
       ElMessage.error(response3.data.message);
       return;
     }
-    query.complaintCount = response3.data?.total;
+    const undoneComplaints = response3.data?.list.filter( complaint => {
+      return complaint.status === 'pending';
+    });
+    query.complaintCount = undoneComplaints.length;
   })();
 }
 

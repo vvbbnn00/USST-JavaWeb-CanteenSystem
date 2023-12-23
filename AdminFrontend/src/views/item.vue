@@ -19,10 +19,10 @@
         <el-button type="primary" :icon="Plus" @click="handleCreate">新增</el-button>
       </div>
       <el-table :data="itemData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-        <el-table-column prop="itemId" label="菜品Id" width="100px"></el-table-column>
+        <el-table-column prop="itemId" label="菜品Id"></el-table-column>
         <el-table-column prop="name" label="菜品名"></el-table-column>
         <el-table-column prop="cuisineId" label="关联菜系Id"></el-table-column>
-        <el-table-column label="菜品图片" align="center" width="100">
+        <el-table-column label="菜品图片" align="center" width="130">
           <template #default="scope">
             <el-image
                 class="Pic"
