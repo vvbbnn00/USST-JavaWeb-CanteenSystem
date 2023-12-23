@@ -242,7 +242,7 @@ import type {UploadProps} from 'element-plus'
 import {getUploadUrl} from "../api";
 import {getCuisineList} from "../api/cuisine";
 import {ajaxUpload} from "../api/upload";
-import {deleteCanteenComment, getCanteenCommentList, getCanteenList, getUserCanteen} from "../api/canteen";
+import {getCanteenList, getUserCanteen} from "../api/canteen";
 import {getItemList, deleteItem, createItem, updateItem, getItemComment, deleteItemComment} from "../api/item";
 
 const query = reactive({
@@ -258,10 +258,8 @@ const canteenList = ref([]);
 
 watch(() => query.canteenId, (newCanteenId) => {
   if (newCanteenId) {
-    // 当选择了一个食堂时
-    getCuisine(newCanteenId); // 调用函数更新菜系列表
+    getCuisine(newCanteenId);
   } else {
-    // 如果没有选择食堂，清空菜系列表
     cuisineList.value = [];
   }
 });
@@ -355,15 +353,11 @@ let form = reactive({
 
 watch(() => editCanteenId.value, () => {
   if (editCanteenId.value) {
-    // 当选择了一个食堂时
-    getEditCuisine(editCanteenId.value); // 调用函数更新菜系列表
+    getEditCuisine(editCanteenId.value);
   } else {
-    // 如果没有选择食堂，清空菜系列表
     editCuisineList.value = [];
   }
 });
-
-
 
 // 获取表格数据
 const getData = () => {
@@ -399,7 +393,6 @@ let idx: number = -1;
 const handleState = async (index: number, row: any) => {
   idx = index;
   form = reactive(JSON.parse(JSON.stringify(row)));
-  console.log(form)
   const uploadResp = await getUploadUrl();
   if (uploadResp.data.code !== 200) {
     ElMessage.error(uploadResp.data.message);
@@ -491,7 +484,15 @@ const handleUploadSuccess: UploadProps['onSuccess'] = async (
   form.fileKey = uploadFileKey.value;
 }
 
-const handleCreate = () => {
+const handleCreate = async () => {
+  const uploadResp = await getUploadUrl();
+  if (uploadResp.data.code !== 200) {
+    ElMessage.error(uploadResp.data.message);
+    return;
+  }
+
+  picUploadUrl.value = uploadResp.data.url;
+  uploadFileKey.value = uploadResp.data?.fileKey;
   clearForm();
   editCanteenId.value = undefined;
   imageUrl.value = '';
@@ -529,6 +530,7 @@ const getCommentData = async () => {
     ElMessage.error("获取数据错误");
   }
 };
+
 const commentVisible = ref(false);
 const handleComment = (row: any) => {
   chooseItemId.value = row.itemId;

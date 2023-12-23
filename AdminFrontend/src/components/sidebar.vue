@@ -112,9 +112,13 @@ const items: {
         title: '投诉管理',
       },
       {
-        index: '/community',
+        index: '/topic',
         title: '社区信息管理',
       },
+      {
+        index: '/announcement',
+        title: '公告管理',
+      }
     ]
   }
 ];

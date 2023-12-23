@@ -3,14 +3,13 @@
     <div class="container">
       <div class="handle-box">
         点击此处选择食堂:
-        <el-select v-model="query.canteenId" placeholder="食堂选择" class="handle-select mr10" clearable>
+        <el-select v-model="query.canteenId" placeholder="食堂选择" class="mr10" clearable>
           <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
                      :value="item.canteenId"></el-option>
         </el-select>
-        <el-button type="primary" :icon="Pointer" @click="handleSearch">确认</el-button>
         <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end" v-if="query.canteenId">新增菜品</el-button>
       </div>
-      <el-table :data="cuisineData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+      <el-table :data="cuisineData" border class="table" ref="multipleTable" header-cell-class-name="table-header" empty-text="请选择食堂以继续">
         <el-table-column prop="cuisineId" label="菜品ID"></el-table-column>
         <el-table-column prop="name" label="菜品名称"></el-table-column>
         <el-table-column prop="canteenId" label="所属食堂ID"></el-table-column>
@@ -79,9 +78,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive} from 'vue';
+import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
-import {Plus, Edit, Delete, Pointer} from '@element-plus/icons-vue';
+import {Plus, Edit, Delete} from '@element-plus/icons-vue';
 import {getUserCanteen} from "../api/canteen";
 import {deleteCuisine, getCuisineList, updateCuisine, createCuisine} from "../api/cuisine";
 import {parseDateTime} from "../utils/string";
@@ -133,10 +132,14 @@ const getData = () => {
 };
 getData();
 
-// 查询操作
-const handleSearch = () => {
-  getData();
-};
+// 下拉框直接查询
+watch(() => query.canteenId, (canteenId) => {
+  if (canteenId) {
+    getData();
+  } else {
+    cuisineData.value = null;
+  }
+})
 
 // 分页导航
 const handlePageChange = (val: number) => {
@@ -146,7 +149,6 @@ const handlePageChange = (val: number) => {
 
 const createVisible = ref(false);
 const handleDelete = (row: any) => {
-  console.log(row.canteenId)
   // 二次确认删除
   ElMessageBox.confirm('确定要删除吗？', '提示', {
     type: 'warning'

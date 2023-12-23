@@ -1,4 +1,5 @@
 import axios, {AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig} from 'axios';
+import codetabs from "md-editor-v3/lib/types/MdEditor/layouts/Content/markdownIt/codetabs";
 
 const service: AxiosInstance = axios.create({
     timeout: 5000,
@@ -26,6 +27,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response: AxiosResponse) => {
         if (response.status === 200) {
+            if (response.data.code !== 200) {
+                return Promise.reject();
+            }
             return response;
         } else {
             Promise.reject();

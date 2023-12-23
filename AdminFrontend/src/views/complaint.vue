@@ -45,7 +45,7 @@
         </el-table-column>
         <el-table-column label="操作" width="200" align="center" fixed="right">
           <template #default="scope">
-            <el-button text :icon="Edit" @click="handleReply(scope.row)">
+            <el-button text :icon="Edit" @click="handleReply(scope.row)" v-if="scope.row.status !== 'finished'">
               回复
             </el-button>
 
@@ -54,9 +54,11 @@
                 :icon="Check"
                 class="green"
                 @click="handleCheck(scope.row)"
+                v-if="scope.row.status !== 'finished'"
             >
               完成
             </el-button>
+            <div v-if="scope.row.status === 'finished'">投诉处理已完成 !</div>
           </template>
         </el-table-column>
       </el-table>
@@ -203,7 +205,7 @@ const handleInfo = (index: number, row: any) => {
   complaintText.value = complaintData.value.filter(item => {
     return row.complaintId === item.complaintId;
   });
-  console.log(complaintText.value)
+
   complaintInfoVisible.value = true;
 };
 
