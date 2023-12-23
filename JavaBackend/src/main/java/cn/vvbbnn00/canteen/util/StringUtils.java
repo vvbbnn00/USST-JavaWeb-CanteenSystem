@@ -60,6 +60,6 @@ public class StringUtils {
         if (email == null || email.isEmpty()) {
             return AVATAR_URL;
         }
-        return AVATAR_URL + md5(email);
+        return AVATAR_URL + md5(email) + "?" + (System.currentTimeMillis() / 7200000); // 2小时更新一次
     }
 }

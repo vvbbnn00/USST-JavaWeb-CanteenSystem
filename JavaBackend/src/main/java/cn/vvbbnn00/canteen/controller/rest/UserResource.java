@@ -185,7 +185,6 @@ public class UserResource {
         if (currentUser.getRole() != User.Role.admin) {
             user.setName(null);
             user.setEmployeeId(null);
-            user.setCreatedAt(null);
             user.setUpdatedAt(null);
             user.setLastLoginAt(null);
         }
