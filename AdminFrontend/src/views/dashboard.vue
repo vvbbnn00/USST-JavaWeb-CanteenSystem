@@ -174,17 +174,6 @@ const query = reactive({
   complaintCount: undefined as unknown as number,
 });
 
-// (async () => {
-//   const resp = await getDashboardInfo();
-//   if (resp.data.code !== 200) {
-//     ElMessage.error(resp.data.message);
-//     return;
-//   }
-//   query.userCount = resp.data?.data?.userCount;
-//   query.commentCount = resp.data?.data?.commentCount;
-//   query.bookCount = resp.data?.data?.bookCount;
-// })();
-
 if (role === 'admin') {
   (async () => {
     const response = await getCanteenList({

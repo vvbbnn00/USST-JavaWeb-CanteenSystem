@@ -10,8 +10,8 @@
         <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end" v-if="query.canteenId">新增菜品</el-button>
       </div>
       <el-table :data="cuisineData" border class="table" ref="multipleTable" header-cell-class-name="table-header" empty-text="请选择食堂以继续">
-        <el-table-column prop="cuisineId" label="菜品ID"></el-table-column>
-        <el-table-column prop="name" label="菜品名称"></el-table-column>
+        <el-table-column prop="cuisineId" label="菜系ID"></el-table-column>
+        <el-table-column prop="name" label="菜系名称"></el-table-column>
         <el-table-column prop="canteenId" label="所属食堂ID"></el-table-column>
         <el-table-column prop="createdAt" label="创建时间" width="160px">
           <template #default="scope">
@@ -59,11 +59,11 @@
     <!-- 新增弹出框 -->
     <el-dialog title="编辑" v-model="createVisible" width="40%">
       <el-form label-width="90px" :model="createForm" :rules="validateForm">
-        <el-form-item label="菜品ID" required prop="canteenId" v-if="createForm.cuisineId">
-          <el-input v-model="createForm.cuisineId" placeholder="请输入菜品ID" disabled></el-input>
+        <el-form-item label="菜系ID" required prop="canteenId" v-if="createForm.cuisineId">
+          <el-input v-model="createForm.cuisineId" placeholder="请输入菜系ID" disabled></el-input>
         </el-form-item>
-        <el-form-item label="菜品名称" required prop="name">
-          <el-input v-model="createForm.name" placeholder="请输入菜品名称"></el-input>
+        <el-form-item label="菜系名称" required prop="name">
+          <el-input v-model="createForm.name" placeholder="请输入菜系名称"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -189,10 +189,10 @@ const saveNewCuisine = async () => {
       await createCuisine(createForm);
     }
 
-    ElMessage.success(`新增/编辑成功`);
+    ElMessage.success(`新增/编辑菜系成功`);
     getData();
   } catch (e) {
-    ElMessage.error(`新增/编辑失败`);
+    ElMessage.error(`新增/编辑菜系失败`);
   }
 };
 
