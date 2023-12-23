@@ -55,7 +55,7 @@ export default function TopicItem({topic, isHot = false, topicPage = 0, onLikeCh
                                         </span>
             </div>
             <div className={"text-gray-700 text-base pt-1 line-clamp-5"}>
-                <pre className={"font-sans"}>
+                <pre className={"font-sans text-wrap break-all"}>
                     {topic?.content}
                 </pre>
             </div>

@@ -36,6 +36,15 @@ export default function CanteenPage() {
         }],
         (args) => fetchApiWithAuth(...args));
 
+    const doSearch = (formData) => {
+        let kw = formData?.get("search");
+        kw = kw?.trim();
+        if (kw?.length === 0) {
+            kw = null;
+        }
+        setKw(kw);
+    }
+
     return <>
         <NavigationBar/>
         <main className={"w-full"}>
@@ -49,7 +58,7 @@ export default function CanteenPage() {
                             <p className={"text-gray-500"}>在这里，你可以发现上理的每一个食堂</p>
                         </div>
                         <div className={"pl-5 pr-5 flex-grow flex items-center"}>
-                            <form className={"w-full"}>
+                            <form className={"w-full"} action={doSearch}>
                                 <Input
                                     placeholder={"搜索食堂"}
                                     name={"search"}

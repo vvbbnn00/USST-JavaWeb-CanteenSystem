@@ -56,7 +56,7 @@ export default function MessagePanel({user}) {
         return <div className={"w-full"}>
             <div className={"flex justify-end"}>
                 <div className={"bg-blue-500 text-white rounded-lg p-2.5 rounded-br-none"}>
-                    <pre className={"font-sans"}>{message?.content}</pre>
+                    <pre className={"font-sans text-wrap break-all"}>{message?.content}</pre>
                 </div>
                 <Avatar src={me?.avatar} alt={me?.username} className={"ml-2"}/>
             </div>
@@ -72,7 +72,7 @@ export default function MessagePanel({user}) {
             <div className={"flex"}>
                 <Avatar src={userInfo?.avatar} alt={userInfo?.username} className={"mr-2"}/>
                 <div className={"bg-gray-100 rounded-lg p-2.5 rounded-bl-none"}>
-                    <pre className={"font-sans"}>{message?.content}</pre>
+                    <pre className={"font-sans text-wrap break-all"}>{message?.content}</pre>
                 </div>
             </div>
             <div className={"flex text-gray-500 text-sm mt-0.5"}>

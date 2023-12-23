@@ -204,11 +204,11 @@ export default function CommentPanel({itemId, type = "canteen/item"}) {
                                         className={"text-red-500 bg-red-50 text-center rounded-lg pt-1.5 pb-1.5"}>
                                         ⚠ 该评论由于存在不友善内容，已被折叠
                                     </div>} indicator={<></>} textValue={"不友善的言论"}>
-                                        <pre className={"font-sans"}>
+                                        <pre className={"font-sans text-wrap break-all"}>
                                             {comment?.content}
                                         </pre>
                                     </AccordionItem>
-                                </Accordion> : <pre className={"font-sans"}>
+                                </Accordion> : <pre className={"font-sans text-wrap break-all"}>
                                     {comment?.content}
                                 </pre>}
                             </div>

@@ -8,6 +8,7 @@ import {Chip, Skeleton} from "@nextui-org/react";
 import {FALLBACK_IMG} from "@/utils/fallback";
 import {EnvironmentOutlined, ProfileOutlined, StarFilled} from "@ant-design/icons";
 import CommentPanel from "@/app/item/[itemId]/CommentPanel";
+import Link from "next/link";
 
 export default function ItemDetailPage({params}) {
     const {data, error, isLoading} = useSWR(
@@ -34,9 +35,9 @@ export default function ItemDetailPage({params}) {
                     <div className={"flex flex-row items-center"}>
                         <BackButton/>
                         <div className={"flex-grow"}>
-                            {isLoading && <Skeleton className={"h-10 w-3/5 rounded-lg"}/>}
+                            {isLoading && <Skeleton className={"h-6 w-3/5 rounded-lg"}/>}
                             {!isLoading && <h1 className={"text-lg font-bold truncate line-clamp-1 w-fit"}>
-                                🍲 {data?.name}
+                                {data?.name}
                             </h1>}
                         </div>
                     </div>
@@ -93,7 +94,12 @@ export default function ItemDetailPage({params}) {
                                             <EnvironmentOutlined/>
                                         </span>
                                             <span className={"text-gray-500 text-medium"}>
-                                            {data?.canteen?.name} ({data?.canteen?.location})
+                                            <Link
+                                                href={`/canteen/${data?.canteen?.canteenId}`}
+                                                className={"hover:underline transition-all"}
+                                            >
+                                                {data?.canteen?.name} ({data?.canteen?.location})
+                                            </Link>
                                         </span>
                                         </div>
                                         <div className={"flex items-center gap-1"}>

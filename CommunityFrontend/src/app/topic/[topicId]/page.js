@@ -77,7 +77,7 @@ export default function TopicDetailPage({params}) {
                     <div className={"flex flex-row items-center"}>
                         <BackButton/>
                         <div className={"flex-grow"}>
-                            {isLoading && <Skeleton className={"h-10 w-3/5 rounded-lg"}/>}
+                            {isLoading && <Skeleton className={"h-6 w-3/5 rounded-lg"}/>}
                             <h1 className={"text-lg font-bold truncate line-clamp-1 w-fit"}>
                                 {data?.title}
                             </h1>
@@ -113,7 +113,7 @@ export default function TopicDetailPage({params}) {
                         </div>
                     </div>
                     <div className={"p-5"}>
-                        <pre className={"text-gray-800 font-sans"}>
+                        <pre className={"text-gray-800 font-sans text-wrap break-all"}>
                             {isLoading && <div className={"flex gap-2 flex-col"}>
                                 <Skeleton className={"h-5 w-[300px] rounded-lg"}/>
                                 <Skeleton className={"h-5 w-[300px] rounded-lg"}/>

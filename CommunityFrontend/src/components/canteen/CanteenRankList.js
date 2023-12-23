@@ -68,7 +68,7 @@ export default function CanteenRankList() {
                                                 className={"text-gray-500"}>{canteen?.compScore?.toFixed(2)}</span>
                                         </div>
                                     </div>
-                                    <div className={"mt-1.5 text-gray-600 text-sm line-clamp-2"}>
+                                    <div className={"mt-1.5 text-gray-600 text-sm line-clamp-2 max-w-[350px]"}>
                                         {canteen?.introduction}
                                     </div>
                                     <div className={"text-gray-500 text-sm mt-0.5"}>
