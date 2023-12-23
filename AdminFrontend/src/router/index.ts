@@ -67,13 +67,13 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/item.vue'),
             },
             {
-                path: '/community',
-                name: 'community',
+                path: '/topic',
+                name: 'topic',
                 meta: {
                     title: '社区信息管理',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "dashboard" */ '../views/community.vue'),
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/topic.vue'),
             }
         ],
     },
