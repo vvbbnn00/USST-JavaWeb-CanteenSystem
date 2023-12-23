@@ -146,7 +146,6 @@ const handlePageChange = (val: number) => {
 
 const createVisible = ref(false);
 const handleDelete = (row: any) => {
-  console.log(row.canteenId)
   // 二次确认删除
   ElMessageBox.confirm('确定要删除吗？', '提示', {
     type: 'warning'

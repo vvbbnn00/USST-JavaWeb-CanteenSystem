@@ -205,7 +205,7 @@ const handleInfo = (index: number, row: any) => {
   complaintText.value = complaintData.value.filter(item => {
     return row.complaintId === item.complaintId;
   });
-  console.log(complaintText.value)
+
   complaintInfoVisible.value = true;
 };
 
