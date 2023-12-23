@@ -29,7 +29,7 @@
         <el-row :gutter="20" class="mgb20">
           <el-col :span="8">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
-              <div class="grid-content grid-con-1">
+              <div class="grid-content grid-con-1" v-if="role === 'admin'" @click="gotoUserManagement">
                 <el-icon class="grid-con-icon">
                   <User/>
                 </el-icon>
@@ -38,30 +38,44 @@
                   <div>用户</div>
                 </div>
               </div>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover" :body-style="{ padding: '0px' }">
-              <div class="grid-content grid-con-2">
-                <el-icon class="grid-con-icon">
-                  <ChatDotRound/>
-                </el-icon>
+              <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'">
+                <el-icon class="grid-con-icon"><Promotion /></el-icon>
                 <div class="grid-cont-right">
-                  <div class="grid-num">{{ query.commentCount }}</div>
-                  <div>评论</div>
+                  <div class="grid-num">{{ query.messageCount }}</div>
+                  <div>公告</div>
                 </div>
               </div>
             </el-card>
           </el-col>
           <el-col :span="8">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
-              <div class="grid-content grid-con-3">
+              <div class="grid-content grid-con-2" v-if="role === 'admin'">
                 <el-icon class="grid-con-icon">
-                  <Goods/>
+                  <ChatDotRound/>
+                </el-icon>
+                <div class="grid-cont-right">
+                  <div class="grid-num">{{ query.commentCount }}</div>
+                  <div>交流社区信息</div>
+                </div>
+              </div>
+              <div class="grid-content grid-con-3" v-if="role === 'canteen_admin'" @click="gotoComplaintManagement">
+                <el-icon class="grid-con-icon"><WarningFilled /></el-icon>
+                <div class="grid-cont-right">
+                  <div class="grid-num">{{ query.complaintCount }}</div>
+                  <div>举报信息</div>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card shadow="hover" :body-style="{ padding: '0px' }">
+              <div class="grid-content grid-con-3" @click="gotoCanteenManagement">
+                <el-icon class="grid-con-icon">
+                  <HomeFilled/>
                 </el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.canteenCount }}</div>
-                  <div>食堂/菜品</div>
+                  <div>食堂</div>
                 </div>
               </div>
             </el-card>
@@ -123,7 +137,9 @@
 import {reactive, ref} from 'vue';
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
-import {getAvatarUrl} from "../utils/string";
+import {getCanteenList, getUserCanteen} from "../api/canteen";
+import {getUserList} from "../api/user";
+import {getComplaintList} from "../api/complain";
 
 const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
@@ -147,11 +163,14 @@ fetch('https://v1.hitokoto.cn?c=k')
 const router = useRouter();
 const name = localStorage.getItem('ms_username');
 const avatar = localStorage.getItem('ms_avatar');
+const role = localStorage.getItem('ms_role');
 
 const query = reactive({
   userCount: undefined as unknown as number,
   commentCount: undefined as unknown as number,
-  canteenCount: undefined as unknown as number
+  canteenCount: undefined as unknown as number,
+  messageCount: undefined as unknown as number,
+  complaintCount: undefined as unknown as number,
 });
 
 // (async () => {
@@ -164,6 +183,63 @@ const query = reactive({
 //   query.commentCount = resp.data?.data?.commentCount;
 //   query.bookCount = resp.data?.data?.bookCount;
 // })();
+
+if (role === 'admin') {
+  (async () => {
+    const response = await getCanteenList({
+      currentPage: 1,
+      pageSize: 100
+    });
+    if (response.data.code !== 200) {
+      ElMessage.error(response.data.message);
+      return;
+    }
+    query.canteenCount = response.data?.total;
+    // 获取交流社区评价条数
+    const response3 = await getUserList({
+      currentPage: 1,
+      pageSize: 100
+    });
+    if (response3.data.code !== 200) {
+      ElMessage.error(response3.data.message);
+      return;
+    }
+    query.userCount = response3.data?.total;
+  })();
+} else if (role === 'canteen_admin') {
+  (async () => {
+    const response = await getUserCanteen();
+    if (response.data.code !== 200) {
+      ElMessage.error(response.data.message);
+      return;
+    }
+    query.canteenCount = response.data?.data.length;
+    // 获取公告条数
+
+    // 获取举报条数
+    const response3 = await getComplaintList({
+      currentPage: 1,
+      pageSize: 100
+    });
+    if (response3.data.code !== 200) {
+      ElMessage.error(response3.data.message);
+      return;
+    }
+    query.complaintCount = response3.data?.total;
+  })();
+}
+
+const gotoUserManagement = () => {
+  router.push('/user');
+}
+
+const gotoCanteenManagement = () => {
+  router.push('/canteen');
+}
+
+const gotoComplaintManagement = () => {
+  router.push('/complaint');
+}
 
 const addView = ref(false)
 let todo = reactive({
