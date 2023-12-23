@@ -150,7 +150,7 @@ public class RequestValidatorUtils {
         // 获取当前方法的名称
         // 由于调用栈中的第一个方法是本方法，第二个方法是调用本方法的方法，第三个方法才是真正的请求方法，故取第三个方法
         Method requestMethod = MethodCache.getCachedMethod(2);
-        LogUtils.info("Checking parameters for method: " + requestMethod.getName());
+        // LogUtils.info("Checking parameters for method: " + requestMethod.getName());
 
         // 获取当前方法的参数列表
         Class<?>[] parameterTypes = requestMethod.getParameterTypes();
