@@ -104,7 +104,8 @@ export default function MessagePanel({user}) {
         <div className={"flex-grow flex-col p-5 pt-2 overflow-scroll overflow-x-hidden"} ref={scrollRef}>
             {recentMessages?.toReversed()?.map(message => {
                 return <div key={message?.messageId} className={"mt-3"}>
-                    {(message?.fromUserId === me?.userId) ? <MyMessage message={message}/> :
+                    {(message?.fromUserId === me?.userId) ?
+                        <MyMessage message={message}/> :
                         <TargetMessage message={message}/>}
                 </div>
             })}

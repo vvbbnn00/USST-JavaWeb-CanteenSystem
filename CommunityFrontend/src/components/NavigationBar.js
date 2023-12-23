@@ -106,7 +106,9 @@ export default function NavigationBar() {
                     variant="flat"
                     disabledKeys={["level"]}
                 >
-                    <DropdownItem key="profile" className="h-14 gap-2">
+                    <DropdownItem key="profile" className="h-14 gap-2" as={Link} href={
+                        `/user/${user?.userId}`
+                    }>
                         <p className="font-bold">{user?.username}</p>
                         <p className="font-semibold text-gray-500">{user?.email}</p>
                     </DropdownItem>
