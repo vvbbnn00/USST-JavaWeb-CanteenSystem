@@ -59,7 +59,7 @@ public class ComplaintService {
             image.setReferenceId(newComplaint.getComplaintId());
             if (imageService.addImage(image) == null) {
                 complaintDao.delete(newComplaint.getComplaintId());
-                throw new RuntimeException("部分图片上传失败，投诉创建失败");
+                throw new RuntimeException("部分图片上传失败或正在转码，投诉创建失败，请不要刷新，稍后再试");
             }
         }
 

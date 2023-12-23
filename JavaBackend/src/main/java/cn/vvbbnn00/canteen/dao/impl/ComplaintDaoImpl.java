@@ -81,7 +81,7 @@ public class ComplaintDaoImpl implements ComplaintDao {
                 params.add(userId);
             }
             if (canteenId != null) {
-                conditions.add("canteen_id = ?");
+                conditions.add("complaint.canteen_id = ?");
                 params.add(canteenId);
             }
             if (status != null) {
