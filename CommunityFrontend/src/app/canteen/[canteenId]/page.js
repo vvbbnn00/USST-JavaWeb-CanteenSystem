@@ -4,9 +4,11 @@ import BackButton from "@/components/common/BackButton";
 import {Empty, Rate} from "antd";
 import useSWR from "swr";
 import {fetchApiWithAuth} from "@/utils/api";
-import {ScrollShadow, Skeleton} from "@nextui-org/react";
+import {Button, ScrollShadow, Skeleton} from "@nextui-org/react";
 import CommentPanel from "@/app/canteen/[canteenId]/CommentPanel";
 import AnnouncementPanel from "@/app/canteen/[canteenId]/AnnouncementPanel";
+import {WarningOutlined} from "@ant-design/icons";
+import Link from "next/link";
 
 export default function CanteenDetailPage({params}) {
     const {data, error, isLoading} = useSWR(
@@ -38,6 +40,17 @@ export default function CanteenDetailPage({params}) {
                                 {!isLoading && <h1 className={"text-lg font-bold truncate line-clamp-1 w-fit"}>
                                     {data?.name}
                                 </h1>}
+                            </div>
+                            <div className={"mr-5"}>
+                                <Button
+                                    startContent={<WarningOutlined />}
+                                    color={"danger"}
+                                    variant={"flat"}
+                                    as={Link}
+                                    href={`/complaint/new?canteenId=${params?.canteenId}`}
+                                >
+                                    我要投诉
+                                </Button>
                             </div>
                         </div>
                     </div>}

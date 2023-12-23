@@ -137,7 +137,7 @@ export default function CanteenPage() {
                     <div className={"w-full"}>
                         {data?.list?.map((canteen, index) => {
                             return <Link
-                                key={index}
+                                key={canteen?.canteenId}
                                 href={`/canteen/${canteen?.canteenId}`}
                             >
                                 <div

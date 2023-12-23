@@ -105,6 +105,7 @@ export default function CommentPanel({itemId, type = "canteen/item"}) {
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
+            autoFocusButton: 'cancel',
             onOk() {
                 doDeleteComment(commentId);
             },

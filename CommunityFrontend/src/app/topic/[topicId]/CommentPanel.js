@@ -94,6 +94,7 @@ export default function CommentPanel({topicId}) {
             title: '确认删除',
             icon: <ExclamationCircleFilled/>,
             content: '你确定要删除这条评论吗？',
+            autoFocusButton: 'cancel',
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',

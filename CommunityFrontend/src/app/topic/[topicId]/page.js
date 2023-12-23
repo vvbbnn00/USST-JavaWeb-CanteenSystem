@@ -46,6 +46,7 @@ export default function TopicDetailPage({params}) {
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
+            autoFocusButton: 'cancel',
             onOk() {
                 fetchApiWithAuth(`/api/rest/topic/${params?.topicId}`, {
                     method: "DELETE"
@@ -124,7 +125,7 @@ export default function TopicDetailPage({params}) {
                     </div>
                     {(data?.imageInfoList && data?.imageInfoList.length > 0) &&
                         <div className={"pl-5 pr-5 pb-5"}>
-                            <ImageLayout imageInfoList={data?.imageInfoList}/>
+                            <ImageLayout imageInfoList={data?.imageInfoList} maxSlice={9}/>
                         </div>
                     }
                     <BottomToolbox data={data}/>
