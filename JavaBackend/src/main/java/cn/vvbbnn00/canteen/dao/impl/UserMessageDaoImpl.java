@@ -52,9 +52,7 @@ public class UserMessageDaoImpl implements UserMessageDao {
             List<User> users = new ArrayList<>();
             while (rs.next()) {
                 User user = (User) SqlStatementUtils.makeEntityFromResult(rs, User.class);
-                if (!user.getUserId().equals(userId)) {
-                    users.add(user);
-                }
+                users.add(user);
             }
             return users;
         } catch (Exception e) {
