@@ -84,6 +84,8 @@ export default function CanteenPage() {
                                     classNames={{
                                         value: "text-gray-500"
                                     }}
+                                    selectionMode={"single"}
+                                    disallowEmptySelection={true}
                                 >
                                     <SelectItem key={"compScore"} value={"compScore"}>
                                         🍜 综合评分
