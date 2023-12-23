@@ -19,6 +19,7 @@ import CommentPanel from "@/app/topic/[topicId]/CommentPanel";
 import UserInfo from "@/app/topic/[topicId]/UserInfo";
 import {Empty, Modal} from "antd";
 import BackButton from "@/components/common/BackButton";
+import Link from "next/link";
 
 const {confirm} = Modal;
 
@@ -95,7 +96,10 @@ export default function TopicDetailPage({params}) {
                                     </div>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Static Actions">
-                                    <DropdownItem key="message">私聊该用户</DropdownItem>
+                                    <DropdownItem key="message"
+                                                  as={Link}
+                                                  href={`/user/message?to=${data?.user?.userId}`}
+                                    >私聊该用户</DropdownItem>
                                     {(user?.userId === data?.user?.userId || user?.role === 'admin') &&
                                         <DropdownItem
                                             key="delete" className="text-danger" color="danger"

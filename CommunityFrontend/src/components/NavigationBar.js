@@ -143,7 +143,7 @@ export default function NavigationBar() {
                     <DropdownItem key="profile">用户信息</DropdownItem>
                     <DropdownItem key="change_password">修改密码</DropdownItem>
                     <DropdownItem key="notification" as={Link} href={"/user/notification"}>通知中心</DropdownItem>
-                    <DropdownItem key="message">短消息</DropdownItem>
+                    <DropdownItem key="message" as={Link} href={"/user/message"}>短消息</DropdownItem>
                     <DropdownItem key="logout" color="danger" className={"text-red-500"} onClick={doLogout}>
                         退出登录
                     </DropdownItem>
