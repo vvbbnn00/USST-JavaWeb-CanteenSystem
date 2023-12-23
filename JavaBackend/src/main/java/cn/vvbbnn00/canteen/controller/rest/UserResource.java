@@ -183,6 +183,7 @@ public class UserResource {
         }
 
         if (currentUser.getRole() != User.Role.admin) {
+            user.setName(null);
             user.setEmployeeId(null);
             user.setEmail(null);
             user.setCreatedAt(null);
