@@ -21,7 +21,7 @@ export default function LatestVote() {
 
     return <div className={"bg-white rounded shadow-xl h-fit"}>
         <div className={"font-bold text-lg text-gray-700 p-2.5 pb-0"}>
-            最新投票
+            🗳最新投票
         </div>
         <div className={"pt-2.5"}>
             {isLatestVoteLoading && <div className={"p-5"}>

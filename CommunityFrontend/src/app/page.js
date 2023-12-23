@@ -8,6 +8,7 @@ import {ClockCircleFilled, FireFilled} from "@ant-design/icons";
 import TopicList from "@/components/community/TopicList";
 import LatestVote from "@/components/vote/LatestVote";
 import {getMe} from "@/utils/auth";
+import FoodRankList from "@/components/canteen/ItemRankList";
 
 
 export default function Home() {
@@ -54,7 +55,7 @@ export default function Home() {
                     <div className={"grow flex flex-col gap-3"}>
                         <LatestVote/>
                         <CanteenRankList/>
-
+                        <FoodRankList/>
                     </div>
                 </div>
             </main>

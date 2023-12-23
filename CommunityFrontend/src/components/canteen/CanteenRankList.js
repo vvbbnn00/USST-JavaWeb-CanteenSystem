@@ -22,7 +22,7 @@ export default function CanteenRankList() {
     return (
         <div className={"bg-white rounded shadow-xl h-fit"}>
             <div className={"font-bold text-lg text-gray-700 p-2.5 pb-0"}>
-                最新食堂排名
+                🍽最新食堂排名
             </div>
             <div className={"mt-2.5 pb-5 max-h-[500px]"}>
                 {isCanteenListLoading && <div className={"p-5"}>
