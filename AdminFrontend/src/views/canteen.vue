@@ -71,8 +71,8 @@
       </div>
     </div>
 
-    <!-- 新增弹出框 -->
-    <el-dialog title="新增食堂" v-model="createVisible" width="40%">
+    <!-- 编辑弹出框 -->
+    <el-dialog title="编辑食堂" v-model="createVisible" width="40%">
       <el-form label-width="90px" :model="createForm" :rules="validateForm">
         <el-form-item label="食堂ID" required prop="canteenId" v-if="createForm.canteenId">
           <el-input v-model="createForm.canteenId" placeholder="请输入食堂ID" disabled></el-input>
@@ -89,6 +89,28 @@
           <div>
             介绍最多 250 字符
           </div>
+        </el-form-item>
+        <el-form-item label="食堂管理员" v-if="isAdmin === 'admin' && createForm.canteenId">
+          <el-select v-model="createForm.userId" placeholder="请选择食堂管理员">
+            <el-option
+                v-for="item in userList"
+                :key="item.userId"
+                :label="item.username"
+                :value="item.userId"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="删除管理员" v-if="isAdmin === 'admin' && createForm.canteenId">
+          <el-select v-model="createForm.deleteUserId" placeholder="请选择删除管理员">
+            <el-option
+                v-for="item in canteenAdminList"
+                :key="item.userId"
+                :label="item.username"
+                :value="item.userId"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -186,9 +208,11 @@ import {
   getUserCanteen,
   getCanteenCommentList,
   deleteCanteenComment,
-  replyCanteenComment
+  replyCanteenComment,
+  getCanteenAdmin, addCanteenAdmin, deleteCanteenAdmin
 } from "../api/canteen";
 import {parseDateTime} from "../utils/string";
+import {getUserList} from "../api/user";
 
 const isAdmin = localStorage.getItem('ms_role');
 const userId = Number(localStorage.getItem('ms_user_id'));
@@ -223,6 +247,22 @@ const validateForm = reactive({
 
 const canteenData = ref([]);
 let pageTotal = ref(0);
+
+const userList = ref([]);
+const getUserData = () => {
+  getUserList({
+    currentPage: 1,
+    pageSize: 100,
+  }).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+    userList.value = data?.list;
+  });
+};
+getUserData();
 
 // 获取表格数据
 const getData = () => {
@@ -340,9 +380,15 @@ const handleCreate = () => {
 const saveNewCanteen = async () => {
   createVisible.value = false;
   try {
-
+    console.log(createForm)
     if (createForm.canteenId) {
       await updateCanteen(createForm);
+      if (createForm.userId){
+        await addCanteenAdmin(createForm.canteenId, createForm.userId);
+      }
+      if (createForm.deleteUserId){
+        await deleteCanteenAdmin(createForm.canteenId, createForm.deleteUserId);
+      }
     } else {
       await newCanteen(createForm);
     }
@@ -354,9 +400,21 @@ const saveNewCanteen = async () => {
   }
 };
 
+const canteenAdminList = ref([]);
 const handleEdit = async (index: number, row: any) => {
   createForm = reactive(JSON.parse(JSON.stringify(row)));
   createVisible.value = true;
+  if (isAdmin === 'admin') {
+    getCanteenAdmin(row.canteenId).then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
+      canteenAdminList.value = data?.data;
+    });
+  }
+
 };
 
 const chooseCommentId = ref(0);
@@ -372,6 +430,8 @@ const clearForm = () => {
     name: '',
     location: '',
     introduction: '',
+    userId: undefined as unknown as number,
+    deleteUserId: undefined as unknown as number,
   });
 }
 

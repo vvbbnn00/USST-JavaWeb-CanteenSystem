@@ -41,7 +41,7 @@
               <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'">
                 <el-icon class="grid-con-icon"><Promotion /></el-icon>
                 <div class="grid-cont-right">
-                  <div class="grid-num">{{ query.messageCount }}</div>
+                  <div class="grid-num">{{ query.community }}</div>
                   <div>公告</div>
                 </div>
               </div>
@@ -169,7 +169,7 @@ const query = reactive({
   userCount: undefined as unknown as number,
   commentCount: undefined as unknown as number,
   canteenCount: undefined as unknown as number,
-  messageCount: undefined as unknown as number,
+  community: undefined as unknown as number,
   complaintCount: undefined as unknown as number,
 });
 

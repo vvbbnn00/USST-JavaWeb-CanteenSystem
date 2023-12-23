@@ -43,6 +43,7 @@ export const newCanteen = (createForm: any) => {
         },
         data: JSON.stringify(createForm)
     });
+
 }
 
 export const getCanteenCommentList = (canteenId: number) => {
@@ -69,5 +70,29 @@ export const replyCanteenComment = (canteenId: number, commentId: number, conten
         data: JSON.stringify({
             content: content
         })
+    });
+}
+
+export const getCanteenAdmin = (canteenId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/${canteenId}/admins`,
+        method: 'GET'
+    });
+}
+
+export const addCanteenAdmin = (canteenId: number, userId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/${canteenId}/admins`,
+        method: 'POST',
+        data: JSON.stringify({
+            userId: userId
+        })
+    });
+}
+
+export const deleteCanteenAdmin = (canteenId: number, userId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/${canteenId}/admins/${userId}`,
+        method: 'DELETE'
     });
 }
