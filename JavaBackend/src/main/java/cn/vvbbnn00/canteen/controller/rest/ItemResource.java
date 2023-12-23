@@ -70,7 +70,12 @@ public class ItemResource {
         BasicDataResponse response = new BasicDataResponse();
         try {
             Item result = itemService.getItemById(itemId);
-            response.setData(result);
+            if (result == null) {
+                response.setCode(404);
+                response.setMessage("菜品不存在");
+            } else {
+                response.setData(result);
+            }
         } catch (Exception e) {
             response.setCode(400);
             response.setMessage(e.getMessage());
