@@ -61,8 +61,8 @@ export default function NavigationBar() {
                     首页
                 </Link>
             </NavbarItem>
-            <NavbarItem isActive={pathname.startsWith("/food")}>
-                <Link color="foreground" href="/food">
+            <NavbarItem isActive={pathname.startsWith("/item")}>
+                <Link color="foreground" href="/item">
                     发现美食
                 </Link>
             </NavbarItem>
