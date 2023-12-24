@@ -141,6 +141,7 @@ import {getCanteenList, getUserCanteen} from "../api/canteen";
 import {getUserList} from "../api/user";
 import {getComplaintList} from "../api/complain";
 import {getTopicList} from "../api/topic";
+import {getAnnouncementList} from "../api/announcement";
 
 const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
@@ -170,7 +171,7 @@ const query = reactive({
   userCount: undefined as unknown as number,
   commentCount: undefined as unknown as number,
   canteenCount: undefined as unknown as number,
-  community: undefined as unknown as number,
+  community: 0,
   complaintCount: undefined as unknown as number,
 });
 
@@ -209,7 +210,19 @@ if (role === 'admin') {
     }
     query.canteenCount = response.data?.data.length;
     // 获取公告条数
-
+    const canteenData = ref([]);
+    const responseCanteen = await getUserCanteen();
+    if (responseCanteen.data.code !== 200) {
+      ElMessage.error(responseCanteen.data.message);
+      return;
+    }
+    canteenData.value = responseCanteen.data?.data;
+    for (const canteen of canteenData.value) {
+      const response2 = await getAnnouncementList(canteen.canteenId);
+      console.log(response2.data?.total);
+      query.community += response2.data?.total;
+      console.log(query.community)
+    }
     // 获取举报条数
     const response3 = await getComplaintList({
       currentPage: 1,
