@@ -54,7 +54,7 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-RUN npm i sharp
+RUN npm i sharp --registry=https://registry.npm.taobao.org
 
 USER nextjs
 

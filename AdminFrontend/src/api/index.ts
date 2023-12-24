@@ -1,6 +1,6 @@
 import request from "../utils/request";
 
-export const BASE_URL = "http://10.100.164.6:60001/backend";
+export const BASE_URL = process.env.NODE_ENV === 'production' ? 'http://10.100.164.6/backend' : "http://10.100.164.6:60001/backend";
 import {doSign} from "../lib/security/release";
 
 export const passwordLogin = async (username: string, password: string) => {

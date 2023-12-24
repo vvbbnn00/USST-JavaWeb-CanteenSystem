@@ -1,11 +1,15 @@
 version: '3.1'
 services:
   next-frontend:
-    build: ./CommunityFrontend
+    build:
+      context: ./CommunityFrontend
+      dockerfile: Dockerfile
     ports:
       - "127.0.0.1:10001:3000"
     depends_on:
       - java-backend
+    env_file:
+      - .env
 
   java-backend:
     build: ./JavaBackend

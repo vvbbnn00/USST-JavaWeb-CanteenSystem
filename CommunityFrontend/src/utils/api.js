@@ -1,7 +1,7 @@
 "use client";
 import store from "@/utils/store";
 
-const BASE_URL = "http://10.100.164.6:60001/backend"
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://10.100.164.6:60001/backend";
 
 const fetchApi = (...args) => {
     let [url, options] = args
