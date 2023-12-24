@@ -11,3 +11,21 @@ export const getVoteList = (query: any) => {
         data: JSON.stringify(query)
     });
 };
+
+export const deleteVote = (id: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${id}`,
+        method: 'DELETE'
+    });
+}
+
+export const updateVote = (form: any) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${form.voteId}`,
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify(form)
+    });
+}
