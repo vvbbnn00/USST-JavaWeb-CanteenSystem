@@ -127,7 +127,7 @@
         <el-table :data="infoData" style="width: 100%">
           <el-table-column label="简介" align="left">
             <template #default="scope">
-              <div class="plugins-tips">{{ scope.row.introduction }}</div>
+              <pre class="plugins-tips">{{ scope.row.introduction }}</pre>
             </template>
           </el-table-column>
         </el-table>
@@ -182,7 +182,7 @@
     <el-dialog title="回复" v-model="commentReplyVisible" width="40%">
       <el-form label-width="90px" :model="commentForm" :rules="validateForm">
         <el-form-item label="回复内容" required prop="message">
-          <el-input v-model="commentForm.message" placeholder="请输入回复内容"></el-input>
+          <el-input type="textarea" v-model="commentForm.message" placeholder="请输入回复内容" rows="3"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -226,7 +226,7 @@ const query = reactive({
   canteen_id: undefined as unknown as number,
   kw: '',
   currentPage: 1,
-  pageSize: 15
+  pageSize: 10
 });
 
 const validateForm = reactive({
