@@ -38,7 +38,7 @@
                   <div>用户</div>
                 </div>
               </div>
-              <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'">
+              <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'" @click="gotoAnnouncementManagement">
                 <el-icon class="grid-con-icon"><Promotion /></el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.community }}</div>
@@ -49,7 +49,7 @@
           </el-col>
           <el-col :span="8">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
-              <div class="grid-content grid-con-2" v-if="role === 'admin'">
+              <div class="grid-content grid-con-2" v-if="role === 'admin'" @click="gotoTopicManagement">
                 <el-icon class="grid-con-icon">
                   <ChatDotRound/>
                 </el-icon>
@@ -141,6 +141,7 @@ import {getCanteenList, getUserCanteen} from "../api/canteen";
 import {getUserList} from "../api/user";
 import {getComplaintList} from "../api/complain";
 import {getTopicList} from "../api/topic";
+import {getAnnouncementList} from "../api/announcement";
 
 const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
@@ -170,7 +171,7 @@ const query = reactive({
   userCount: undefined as unknown as number,
   commentCount: undefined as unknown as number,
   canteenCount: undefined as unknown as number,
-  community: undefined as unknown as number,
+  community: 0,
   complaintCount: undefined as unknown as number,
 });
 
@@ -209,7 +210,19 @@ if (role === 'admin') {
     }
     query.canteenCount = response.data?.data.length;
     // 获取公告条数
-
+    const canteenData = ref([]);
+    const responseCanteen = await getUserCanteen();
+    if (responseCanteen.data.code !== 200) {
+      ElMessage.error(responseCanteen.data.message);
+      return;
+    }
+    canteenData.value = responseCanteen.data?.data;
+    for (const canteen of canteenData.value) {
+      const response2 = await getAnnouncementList(canteen.canteenId);
+      console.log(response2.data?.total);
+      query.community += response2.data?.total;
+      console.log(query.community)
+    }
     // 获取举报条数
     const response3 = await getComplaintList({
       currentPage: 1,
@@ -236,6 +249,14 @@ const gotoCanteenManagement = () => {
 
 const gotoComplaintManagement = () => {
   router.push('/complaint');
+}
+
+const gotoAnnouncementManagement = () => {
+  router.push('/announcement');
+}
+
+const gotoTopicManagement = () => {
+  router.push('/topic');
 }
 
 const addView = ref(false)

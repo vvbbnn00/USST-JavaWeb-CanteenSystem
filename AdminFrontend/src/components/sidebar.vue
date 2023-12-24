@@ -118,6 +118,10 @@ const items: {
       {
         index: '/announcement',
         title: '公告管理',
+      },
+      {
+        index: '/vote',
+        title: '投票管理',
       }
     ]
   }
