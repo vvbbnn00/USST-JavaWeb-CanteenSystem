@@ -127,15 +127,23 @@
           <el-input v-model="form.itemId" placeholder="请输入菜品ID" disabled></el-input>
         </el-form-item>
         <el-form-item label="所属菜系" required prop="cuisineId">
-          <el-select v-model="editCanteenId" placeholder="食堂名称" class="handle-select mr10" clearable>
-            <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
-                       :value="item.canteenId"></el-option>
-          </el-select>
-          <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="editCuisineList.length > 0">
-            <el-option v-for="item in editCuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
-          </el-select>
-          <div v-if="form.itemId" class="tips">
-            不需要更改菜系不做选择
+          <div v-if="form.itemId">
+            <el-select v-model="editCanteenId" placeholder="食堂名称" class="handle-select mr10" disabled>
+              <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
+                         :value="item.canteenId"></el-option>
+            </el-select>
+            <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="editCuisineList.length > 0">
+              <el-option v-for="item in editCuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
+            </el-select>
+          </div>
+          <div v-if="!form.itemId">
+            <el-select v-model="editCanteenId" placeholder="食堂名称" class="handle-select mr10" clearable>
+              <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
+                         :value="item.canteenId"></el-option>
+            </el-select>
+            <el-select v-model="form.cuisineId" placeholder="请选择菜系" clearable v-if="editCuisineList.length > 0">
+              <el-option v-for="item in editCuisineList" :key="item.cuisineId" :label="item.name" :value="item.cuisineId"></el-option>
+            </el-select>
           </div>
         </el-form-item>
 
@@ -241,7 +249,7 @@ import {getUploadUrl} from "../api";
 import {getCuisineList} from "../api/cuisine";
 import {ajaxUpload} from "../api/upload";
 import {getCanteenList, getUserCanteen} from "../api/canteen";
-import {getItemList, deleteItem, createItem, updateItem, getItemComment, deleteItemComment} from "../api/item";
+import {getItemList, deleteItem, createItem, updateItem, getItemComment, deleteItemComment, getItemInfo} from "../api/item";
 
 const query = reactive({
   kw: '',
@@ -391,6 +399,14 @@ let idx: number = -1;
 const handleState = async (index: number, row: any) => {
   idx = index;
   form = reactive(JSON.parse(JSON.stringify(row)));
+  getItemInfo(row.itemId).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+    editCanteenId.value = data?.data?.canteen.canteenId;
+  });
   const uploadResp = await getUploadUrl();
   if (uploadResp.data.code !== 200) {
     ElMessage.error(uploadResp.data.message);
@@ -618,7 +634,4 @@ const handleCommentDelete = (row: any) => {
   text-align: center;
 }
 
-.tips {
-  margin-left: 10px;
-}
 </style>
