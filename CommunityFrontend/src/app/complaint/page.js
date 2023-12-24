@@ -74,13 +74,17 @@ export default function ComplaintPage() {
                             </Button>
                         </div>
                         <div className={"flex justify-end items-center"}>
-                            <CanteenSelect onChange={setCanteenId}/>
+                            <CanteenSelect onChange={(e)=>{
+                                setPage(1);
+                                setCanteenId(e);
+                            }}/>
                             <Select
                                 label="投诉状态"
                                 className={"w-[150px] text-gray-500 ml-5"}
                                 size={"sm"}
                                 defaultSelectedKeys={[status || "all"]}
                                 onChange={e => {
+                                    setPage(1);
                                     setStatus(e.target.value === "all" ? undefined : e.target.value);
                                 }}
                                 classNames={{

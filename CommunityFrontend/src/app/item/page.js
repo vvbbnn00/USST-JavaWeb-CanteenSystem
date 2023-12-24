@@ -97,10 +97,12 @@ export default function ItemPage({params}) {
             setFilterCuisine(selectedOptions[1]?.value);
             setFilterText(selectedOptions[0]?.label + " / " + selectedOptions[1]?.label);
         }
+        setPage(1);
     }
 
     const onSearch = (formData) => {
         let kw = formData?.get("search");
+        setPage(1);
         kw = kw?.trim();
         if (kw?.length === 0) {
             kw = null;
