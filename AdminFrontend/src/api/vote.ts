@@ -81,3 +81,10 @@ export const updateVoteOption = (voteId: number, optionId: number, name: string)
         })
     });
 }
+
+export const getVoteResult = (voteId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${voteId}/stat`,
+        method: 'GET'
+    });
+}

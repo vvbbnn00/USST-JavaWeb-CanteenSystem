@@ -57,7 +57,7 @@
             <el-button text :icon="CirclePlus" class="green" @click="handleOptionsEdit(scope.row)" v-if="!scope.row.isStarted">
               编辑选项
             </el-button>
-            <el-button text :icon="PieChart" class="blue" @click="" v-if="scope.row.isStarted">
+            <el-button text :icon="PieChart" class="blue" @click="handleVoteResult(scope.row)">
               查看统计信息
             </el-button>
             <el-button
@@ -172,6 +172,19 @@
       </template>
     </el-dialog>
 
+    <!--  投票结果  -->
+    <el-dialog v-model="voteResultVisible" width="70%" @close="voteResultChartVisible = false">
+      <el-card shadow="hover">
+        <schart v-if="voteResultChartVisible" class="schart" canvasId="bar1" :options="options"></schart>
+      </el-card>
+      <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="voteResultVisible = false">取 消</el-button>
+    </span>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -179,8 +192,20 @@
 import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Plus, Edit, Delete, CirclePlus, PieChart} from '@element-plus/icons-vue';
-import {getVoteList, deleteVote, updateVote, newVote, getVoteOptionsList, createVoteOption, deleteVoteOption, updateVoteOption} from "../api/vote";
+import {
+  getVoteList,
+  deleteVote,
+  updateVote,
+  newVote,
+  getVoteOptionsList,
+  createVoteOption,
+  deleteVoteOption,
+  updateVoteOption,
+  getVoteResult
+} from "../api/vote";
 import {parseDateTime} from "../utils/string";
+import Schart from 'vue-schart';
+import {nextTick} from "vue";
 
 const query = reactive({
   isStarted: null as boolean | null,
@@ -392,6 +417,59 @@ const handleDeleteOptions = (row: any) => {
       .catch(() => {
       });
 };
+
+const voteResultVisible = ref(false);
+const voteResultData = ref([]);
+const getResultData = async (id: number) => {
+  await getVoteResult(id).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+
+    voteResultData.value = data?.list;
+  });
+}
+
+let options = reactive({
+  type: '',
+  title: {
+    text: ''
+  },
+  bgColor: '',
+  labels: [],
+  datasets: [
+    {
+      label: '',
+      data: []
+    }
+  ]
+});
+const voteResultChartVisible = ref(false);
+
+const handleVoteResult = async (row: any) => {
+  await getResultData(row.voteId);
+  options = {
+    type: 'bar',
+    title: {
+      text:row.voteName,
+    },
+    bgColor: '#fbfbfb',
+    labels: voteResultData.value.map(item => item.name),
+    datasets:[
+      {
+        data: voteResultData.value.map(item => item.count),
+        label: '投票结果'
+      }
+    ]
+  }
+  voteResultVisible.value = true;
+  nextTick(() => {
+    voteResultChartVisible.value = true;
+  })
+};
+
 </script>
 
 <style scoped>
@@ -418,6 +496,11 @@ const handleDeleteOptions = (row: any) => {
 
 .blue {
   color: rgba(64, 158, 255, 0.93);
+}
+
+.schart {
+  width: 100%;
+  height: 500px;
 }
 
 </style>
