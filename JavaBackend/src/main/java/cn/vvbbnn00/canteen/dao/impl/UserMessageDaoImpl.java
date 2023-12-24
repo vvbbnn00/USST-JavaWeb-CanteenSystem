@@ -33,34 +33,33 @@ public class UserMessageDaoImpl implements UserMessageDao {
 
     public List<UserMessageCount> queryMessagedUsers(Integer userId) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = "SELECT user.user_id as user_id, SUM(message_count) AS total_messages, username, email, level, is_verified " +
+            String sql = "SELECT user.user_id as user_id, SUM(message_count) AS total_messages, " +
+                    "username, email, level, is_verified, " +
+                    "MAX(combined.last_date) as last_date " +
                     "FROM ( " +
                     "    SELECT from_user_id AS user_id, count(message_id) as message_count, MAX(created_at) AS last_date " +
                     "    FROM user_message " +
                     "    WHERE from_user_id <> ? AND to_user_id = ? " +
                     "    GROUP BY from_user_id " +
-                    "    UNION ALL " +
-                    "    SELECT to_user_id AS user_id, count(message_id), MAX(created_at) AS last_date " +
+
+                    "    UNION " +
+
+                    "    SELECT to_user_id AS user_id, (0) as message_count, MAX(created_at) AS last_date " +
                     "    FROM user_message " +
                     "    WHERE to_user_id <> ? AND from_user_id = ? " +
                     "    GROUP BY to_user_id " +
-                    "    UNION ALL " +
-                    "    SELECT to_user_id AS user_id, count(message_id), MAX(created_at) AS last_date " +
-                    "    FROM user_message " +
-                    "    WHERE to_user_id = ? " +
-                    "    GROUP BY to_user_id " +
-                    "    ORDER BY last_date DESC" +
+
                     "    LIMIT 200 " +
                     ") AS combined " +
                     "JOIN user ON user.user_id = combined.user_id " +
-                    "GROUP BY user.user_id;";
+                    "GROUP BY user.user_id " +
+                    "ORDER BY last_date DESC;";
 
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, userId);
             ps.setInt(3, userId);
             ps.setInt(4, userId);
-            ps.setInt(5, userId);
 
             ResultSet rs = ps.executeQuery();
 
