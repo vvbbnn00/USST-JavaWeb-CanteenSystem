@@ -31,30 +31,37 @@ export default function UserVerify() {
         (...args) => fetchApiWithAuth(...args).then(r => r.data)
     );
 
-    const doVerify = (formData) => {
-        const employeeId = formData.get("employeeId");
-        const name = formData.get("name");
+    const doVerify = async (formData) => {
+        return new Promise((resolve, reject)=>{
+            const employeeId = formData.get("employeeId");
+            const name = formData.get("name");
 
-        confirm({
-            title: '确认提交',
-            content: '提交后将无法更改，确认提交认证信息吗？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
-            onOk() {
-                fetchApiWithAuth(`/api/rest/user/me/verify`, {
-                    method: "POST",
-                    body: JSON.stringify({employeeId, name})
-                }).then(r => {
-                    setRefresh(refresh + 1);
-                }).catch(e => {
-                    messageApi.open({
-                        type: 'error',
-                        content: e.message || "认证失败"
-                    });
-                })
-            }
-        });
+            confirm({
+                title: '确认提交',
+                content: '提交后将无法更改，确认提交认证信息吗？',
+                okText: '确定',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk() {
+                    fetchApiWithAuth(`/api/rest/user/me/verify`, {
+                        method: "POST",
+                        body: JSON.stringify({employeeId, name})
+                    }).then(r => {
+                        setRefresh(refresh + 1);
+                        resolve();
+                    }).catch(e => {
+                        messageApi.open({
+                            type: 'error',
+                            content: e.message || "认证失败"
+                        });
+                        resolve();
+                    })
+                },
+                onCancel() {
+                    resolve();
+                }
+            });
+        })
     }
 
     return (<>

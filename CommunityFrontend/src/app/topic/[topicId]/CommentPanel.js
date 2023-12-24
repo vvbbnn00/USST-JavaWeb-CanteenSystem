@@ -51,7 +51,7 @@ export default function CommentPanel({topicId}) {
             return;
         }
         content = content.trim();
-        fetchApiWithAuth(`/api/rest/topic/${topicId}/comment`, {
+        await fetchApiWithAuth(`/api/rest/topic/${topicId}/comment`, {
             method: "POST",
             body: JSON.stringify({content})
         }).then(r => {

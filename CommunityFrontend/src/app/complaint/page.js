@@ -154,7 +154,7 @@ export default function ComplaintPage() {
                             <Empty description={"没有找到相关投诉"} className={"text-gray-500"}/>
                         </div>}
                     {!isLoading && <div className={"flex flex-col"}>
-                        {data?.list?.map((item, index) => {
+                        {data?.list?.map((item) => {
                             return <Link href={`/complaint/${item?.complaintId}`} key={item?.complaintId}>
                                 <div key={item?.complaintId}
                                      className={"flex flex-col gap-0 border-b p-5 hover:bg-gray-100 cursor-pointer transition-background"}>

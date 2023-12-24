@@ -59,7 +59,7 @@ export default function CommentPanel({itemId, type = "canteen/item"}) {
             return;
         }
         content = content.trim();
-        fetchApiWithAuth(`/api/rest/${type}/${itemId}/comment`, {
+        await fetchApiWithAuth(`/api/rest/${type}/${itemId}/comment`, {
             method: "POST",
             body: JSON.stringify({content, score})
         }).then(r => {
