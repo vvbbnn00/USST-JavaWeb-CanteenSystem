@@ -1,4 +1,4 @@
-FROM tomcat:10-jre11
+FROM tomcat:10
 LABEL authors="vvbbnn00"
 
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
