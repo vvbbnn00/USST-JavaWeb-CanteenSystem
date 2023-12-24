@@ -275,11 +275,7 @@ const defaultTodoList = [
     status: false
   },
   {
-    title: '评价信息管理',
-    status: false
-  },
-  {
-    title: '交流社区信息管理',
+    title: '评价交流信息管理',
     status: false
   },
   {
@@ -287,6 +283,27 @@ const defaultTodoList = [
     status: false
   }
 ];
+
+const canteenAdminTodoList = [
+  {
+    title: '管理/更新食堂',
+    status: false
+  },
+  {
+    title: '菜系/菜品管理',
+    status: false
+  },
+  {
+    title: '公告信息管理',
+    status: false
+  },
+  {
+    title: '投诉信息处理',
+    status: false
+  }
+];
+
+const isAdmin = localStorage.getItem('ms_role');
 
 let todoList: any = reactive([]);
 
@@ -300,12 +317,20 @@ const loadTodoList = () => {
     if (ms_todoList_date === date_str) {
       todoList = reactive(JSON.parse(ms_todoList));
     } else {
-      todoList = reactive(defaultTodoList);
+      if (isAdmin === 'admin') {
+        todoList = reactive(defaultTodoList);
+      } else if (isAdmin === 'canteen_admin') {
+        todoList = reactive(canteenAdminTodoList);
+      }
       localStorage.setItem('ms_todoList', JSON.stringify(todoList));
       localStorage.setItem('ms_todoList_date_str', date_str);
     }
   } else {
-    todoList = reactive(defaultTodoList);
+    if (isAdmin === 'admin') {
+      todoList = reactive(defaultTodoList);
+    } else if (isAdmin === 'canteen_admin') {
+      todoList = reactive(canteenAdminTodoList);
+    }
     const date = new Date();
     const date_str = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     localStorage.setItem('ms_todoList', JSON.stringify(todoList));
@@ -323,7 +348,11 @@ const saveTodoList = () => {
 loadTodoList();
 
 const handleReset = () => {
-  todoList = reactive(defaultTodoList);
+  if (isAdmin === 'admin') {
+    todoList = reactive(defaultTodoList);
+  } else if (isAdmin === 'canteen_admin') {
+    todoList = reactive(canteenAdminTodoList);
+  }
   saveTodoList();
   // Reload the page
   router.go(0);
