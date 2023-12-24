@@ -34,7 +34,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="评论" align="center">
+        <el-table-column label="评论" align="center" width="200px">
           <template #default="scope">
             <el-button class="el-icon-lx-calendar" @click="handleComment(scope.row, false)">
               查看评论
