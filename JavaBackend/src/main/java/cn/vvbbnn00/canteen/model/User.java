@@ -24,7 +24,7 @@ public class User implements Serializable {
     private String name;
     private String employeeId;
     @Min(value = 0, message = "level不能小于0")
-    @Max(value = 6, message = "level不能大于6")
+    @Max(value = 20, message = "level不能大于20")
     private Integer level;
     @Min(value = 0, message = "point不能小于0")
     private Long point;

@@ -38,15 +38,26 @@ public class VoteDaoImpl implements VoteDao {
     }
 
     @Override
-    public List<Vote> getVoteList(Integer page, Integer pageSize, Integer status, String orderBy, Boolean asc) {
+    public List<Vote> getVoteList(Integer page, Integer pageSize, Integer userId, Integer status, String orderBy, Boolean asc) {
         String sql = SqlStatementUtils.generateBasicSelectSql(Vote.class, new String[]{
                 "voteId", "voteName", "startTime", "endTime", "isStarted", "voteIntro", "createdBy", "createdAt", "updatedAt"
         });
 
         List<Object> params = new ArrayList<>();
+        List<String> where = new ArrayList<>();
+
         if (status != null) {
-            sql += " WHERE `is_started` = ?";
+            where.add("`is_started` = ?");
             params.add(status);
+        }
+
+        if (userId != null) {
+            where.add("`created_by` = ?");
+            params.add(userId);
+        }
+
+        if (!where.isEmpty()) {
+            sql += " WHERE " + String.join(" AND ", where);
         }
 
         if (orderBy != null) {
@@ -82,8 +93,7 @@ public class VoteDaoImpl implements VoteDao {
 
     @Override
     public Vote queryVoteById(Integer id) {
-        try {
-            Connection connection = Hikari.getConnection();
+        try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Vote.class, new String[]{
                     "voteId", "voteName", "startTime", "endTime", "isStarted", "voteIntro", "createdBy", "createdAt", "updatedAt"
             }) + " WHERE `vote_id` = ?;";
@@ -101,8 +111,7 @@ public class VoteDaoImpl implements VoteDao {
 
     @Override
     public List<VoteOption> getVoteOptionList(Integer voteId) {
-        try {
-            Connection connection = Hikari.getConnection();
+        try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(VoteOption.class, new String[]{
                     "vote_option_id", "vote_id", "name", "created_at", "updated_at"
             });
@@ -198,8 +207,7 @@ public class VoteDaoImpl implements VoteDao {
 
     @Override
     public VoteOption queryVoteOptionById(Integer id) {
-        try {
-            Connection connection = Hikari.getConnection();
+        try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(VoteOption.class, new String[]{
                     "vote_option_id", "vote_id", "name", "created_at", "updated_at"
             }) + " WHERE `vote_option_id` = ?;";
@@ -231,8 +239,7 @@ public class VoteDaoImpl implements VoteDao {
 
     @Override
     public Voter queryVoteResultByUserId(Integer userId, Integer voteId) {
-        try {
-            Connection connection = Hikari.getConnection();
+        try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Voter.class, new String[]{
                     "userId", "voteId", "optionId"
             }) + " WHERE `user_id` = ? AND `vote_id` = ?;";
@@ -280,12 +287,23 @@ public class VoteDaoImpl implements VoteDao {
     }
 
     @Override
-    public Integer getVoteListCount(Integer status) {
+    public Integer getVoteListCount(Integer userId, Integer status) {
         String sql = "SELECT COUNT(*) FROM vote";
+        List<String> where = new ArrayList<>();
         List<Object> params = new ArrayList<>();
+
         if (status != null) {
-            sql += " WHERE `is_started` = ?";
+            where.add("`is_started` = ?");
             params.add(status);
+        }
+
+        if (userId != null) {
+            where.add("`created_by` = ?");
+            params.add(userId);
+        }
+
+        if (!where.isEmpty()) {
+            sql += " WHERE " + String.join(" AND ", where);
         }
 
         try (Connection connection = Hikari.getConnection()) {

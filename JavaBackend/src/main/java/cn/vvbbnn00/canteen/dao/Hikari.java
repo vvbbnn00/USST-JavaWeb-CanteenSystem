@@ -21,7 +21,9 @@ public class Hikari {
         config.setUsername(ConfigUtils.getEnv("DB_USERNAME", "root"));
         config.setPassword(ConfigUtils.getEnv("DB_PASSWORD", "password"));
         config.setDriverClassName(ConfigUtils.getEnv("DB_DRIVER", "com.mysql.cj.jdbc.Driver"));
-        config.setMaximumPoolSize(1000);
+        config.setMaximumPoolSize(100);
+        config.setConnectionTimeout(2000);
+        config.setPoolName("canteen-community-hikari-pool");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
