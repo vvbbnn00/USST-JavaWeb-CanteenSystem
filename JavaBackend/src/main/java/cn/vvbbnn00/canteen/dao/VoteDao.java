@@ -25,7 +25,7 @@ public interface VoteDao {
      * @param asc      是否升序
      * @return 投票列表
      */
-    List<Vote> getVoteList(Integer page, Integer pageSize, Integer status, String orderBy, Boolean asc);
+    List<Vote> getVoteList(Integer page, Integer pageSize, Integer userId, Integer status, String orderBy, Boolean asc);
 
     /**
      * 根据id查询投票信息
@@ -120,6 +120,6 @@ public interface VoteDao {
      * @param status 状态
      * @return 投票列表数量
      */
-    Integer getVoteListCount(Integer status);
+    Integer getVoteListCount(Integer userId, Integer status);
 
 }

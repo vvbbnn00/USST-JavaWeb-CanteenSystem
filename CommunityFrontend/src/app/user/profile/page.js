@@ -92,7 +92,7 @@ export default function UserProfile() {
                                     <div className={"flex-grow"}></div>
                                     <div className={"flex flex-row gap-2 items-center"}>
                                         {data?.isVerified && <Chip color={"success"} variant={"flat"}>已认证</Chip>}
-                                        {!data?.isVerified && <Chip color={"error"} variant={"flat"}>未认证</Chip>}
+                                        {!data?.isVerified && <Chip color={"danger"} variant={"flat"}>未认证</Chip>}
                                         <ArrowRightOutlined/>
                                     </div>
                                 </div>

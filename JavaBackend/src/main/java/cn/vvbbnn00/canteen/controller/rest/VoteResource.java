@@ -90,11 +90,15 @@ public class VoteResource {
         response.setList(voteService.getVoteList(
                 voteListRequest.getCurrentPage(),
                 voteListRequest.getPageSize(),
+                voteListRequest.getUserId(),
                 status,
                 voteListRequest.getOrderBy(),
                 voteListRequest.getAsc()
         ));
-        response.setTotal(voteService.countVoteList(status));
+        response.setTotal(voteService.countVoteList(
+                voteListRequest.getUserId(),
+                status
+        ));
         response.setPageSize(voteListRequest.getPageSize());
         response.setCurrentPage(voteListRequest.getCurrentPage());
         return response;

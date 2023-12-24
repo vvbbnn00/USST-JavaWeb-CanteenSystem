@@ -1,7 +1,7 @@
 "use client";
 import NavigationBar from "@/components/NavigationBar";
 import BackButton from "@/components/common/BackButton";
-import {Empty, Modal} from "antd";
+import {Empty, message, Modal} from "antd";
 import {Button, Skeleton} from "@nextui-org/react";
 import {
     AlertOutlined,
@@ -26,6 +26,8 @@ export default function ComplaintDetailPage({params}) {
         `/api/rest/canteen/complaint/${params?.complaintId}?${refresh}`,
         (...args) => fetchApiWithAuth(...args).then(r => r.data)
     );
+    const [messageApi, contextHolder] = message.useMessage();
+
     useEffect(() => {
         getMe().then(userData => {
             setMe(userData);
@@ -42,7 +44,19 @@ export default function ComplaintDetailPage({params}) {
             cancelText: '取消',
             autoFocusButton: 'cancel',
             onOk() {
-                console.log('OK');
+                fetchApiWithAuth(`/api/rest/canteen/complaint/${params?.complaintId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        status: 'finished'
+                    })
+                }).then(r => {
+                    setRefresh(refresh + 1);
+                }).catch(e => {
+                    messageApi.open({
+                        type: 'error',
+                        content: e.message || "请求失败"
+                    });
+                })
             },
         });
     }
@@ -50,6 +64,7 @@ export default function ComplaintDetailPage({params}) {
 
     return <>
         <NavigationBar/>
+        {contextHolder}
         <main className={"flex justify-center flex-col items-center"}>
             <div className={"w-full lg:w-[768px] flex flex-wrap items-start"}>
                 <div className={"bg-white m-5 rounded-md shadow-xl overflow-hidden pb-0 w-full"}>

@@ -42,8 +42,8 @@ public class VoteService {
      * @param asc      是否升序
      * @return 投票列表
      */
-    public List<Vote> getVoteList(Integer page, Integer pageSize, Integer status, String orderBy, Boolean asc) {
-        return voteDao.getVoteList(page, pageSize, status, orderBy, asc);
+    public List<Vote> getVoteList(Integer page, Integer pageSize, Integer userId,  Integer status, String orderBy, Boolean asc) {
+        return voteDao.getVoteList(page, pageSize, userId, status, orderBy, asc);
     }
 
     /**
@@ -330,7 +330,7 @@ public class VoteService {
      * @param status 状态
      * @return 投票列表数量
      */
-    public Integer countVoteList(Integer status) {
-        return voteDao.getVoteListCount(status);
+    public Integer countVoteList(Integer userId, Integer status) {
+        return voteDao.getVoteListCount(userId, status);
     }
 }

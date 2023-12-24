@@ -29,8 +29,7 @@ public class CuisineDaoImpl implements CuisineDao {
 
     @Override
     public Cuisine queryCuisineById(Integer id) {
-        try {
-            Connection connection = Hikari.getConnection();
+        try (Connection connection = Hikari.getConnection()) {
             String sql = SqlStatementUtils.generateBasicSelectSql(Cuisine.class, new String[]{
                     "cuisineId", "name", "canteenId", "createdAt", "updatedAt"
             }) + " WHERE `cuisine_id` = ?;";

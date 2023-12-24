@@ -115,7 +115,7 @@ public class ItemService {
 
         // 验证当前用户是否为餐厅管理员，如果不是则抛出异常
         if (!canteenAdminService.checkHasCanteenAdmin(canteenId, userId)) {
-            throw new RuntimeException("您不是该餐厅的管理员");
+            throw new RuntimeException("您不是该食堂的管理员");
         }
 
         // 对传入的菜品对象中的各个属性进行检查，如果某个属性值不为空，则将这个属性值更新到旧的菜品信息中
@@ -130,7 +130,7 @@ public class ItemService {
                 throw new RuntimeException("菜系不存在");
             }
             if (!Objects.equals(cuisine.getCanteenId(), canteenId)) {
-                throw new RuntimeException("菜系不属于该餐厅");
+                throw new RuntimeException("菜系不属于该食堂");
             }
             itemExist.setCuisineId(item.getCuisineId());
         }

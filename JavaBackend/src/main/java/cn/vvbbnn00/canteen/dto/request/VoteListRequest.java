@@ -1,5 +1,6 @@
 package cn.vvbbnn00.canteen.dto.request;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,4 +15,7 @@ public class VoteListRequest extends BasicListRequest {
             message = "orderBy必须是startTime,endTime,status中的一个")
     private String orderBy;
     private Boolean isStarted;
+
+    @Min(value = 1, message = "userId必须大于0")
+    private Integer userId;
 }
