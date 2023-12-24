@@ -6,6 +6,7 @@ import {Button, Input, Spinner} from "@nextui-org/react";
 import {useFormStatus} from "react-dom";
 import {message, Modal} from "antd";
 import {useState} from "react";
+import BackButton from "@/components/common/BackButton";
 
 const {confirm} = Modal;
 
@@ -62,7 +63,12 @@ export default function UserVerify() {
             <NavigationBar/>
             <div className={"flex items-center justify-center"}>
                 <div className={"w-full lg:w-[500px] bg-white m-5 rounded-md shadow-xl overflow-hidden"}>
-                    <h1 className={"p-5 text-center font-bold text-gray-900 text-2xl pb-2"}>用户认证</h1>
+                    <div className={"flex w-full items-center justify-center relative"}>
+                        <div className={"h-full flex items-center absolute left-1"}>
+                            <BackButton />
+                        </div>
+                        <h1 className={"text-center font-bold text-gray-900 text-2xl flex items-center p-5"}>用户认证</h1>
+                    </div>
                     <p className={"p-5 text-yellow-600 text-sm text bg-yellow-50 m-5 rounded-lg"}>
                         完成用户认证，可以一次性获得<b>20</b>点积分奖励，认证后您的发言权重将会提升，获得更多的关注。<br/>
                         <b>每个用户只能认证一次，认证后不可更改。</b>

@@ -17,19 +17,70 @@ import {usePathname} from 'next/navigation'
 import {getMe, logout} from "@/utils/auth";
 import useSWR from "swr";
 import {NotificationIcon} from "@/components/icons/NotificationIcon";
+import {MailFilled} from "@ant-design/icons";
 
 export default function NavigationBar() {
     const [user, setUser] = useState();
     const [nextLevelExp, setNextLevelExp] = useState(0);
     const [progress, setProgress] = useState(0);
     const pathname = usePathname();
-    const {data: notification} = useSWR("/api/rest/user/notification/unread/count", fetchApiWithAuth);
+    const {data: notification} = useSWR(
+        "/api/rest/user/notification/unread/count",
+        fetchApiWithAuth,
+        {
+            refreshInterval: 1000 * 5
+        }
+    );
+    const {data: messageList} = useSWR(
+        "/api/rest/user/message/target/list",
+        (...args) => fetchApiWithAuth(...args).then(r => r.list), {
+            refreshInterval: 1000 * 5
+        }
+    );
+    const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
     useEffect(() => {
         getMe().then(userData => {
             setUser(userData);
         });
+        const unreadMessageCount = store.session.get("unreadMessageCount");
+        if (unreadMessageCount) {
+            setUnreadMessageCount(unreadMessageCount);
+        }
     }, []);
+
+    useEffect(() => {
+        if (!user) return;
+        if (!messageList) return;
+        const userId = user?.userId;
+        const key = `canteen|unread_message_${userId}`;
+        let lastMessage = localStorage.getItem(key);
+        let messageMap = {};
+        let cnt = 0
+        try {
+            lastMessage = JSON.parse(lastMessage);
+            lastMessage.forEach(message => {
+                messageMap[message?.userId] = message;
+            })
+        } catch (e) {
+        }
+        messageList.forEach(message => {
+            const uid = message?.userId;
+            if (!messageMap[uid]) {
+                cnt += message?.totalMessages;
+                return
+            }
+            if (messageMap[uid]?.totalMessages !== message?.totalMessages) {
+                cnt += message?.totalMessages - messageMap[uid]?.totalMessages;
+            }
+        });
+        if (cnt < 0) {
+            cnt = 0;
+            localStorage.setItem(key, JSON.stringify(messageList));
+        }
+        setUnreadMessageCount(cnt);
+        store.session.set("unreadMessageCount", cnt);
+    }, [messageList, user])
 
     useEffect(() => {
         const {nextLevelExp, progress} = calcLevelAndProgress(user?.point);
@@ -80,12 +131,25 @@ export default function NavigationBar() {
 
         <NavbarContent as="div" justify="end">
             <NavbarItem>
-                <Link href={"/user/notification"}>
-                    <Badge color="danger" content={notification?.data} isInvisible={notification?.data === 0}
-                           shape="circle">
-                        <NotificationIcon className="fill-current pt-0.5" size={30}/>
-                    </Badge>
-                </Link>
+                <div className={"flex items-center gap-2"}>
+                    <Link href={"/user/notification"}>
+                        <Badge color="danger"
+                               content={notification?.data > 99 ? '99+' : notification?.data}
+                               isInvisible={notification?.data === 0}
+                               shape="circle">
+                            <NotificationIcon className="fill-current pt-0.5" size={30}/>
+                        </Badge>
+                    </Link>
+                    <Link href={"/user/message"}>
+                        <Badge color="danger" content={unreadMessageCount > 99 ? '99+' : unreadMessageCount}
+                               isInvisible={unreadMessageCount === 0}
+                               shape="circle">
+                            <div className={"text-[28px] overflow-hidden"}>
+                                <MailFilled className={"rounded-lg overflow-hidden"} />
+                            </div>
+                        </Badge>
+                    </Link>
+                </div>
             </NavbarItem>
             <Dropdown placement="bottom-end">
                 <DropdownTrigger>
@@ -139,11 +203,13 @@ export default function NavigationBar() {
                         </div>
                     </DropdownItem>
 
-                    {(!user?.isVerified) && <DropdownItem key="verify" color={"primary"} as={Link} href={"/user/verify"}>
-                        <span className={"text-blue-500 font-bold"}>🪪 认证账户，提升等级</span>
-                    </DropdownItem>}
-                    <DropdownItem key="profile">用户信息</DropdownItem>
-                    <DropdownItem key="change_password">修改密码</DropdownItem>
+                    {(!user?.isVerified) &&
+                        <DropdownItem key="verify" color={"primary"} as={Link} href={"/user/verify"}>
+                            <span className={"text-blue-500 font-bold"}>🪪 认证账户，提升等级</span>
+                        </DropdownItem>}
+                    <DropdownItem key="profile" as={Link} href={"/user/profile"}>用户信息</DropdownItem>
+                    <DropdownItem key="change_password" as={Link}
+                                  href={"/user/profile/password"}>修改密码</DropdownItem>
                     <DropdownItem key="notification" as={Link} href={"/user/notification"}>通知中心</DropdownItem>
                     <DropdownItem key="message" as={Link} href={"/user/message"}>短消息</DropdownItem>
                     <DropdownItem key="logout" color="danger" className={"text-red-500"} onClick={doLogout}>

@@ -2,6 +2,7 @@ package cn.vvbbnn00.canteen.service;
 
 import cn.vvbbnn00.canteen.dao.UserMessageDao;
 import cn.vvbbnn00.canteen.dao.impl.UserMessageDaoImpl;
+import cn.vvbbnn00.canteen.dto.response.UserMessageCount;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.model.UserMessage;
 
@@ -16,7 +17,7 @@ public class UserMessageService {
      * @param UserId 接收者id
      * @return 消息列表
      */
-    public List<User> getMessagedUserList(Integer UserId) {
+    public List<UserMessageCount> getMessagedUserList(Integer UserId) {
         return messageDao.queryMessagedUsers(
                 UserId
         );

@@ -1,5 +1,6 @@
 package cn.vvbbnn00.canteen.dao;
 
+import cn.vvbbnn00.canteen.dto.response.UserMessageCount;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.model.UserMessage;
 
@@ -17,7 +18,7 @@ public interface UserMessageDao {
      * @param UserId 相关用户id
      * @return 消息列表
      */
-    List<User> queryMessagedUsers(Integer UserId);
+    List<UserMessageCount> queryMessagedUsers(Integer UserId);
     /**
      * 查询最近200条消息
      * @param fromUserId 互相发送消息的用户id

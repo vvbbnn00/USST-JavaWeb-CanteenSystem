@@ -10,6 +10,7 @@ import {calcLevelColor} from "@/utils/level";
 import {VerifiedOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
 import MessagePanel from "@/app/user/message/MessagePanel";
+import {getMe} from "@/utils/auth";
 
 export default function MessagePage({searchParams}) {
     const {data: recentUser, isLoading: isRecentUserLoading} = useSWR(
@@ -19,6 +20,7 @@ export default function MessagePage({searchParams}) {
             refreshInterval: 5000
         }
     );
+    const [me, setMe] = useState();
     const [selectedUser, setSelectedUser] = useState();
 
     useEffect(() => {
@@ -27,7 +29,18 @@ export default function MessagePage({searchParams}) {
                 setSelectedUser(r.data);
             });
         }
+        getMe().then(r => {
+            setMe(r);
+        })
     }, []);
+
+    useEffect(() => {
+        if (!me) return;
+        if (!recentUser) return;
+        const userId = me?.userId;
+        const key = `canteen|unread_message_${userId}`;
+        localStorage.setItem(key, JSON.stringify(recentUser));
+    });
 
 
     return <>

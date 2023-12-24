@@ -106,6 +106,8 @@ export default function UserPage({params}) {
                                         <Button
                                             className={"rounded-full"}
                                             variant={"bordered"}
+                                            as={Link}
+                                            href={"/user/profile"}
                                         >
                                             编辑个人资料
                                         </Button>

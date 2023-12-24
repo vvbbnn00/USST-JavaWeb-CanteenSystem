@@ -1,5 +1,5 @@
 "use client";
-import {Skeleton} from "@nextui-org/react";
+import {ScrollShadow, Skeleton} from "@nextui-org/react";
 import VoteSmallItem from "@/components/vote/VoteSmallItem";
 import useSWR from "swr";
 import {fetchApi} from "@/utils/api";
@@ -11,9 +11,10 @@ export default function LatestVote() {
             method: "POST",
             body: JSON.stringify({
                 page: 1,
-                pageSize: 1,
+                pageSize: 100,
                 orderBy: "startTime",
-                asc: false
+                asc: false,
+                isStarted: true,
             })
         }],
         (args) => fetchApi(...args)
@@ -31,11 +32,13 @@ export default function LatestVote() {
                     <Skeleton className="h-3 w-full rounded-lg"/>
                 </div>
             </div>}
-            {
-                latestVote?.list?.map(vote => {
-                    return <VoteSmallItem vote={vote} key={vote?.voteId}/>
-                })
-            }
+            <ScrollShadow className={"h-max-[400px] overflow-y-auto"}>
+                {
+                    latestVote?.list?.map(vote => {
+                        return <VoteSmallItem vote={vote} key={vote?.voteId}/>
+                    })
+                }
+            </ScrollShadow>
         </div>
     </div>
 }

@@ -279,4 +279,28 @@ public class VoteDaoImpl implements VoteDao {
         }
     }
 
+    @Override
+    public Integer getVoteListCount(Integer status) {
+        String sql = "SELECT COUNT(*) FROM vote";
+        List<Object> params = new ArrayList<>();
+        if (status != null) {
+            sql += " WHERE `is_started` = ?";
+            params.add(status);
+        }
+
+        try (Connection connection = Hikari.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            LogUtils.severe(e.getMessage(), e);
+        }
+        return null;
+    }
+
 }
