@@ -40,7 +40,6 @@ import {getAvatarUrl} from "../utils/string";
 import {usePermissStore} from "../store/permiss";
 
 const username: string | null = localStorage.getItem('ms_username');
-const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
 const sidebar = useSidebarStore();
 const avatar = localStorage.getItem('ms_avatar');
@@ -65,6 +64,8 @@ const handleCommand = (command: string) => {
     localStorage.removeItem('ms_email');
     localStorage.removeItem('ms_user_id');
     permiss.handleRemove();
+    localStorage.removeItem('ms_todoList');
+    localStorage.removeItem('ms_todoList_date_str');
     router.push('/login');
   } else if (command == 'user') {
     router.push('/user');
