@@ -16,9 +16,9 @@
         <el-table-column label="投诉处理状态" align="center">
           <template #default="scope">
             <el-tag
-                :type="scope.row.status === 'pending' ? 'danger' : scope.row.status === 'replied' ? 'warning' : 'success'"
+                :type="scope.row.status === 'pending' ? 'danger' : scope.row.status === 'replied' ? 'warning' : scope.row.status === 'processing' ? 'primary' : 'success'"
             >
-              {{ scope.row.status === 'pending' ? '未处理' : scope.row.status === 'replied' ? '已回复' : '已完成' }}
+              {{ scope.row.status === 'pending' ? '未处理' : scope.row.status === 'replied' ? '已回复' : scope.row.status === 'processing' ? '处理中' : '已完成' }}
             </el-tag>
           </template>
         </el-table-column>
@@ -103,7 +103,7 @@
     <el-dialog title="回复" v-model="complaintReplyVisible" width="40%">
       <el-form label-width="90px" :model="complaintReplyComment" :rules="validateForm">
         <el-form-item label="回复内容" required prop="content">
-          <el-input v-model="complaintReplyComment.content" placeholder="请输入投诉回复内容"></el-input>
+          <el-input type="textarea" v-model="complaintReplyComment.content" placeholder="请输入投诉回复内容" rows="3"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>

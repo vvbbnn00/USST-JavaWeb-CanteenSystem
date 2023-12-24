@@ -182,7 +182,7 @@
     <el-dialog title="回复" v-model="commentReplyVisible" width="40%">
       <el-form label-width="90px" :model="commentForm" :rules="validateForm">
         <el-form-item label="回复内容" required prop="message">
-          <el-input v-model="commentForm.message" placeholder="请输入回复内容"></el-input>
+          <el-input type="textarea" v-model="commentForm.message" placeholder="请输入回复内容" rows="3"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>

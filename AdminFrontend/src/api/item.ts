@@ -51,3 +51,11 @@ export const deleteItemComment = (itemId: number,commentId: number) => {
         method: 'DELETE'
     });
 }
+
+
+export const getItemInfo = (itemId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/canteen/item/${itemId}`,
+        method: 'GET'
+    });
+}
