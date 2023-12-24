@@ -93,7 +93,7 @@
           <el-input v-model="editForm.voteName" placeholder="请输入投票名称"></el-input>
         </el-form-item>
         <el-form-item label="投票介绍" prop="voteIntro">
-          <el-input v-model="editForm.voteIntro" placeholder="请输入投票介绍"></el-input>
+          <el-input type="textarea"  v-model="editForm.voteIntro" placeholder="请输入投票介绍" row="2"></el-input>
         </el-form-item>
         <el-form-item label="开始时间" prop="startTime">
           <el-date-picker
