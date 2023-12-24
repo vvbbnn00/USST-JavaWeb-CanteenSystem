@@ -38,7 +38,7 @@
                   <div>用户</div>
                 </div>
               </div>
-              <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'">
+              <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'" @click="gotoAnnouncementManagement">
                 <el-icon class="grid-con-icon"><Promotion /></el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.community }}</div>
@@ -49,7 +49,7 @@
           </el-col>
           <el-col :span="8">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
-              <div class="grid-content grid-con-2" v-if="role === 'admin'">
+              <div class="grid-content grid-con-2" v-if="role === 'admin'" @click="gotoTopicManagement">
                 <el-icon class="grid-con-icon">
                   <ChatDotRound/>
                 </el-icon>
@@ -249,6 +249,14 @@ const gotoCanteenManagement = () => {
 
 const gotoComplaintManagement = () => {
   router.push('/complaint');
+}
+
+const gotoAnnouncementManagement = () => {
+  router.push('/announcement');
+}
+
+const gotoTopicManagement = () => {
+  router.push('/topic');
 }
 
 const addView = ref(false)

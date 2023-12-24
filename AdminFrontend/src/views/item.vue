@@ -198,9 +198,9 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200" align="center" fixed="right">
+          <el-table-column label="操作" width="200" align="center" fixed="right" v-if="isAdmin === 'admin'">
             <template #default="scope">
-              <el-button v-if="isAdmin === 'admin'"
+              <el-button
                          text
                          :icon="Delete"
                          class="red"
