@@ -16,6 +16,7 @@ import ImageLayout from "@/components/community/ImageLayout";
 import CommentPanel from "@/app/complaint/[complaintId]/CommentPanel";
 import {useEffect, useState} from "react";
 import {getMe} from "@/utils/auth";
+import Link from "next/link";
 
 const {confirm} = Modal;
 
@@ -138,6 +139,17 @@ export default function ComplaintDetailPage({params}) {
                                 {formatDateTime(data?.createdAt)}
                             </div>}
                         </div>
+                        <div className={"flex flex-row items-center gap-2 p-5 pb-0 pt-0"}>
+                            <div className={"flex"}>
+                                <span className={"text-gray-700 font-bold w-[80px]"}>投诉食堂</span>
+                            </div>
+                            {isLoading && <Skeleton className={"h-6 w-1/5 rounded-lg"}/>}
+                            {!isLoading && <div className={"text-gray-500 underline font-bold"}>
+                                <Link href={"/canteen/" + data?.canteenId}>
+                                    <a>{data?.canteen?.name}</a>
+                                </Link>
+                            </div>}
+                        </div>
                         <div className={"flex flex-row items-start gap-2 p-5 pt-0 pb-0"}>
                             <div className={"flex"}>
                                 <span className={"text-gray-700 font-bold w-[80px]"}>投诉内容</span>
@@ -149,7 +161,7 @@ export default function ComplaintDetailPage({params}) {
                                 </pre>
                             </div>}
                         </div>
-                        {data?.imageInfoList && <div className={"p-5 pt-0"}>
+                        {data?.imageInfoList?.length > 0 && <div className={"p-5 pt-0"}>
                             <div className={"text-gray-700 font-bold pb-3"}>
                                 相关图片
                             </div>

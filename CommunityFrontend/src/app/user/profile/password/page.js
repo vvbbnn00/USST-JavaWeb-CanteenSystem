@@ -23,7 +23,7 @@ const SubmitButton = () => {
 export default function UserEmail() {
     const [messageApi, contextHolder] = message.useMessage();
 
-    const doChange = (formData) => {
+    const doChange = async (formData) => {
         const oldPassword = formData.get("oldPassword");
         const newPassword = formData.get("newPassword");
         const confirmNewPassword = formData.get("confirmNewPassword");
@@ -36,7 +36,7 @@ export default function UserEmail() {
             return;
         }
 
-        fetchApiWithAuth(`/api/rest/user/me/password`, {
+        await fetchApiWithAuth(`/api/rest/user/me/password`, {
             method: "PUT",
             body: JSON.stringify({
                 oldPassword,

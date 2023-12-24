@@ -13,7 +13,7 @@ import {fetchApiWithAuth} from "@/utils/api";
 import {Cascader, Empty} from "antd";
 import Link from "next/link";
 
-export default function ItemPage({params}) {
+export default function ItemPage() {
     const [filterCanteen, setFilterCanteen] = useState();
     const [filterCuisine, setFilterCuisine] = useState();
     const [sort, setSort] = useState("compScore");

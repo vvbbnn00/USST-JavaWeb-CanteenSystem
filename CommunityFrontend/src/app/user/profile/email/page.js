@@ -30,10 +30,10 @@ export default function UserEmail() {
         (...args) => fetchApiWithAuth(...args).then(r => r.data)
     );
 
-    const doChange = (formData) => {
+    const doChange = async (formData) => {
         const email = formData.get("email");
 
-        fetchApiWithAuth(`/api/rest/user/me`, {
+        await fetchApiWithAuth(`/api/rest/user/me`, {
             method: "PUT",
             body: JSON.stringify({email})
         }).then(r => {

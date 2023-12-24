@@ -2,31 +2,16 @@
 import NavigationBar from "@/components/NavigationBar";
 import useSWR from "swr";
 import {fetchApiWithAuth} from "@/utils/api";
-import {Avatar, Button, Chip, Input, Spinner} from "@nextui-org/react";
-import {useFormStatus} from "react-dom";
-import {message, Modal} from "antd";
-import {useState} from "react";
+import {Avatar, Chip, Spinner} from "@nextui-org/react";
+import {message} from "antd";
 import {ArrowRightOutlined} from "@ant-design/icons";
 import Link from "next/link";
-
-const {confirm} = Modal;
-
-const SubmitButton = () => {
-    const {pending} = useFormStatus();
-
-    return <Button
-        color={"primary"}
-        className={"w-full mt-5"}
-        type={"submit"}
-        isLoading={pending}
-    >提交</Button>
-}
 
 
 export default function UserProfile() {
     const [messageApi, contextHolder] = message.useMessage();
 
-    const {data, isLoading, error} = useSWR(
+    const {data, isLoading} = useSWR(
         `/api/rest/user/me`,
         (...args) => fetchApiWithAuth(...args).then(r => r.data)
     );

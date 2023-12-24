@@ -59,7 +59,7 @@ export default function CommentPanel({complaintId, data, onReplied, userId}) {
             return;
         }
         content = content.trim();
-        fetchApiWithAuth(`/api/rest/canteen/complaint/${complaintId}/reply`, {
+        await fetchApiWithAuth(`/api/rest/canteen/complaint/${complaintId}/reply`, {
             method: "POST",
             body: JSON.stringify({content})
         }).then(r => {
