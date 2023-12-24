@@ -29,3 +29,15 @@ export const updateVote = (form: any) => {
         data: JSON.stringify(form)
     });
 }
+
+export const newVote = (createForm: any) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify(createForm)
+    });
+
+}

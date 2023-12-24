@@ -9,7 +9,7 @@
         <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end">新增投票基础信息</el-button>
       </div>
       <el-table :data="voteData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-        <el-table-column prop="voteId" label="投票ID"></el-table-column>
+        <el-table-column prop="voteId" label="投票ID" width="100px"></el-table-column>
         <el-table-column label="发布状态" align="center">
           <template #default="scope">
             <el-tag
@@ -133,7 +133,7 @@
 import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Plus, Edit, Delete, CirclePlus, PieChart} from '@element-plus/icons-vue';
-import {getVoteList, deleteVote, updateVote} from "../api/vote";
+import {getVoteList, deleteVote, updateVote, newVote} from "../api/vote";
 import {parseDateTime} from "../utils/string";
 
 const query = reactive({
@@ -241,7 +241,7 @@ const saveEditForm = async () => {
     if (editForm.voteId) {
       await updateVote(editForm);
     } else {
-      // await createVote(editForm);
+      await newVote(editForm);
     }
     getData();
     ElMessage.success(`编辑投票成功`);
