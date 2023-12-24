@@ -94,6 +94,7 @@ public class VoteResource {
                 voteListRequest.getOrderBy(),
                 voteListRequest.getAsc()
         ));
+        response.setTotal(voteService.countVoteList(status));
         response.setPageSize(voteListRequest.getPageSize());
         response.setCurrentPage(voteListRequest.getCurrentPage());
         return response;

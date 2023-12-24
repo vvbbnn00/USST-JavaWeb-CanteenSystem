@@ -324,4 +324,13 @@ public class VoteService {
     public VoteOption getVoteResultByVoteId(Integer voteId, Integer userId) {
         return voteDao.queryVoteOptionById(voteDao.queryVoteResultByUserId(userId, voteId).getOptionId());
     }
+
+    /**
+     * 获取投票列表数量
+     * @param status 状态
+     * @return 投票列表数量
+     */
+    public Integer countVoteList(Integer status) {
+        return voteDao.getVoteListCount(status);
+    }
 }

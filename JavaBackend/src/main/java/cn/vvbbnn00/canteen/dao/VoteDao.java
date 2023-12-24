@@ -113,4 +113,13 @@ public interface VoteDao {
      * @return 投票结果
      */
     List<VoteOptionInfo> queryVoteResultStat(Integer voteId);
+
+    /**
+     * 获取投票列表数量
+     *
+     * @param status 状态
+     * @return 投票列表数量
+     */
+    Integer getVoteListCount(Integer status);
+
 }

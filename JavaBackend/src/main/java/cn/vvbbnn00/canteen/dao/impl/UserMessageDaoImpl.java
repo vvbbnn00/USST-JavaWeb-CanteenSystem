@@ -2,10 +2,12 @@ package cn.vvbbnn00.canteen.dao.impl;
 
 import cn.vvbbnn00.canteen.dao.Hikari;
 import cn.vvbbnn00.canteen.dao.UserMessageDao;
+import cn.vvbbnn00.canteen.dto.response.UserMessageCount;
 import cn.vvbbnn00.canteen.model.User;
 import cn.vvbbnn00.canteen.model.UserMessage;
 import cn.vvbbnn00.canteen.util.LogUtils;
 import cn.vvbbnn00.canteen.util.SqlStatementUtils;
+import cn.vvbbnn00.canteen.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,29 +31,43 @@ public class UserMessageDaoImpl implements UserMessageDao {
         }
     }
 
-    public List<User> queryMessagedUsers(Integer userId) {
+    public List<UserMessageCount> queryMessagedUsers(Integer userId) {
         try (Connection connection = Hikari.getConnection()) {
-            String sql = "SELECT DISTINCT user.user_id as user_id, user.username as username, " +
-                    "user.email as email, message.created_at as msg_created_at, level, is_verified " +
-                    "FROM " + Hikari.getDbName() + ".`user_message` AS message " +
-                    "JOIN " + Hikari.getDbName() + ".`user` AS user " +
-                    "ON message.from_user_id = user.user_id OR message.to_user_id = user.user_id " +
-                    "WHERE (message.from_user_id = ? OR message.to_user_id = ?) " +
-                    "AND message.created_at = (SELECT MAX(created_at) FROM " + Hikari.getDbName() + ".`user_message` " +
-                    "                           WHERE (from_user_id = ? OR to_user_id = ?) " +
-                    "                             AND (from_user_id = user.user_id OR to_user_id = user.user_id)) " +
-                    "ORDER BY message.created_at DESC LIMIT 200;";
+            String sql = "SELECT user.user_id as user_id, SUM(message_count) AS total_messages, username, email, level, is_verified " +
+                    "FROM ( " +
+                    "    SELECT from_user_id AS user_id, count(message_id) as message_count, MAX(created_at) AS last_date " +
+                    "    FROM user_message " +
+                    "    WHERE from_user_id <> ? AND to_user_id = ? " +
+                    "    GROUP BY from_user_id " +
+                    "    UNION ALL " +
+                    "    SELECT to_user_id AS user_id, count(message_id), MAX(created_at) AS last_date " +
+                    "    FROM user_message " +
+                    "    WHERE to_user_id <> ? AND from_user_id = ? " +
+                    "    GROUP BY to_user_id " +
+                    "    UNION ALL " +
+                    "    SELECT to_user_id AS user_id, count(message_id), MAX(created_at) AS last_date " +
+                    "    FROM user_message " +
+                    "    WHERE to_user_id = ? " +
+                    "    GROUP BY to_user_id " +
+                    "    ORDER BY last_date DESC" +
+                    "    LIMIT 200 " +
+                    ") AS combined " +
+                    "JOIN user ON user.user_id = combined.user_id " +
+                    "GROUP BY user.user_id;";
 
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, userId);
             ps.setInt(3, userId);
             ps.setInt(4, userId);
+            ps.setInt(5, userId);
+
             ResultSet rs = ps.executeQuery();
 
-            List<User> users = new ArrayList<>();
+            List<UserMessageCount> users = new ArrayList<>();
             while (rs.next()) {
-                User user = (User) SqlStatementUtils.makeEntityFromResult(rs, User.class);
+                UserMessageCount user = (UserMessageCount) SqlStatementUtils.makeEntityFromResult(rs, UserMessageCount.class);
+                user.setAvatar(StringUtils.getAvatarUrl(rs.getString("email")));
                 users.add(user);
             }
             return users;
