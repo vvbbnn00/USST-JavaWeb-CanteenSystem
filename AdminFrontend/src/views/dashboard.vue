@@ -62,7 +62,7 @@
                 <el-icon class="grid-con-icon"><WarningFilled /></el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.complaintCount }}</div>
-                  <div>未处理投诉信息</div>
+                  <div>进行中投诉信息</div>
                 </div>
               </div>
             </el-card>
@@ -172,7 +172,7 @@ const query = reactive({
   commentCount: undefined as unknown as number,
   canteenCount: undefined as unknown as number,
   community: 0,
-  complaintCount: undefined as unknown as number,
+  complaintCount: 0,
 });
 
 if (role === 'admin') {
@@ -224,18 +224,21 @@ if (role === 'admin') {
       console.log(query.community)
     }
     // 获取举报条数
-    const response3 = await getComplaintList({
-      currentPage: 1,
-      pageSize: 100
-    });
-    if (response3.data.code !== 200) {
-      ElMessage.error(response3.data.message);
-      return;
+    for (const canteen of canteenData.value) {
+      const response3 = await getComplaintList({
+        currentPage: 1,
+        pageSize: 100,
+        canteenId: canteen.canteenId
+      });
+      if (response3.data.code !== 200) {
+        ElMessage.error(response3.data.message);
+        return;
+      }
+      const undoneComplaints = response3.data?.list.filter( complaint => {
+        return complaint.status !== 'finished';
+      });
+      query.complaintCount += undoneComplaints.length;
     }
-    const undoneComplaints = response3.data?.list.filter( complaint => {
-      return complaint.status === 'pending';
-    });
-    query.complaintCount = undoneComplaints.length;
   })();
 }
 
