@@ -116,6 +116,9 @@ public class ComplaintService {
                 "createdAt", null);
         complaint.setComments(comments);
 
+        Canteen canteen = canteenService.getCanteenById(complaint.getCanteenId());
+        complaint.setCanteen(canteen);
+
         return complaint;
     }
 
