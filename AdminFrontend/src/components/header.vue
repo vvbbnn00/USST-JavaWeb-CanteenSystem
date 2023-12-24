@@ -36,7 +36,6 @@
 import {onMounted} from 'vue';
 import {useSidebarStore} from '../store/sidebar';
 import {useRouter} from 'vue-router';
-import {getAvatarUrl} from "../utils/string";
 import {usePermissStore} from "../store/permiss";
 
 const username: string | null = localStorage.getItem('ms_username');
@@ -66,6 +65,8 @@ const handleCommand = (command: string) => {
     permiss.handleRemove();
     localStorage.removeItem('ms_todoList');
     localStorage.removeItem('ms_todoList_date_str');
+    localStorage.removeItem('ms_role');
+    localStorage.removeItem('ms_avatar');
     router.push('/login');
   } else if (command == 'user') {
     router.push('/user');
