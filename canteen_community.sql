@@ -35,7 +35,7 @@ CREATE TABLE `announcement`  (
   INDEX `idx_announcement_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `announcement_ibfk_1` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `announcement_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 5000))
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '公告表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '公告表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for canteen
@@ -55,7 +55,7 @@ CREATE TABLE `canteen`  (
   INDEX `idx_canteen_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_canteen_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `canteen_chk_1` CHECK ((`comp_score` >= 0) and (`comp_score` <= 5))
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '食堂表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '食堂表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for canteen_admin
@@ -84,6 +84,8 @@ CREATE TABLE `comment`  (
   `parent_id` int NULL DEFAULT NULL COMMENT '父评论ID',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `weight` double NULL DEFAULT NULL COMMENT '评论权重',
+  `flagged` smallint NULL DEFAULT NULL COMMENT '是否被标记',
   PRIMARY KEY (`comment_id`) USING BTREE,
   INDEX `idx_comment_type_reference_id`(`type` ASC, `reference_id` ASC) USING BTREE,
   INDEX `idx_comment_created_by`(`created_by` ASC) USING BTREE,
@@ -94,7 +96,7 @@ CREATE TABLE `comment`  (
   CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `comment_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 500)),
   CONSTRAINT `comment_chk_2` CHECK ((`score` >= 0) and (`score` <= 5))
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表,包括食堂评论、菜品评论、帖子评论和投诉评论（投诉评论不能回复，以列表形式呈现）' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表,包括食堂评论、菜品评论、帖子评论和投诉评论（投诉评论不能回复，以列表形式呈现）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for complaint
@@ -103,18 +105,22 @@ DROP TABLE IF EXISTS `complaint`;
 CREATE TABLE `complaint`  (
   `complaint_id` int NOT NULL AUTO_INCREMENT COMMENT '投诉ID',
   `created_by` int NULL DEFAULT NULL COMMENT '投诉者ID',
+  `canteen_id` int NULL DEFAULT NULL COMMENT '被投诉食堂ID',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '投诉标题',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '投诉内容',
-  `status` enum('pending','processing','replied','finished') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'pending' COMMENT '投诉状态, pending: 待处理, processing: 处理中, replied: 已回复, finished: 已完成',
+  `status` enum('pending','processing','replied','finished') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'pending' COMMENT '投诉状态, pending: 待处理, processing: 处理中, replied: 已回复, finished: 已完成',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`complaint_id`) USING BTREE,
-  INDEX `created_by`(`created_by` ASC) USING BTREE,
   INDEX `idx_complaint_status_created_by`(`status` ASC, `created_by` ASC) USING BTREE,
   INDEX `idx_complaint_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_complaint_updated_at`(`updated_at` ASC) USING BTREE,
-  CONSTRAINT `complaint_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  INDEX `idx_complaint_canteen_id`(`canteen_id` ASC) USING BTREE,
+  INDEX `idx_complaint_created_by`(`created_by` ASC) USING BTREE,
+  CONSTRAINT `complaint_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `complaint_ibfk_2` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `complaint_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 5000))
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投诉表,当用户发起投诉，状态为pending，管理员回复后状态为replied，用户回复后状态为processing，管理员处理完成后状态为finished，投诉信息不可被删除' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投诉表,当用户发起投诉，状态为pending，管理员回复后状态为replied，用户回复后状态为processing，管理员处理完成后状态为finished，投诉信息不可被删除' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for cuisine
@@ -132,7 +138,7 @@ CREATE TABLE `cuisine`  (
   INDEX `idx_cuisine_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_cuisine_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `cuisine_ibfk_1` FOREIGN KEY (`canteen_id`) REFERENCES `canteen` (`canteen_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜系表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜系表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for image
@@ -150,7 +156,7 @@ CREATE TABLE `image`  (
   INDEX `idx_image_type_reference_id`(`type` ASC, `reference_id` ASC) USING BTREE,
   INDEX `idx_image_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_image_updated_at`(`updated_at` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '图片表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '图片表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for item
@@ -162,8 +168,9 @@ CREATE TABLE `item`  (
   `cuisine_id` int NULL DEFAULT NULL COMMENT '菜系ID',
   `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '菜品价格',
   `promotion_price` decimal(10, 2) NULL DEFAULT NULL COMMENT '促销价格',
+  `recommended` tinyint NOT NULL DEFAULT 0 COMMENT '是否为推荐菜品',
   `introduction` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '菜品简介',
-  `comp_score` decimal(5, 2) NULL DEFAULT NULL COMMENT '综合评分',
+  `comp_score` decimal(5, 2) NULL DEFAULT 0.00 COMMENT '综合评分',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`item_id`) USING BTREE,
@@ -173,9 +180,10 @@ CREATE TABLE `item`  (
   INDEX `idx_item_comp_score`(`comp_score` ASC) USING BTREE,
   INDEX `idx_item_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_item_updated_at`(`updated_at` ASC) USING BTREE,
+  INDEX `idx_item_recommended`(`recommended` ASC) USING BTREE,
   CONSTRAINT `item_ibfk_1` FOREIGN KEY (`cuisine_id`) REFERENCES `cuisine` (`cuisine_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `item_chk_1` CHECK ((`comp_score` >= 0) and (`comp_score` <= 5))
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for topic
@@ -186,6 +194,7 @@ CREATE TABLE `topic`  (
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '内容',
   `created_by` int NULL DEFAULT NULL COMMENT '创建者ID',
+  `flagged` smallint NULL DEFAULT NULL COMMENT '是否被标记',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`topic_id`) USING BTREE,
@@ -194,7 +203,7 @@ CREATE TABLE `topic`  (
   INDEX `idx_topic_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `topic_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `topic_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 5000))
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for topic_like
@@ -222,6 +231,7 @@ CREATE TABLE `user`  (
   `user_id` int NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
   `password` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '密码,使用Bcrypt加密,长度60,预留20',
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '邮箱',
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '真实姓名',
   `employee_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '学工号',
   `level` int NULL DEFAULT 0 COMMENT '用户等级',
@@ -243,7 +253,7 @@ CREATE TABLE `user`  (
   INDEX `idx_user_updated_at`(`updated_at` ASC) USING BTREE,
   INDEX `idx_user_last_login_at`(`last_login_at` ASC) USING BTREE,
   INDEX `idx_user_role`(`role` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_message
@@ -262,7 +272,7 @@ CREATE TABLE `user_message`  (
   CONSTRAINT `user_message_ibfk_1` FOREIGN KEY (`from_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_message_ibfk_2` FOREIGN KEY (`to_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_message_chk_1` CHECK ((length(`content`) > 0) and (length(`content`) < 200))
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户消息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户消息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_notification
@@ -278,7 +288,7 @@ CREATE TABLE `user_notification`  (
   PRIMARY KEY (`notification_id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE,
   CONSTRAINT `user_notification_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户通知表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户通知表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_point_log
@@ -296,7 +306,7 @@ CREATE TABLE `user_point_log`  (
   INDEX `idx_user_point_log_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_user_point_log_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `user_point_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户积分日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户积分日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for vote
@@ -305,25 +315,21 @@ DROP TABLE IF EXISTS `vote`;
 CREATE TABLE `vote`  (
   `vote_id` int NOT NULL AUTO_INCREMENT COMMENT '投票ID',
   `vote_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '投票名称',
-  `starttime` datetime NULL DEFAULT NULL COMMENT '开始时间',
-  `endtime` datetime NULL DEFAULT NULL COMMENT '结束时间',
+  `start_time` datetime NULL DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
+  `is_started` tinyint NULL DEFAULT 0 COMMENT '投票是否开始',
   `vote_intro` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '投票简介',
-  `if_more` tinyint NULL DEFAULT 0 COMMENT '是否多选',
-  `max` int NULL DEFAULT NULL COMMENT '最多选择数',
-  `min` int NULL DEFAULT 1 COMMENT '最少选择数',
   `created_by` int NULL DEFAULT NULL COMMENT '创建者ID',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`vote_id`) USING BTREE,
   INDEX `idx_vote_created_by`(`created_by` ASC) USING BTREE,
-  INDEX `idx_vote_starttime_endtime`(`starttime` ASC, `endtime` ASC) USING BTREE,
+  INDEX `idx_vote_starttime_endtime`(`start_time` ASC, `end_time` ASC) USING BTREE,
   INDEX `idx_vote_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_vote_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `vote_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `vote_chk_1` CHECK ((length(`vote_intro`) > 0) and (length(`vote_intro`) < 500)),
-  CONSTRAINT `vote_chk_2` CHECK (`max` > 0),
-  CONSTRAINT `vote_chk_3` CHECK (`min` > 0)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票表' ROW_FORMAT = Dynamic;
+  CONSTRAINT `vote_chk_1` CHECK ((length(`vote_intro`) > 0) and (length(`vote_intro`) < 500))
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for vote_option
@@ -340,7 +346,7 @@ CREATE TABLE `vote_option`  (
   INDEX `idx_vote_option_created_at`(`created_at` ASC) USING BTREE,
   INDEX `idx_vote_option_updated_at`(`updated_at` ASC) USING BTREE,
   CONSTRAINT `vote_option_ibfk_1` FOREIGN KEY (`vote_id`) REFERENCES `vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票选项表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票选项表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for voter
@@ -355,6 +361,7 @@ CREATE TABLE `voter`  (
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`voter_id`) USING BTREE,
   UNIQUE INDEX `vote_id`(`vote_id` ASC, `user_id` ASC, `option_id` ASC) USING BTREE,
+  UNIQUE INDEX `idx_voter_vote_id_user_id`(`vote_id` ASC, `user_id` ASC) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE,
   INDEX `option_id`(`option_id` ASC) USING BTREE,
   INDEX `idx_voter_vote_id_user_id_option_id`(`vote_id` ASC, `user_id` ASC, `option_id` ASC) USING BTREE,
@@ -363,7 +370,7 @@ CREATE TABLE `voter`  (
   CONSTRAINT `voter_ibfk_1` FOREIGN KEY (`vote_id`) REFERENCES `vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `voter_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `voter_ibfk_3` FOREIGN KEY (`option_id`) REFERENCES `vote_option` (`vote_option_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票者记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '投票者记录表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Triggers structure for table canteen
@@ -443,6 +450,42 @@ WHERE
     `type` = 'topic'
     AND `reference_id` = OLD.`topic_id`;
 
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table user
+-- ----------------------------
+DROP TRIGGER IF EXISTS `calculate_level`;
+delimiter ;;
+CREATE TRIGGER `calculate_level` BEFORE UPDATE ON `user` FOR EACH ROW BEGIN
+    DECLARE new_level INT;
+
+    -- 根据point值计算新等级
+    SET new_level = CASE
+        WHEN NEW.point < 5 THEN 1
+        WHEN NEW.point < 15 THEN 2
+        WHEN NEW.point < 30 THEN 3
+        WHEN NEW.point < 50 THEN 4
+        WHEN NEW.point < 100 THEN 5
+        WHEN NEW.point < 200 THEN 6
+        WHEN NEW.point < 500 THEN 7
+        WHEN NEW.point < 1000 THEN 8
+				WHEN NEW.point < 1000 THEN 8
+        WHEN NEW.point < 3000 THEN 10
+        WHEN NEW.point < 6000 THEN 11
+        WHEN NEW.point < 10000 THEN 12
+        WHEN NEW.point < 18000 THEN 13
+        WHEN NEW.point < 30000 THEN 14
+        WHEN NEW.point < 60000 THEN 15
+        WHEN NEW.point < 100000 THEN 16
+        WHEN NEW.point < 300000 THEN 17
+        ELSE 18
+    END;
+
+    -- 更新用户等级
+    SET NEW.level = new_level;
 END
 ;;
 delimiter ;
