@@ -59,7 +59,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pagination" v-if="isAdmin === 'admin'">
+      <div class="pagination">
         <el-pagination
             background
             layout="total, prev, pager, next"
@@ -226,7 +226,7 @@ const query = reactive({
   canteen_id: undefined as unknown as number,
   kw: '',
   currentPage: 1,
-  pageSize: 10
+  pageSize: 15
 });
 
 const validateForm = reactive({
@@ -279,7 +279,7 @@ const getData = () => {
 
       canteenData.value = data?.list;
       pageTotal.value = data?.total || 0;
-      query.currentPage = data?.currentPage || 1;
+      query.currentPage = data?.currentPage;
       query.pageSize = data?.pageSize;
     });
   } else {

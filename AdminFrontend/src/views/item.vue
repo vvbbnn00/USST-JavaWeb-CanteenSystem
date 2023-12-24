@@ -232,8 +232,6 @@
 </template>
 
 <script setup lang="ts">
-
-
 import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus} from '@element-plus/icons-vue';
@@ -370,7 +368,7 @@ const getData = () => {
 
     itemData.value = data?.list;
     pageTotal.value = data?.total || 0;
-    query.currentPage = data?.pageIndex || 1;
+    query.currentPage = data?.currentPage || 1;
     query.pageSize = data?.pageSize;
   });
 

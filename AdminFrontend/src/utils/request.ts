@@ -39,8 +39,14 @@ service.interceptors.response.use(
         // @ts-ignore
         if (error?.response?.data?.code === 401) {
             localStorage.removeItem('ms_username');
-            localStorage.removeItem('ms_token');
-            location.reload();
+            localStorage.removeItem('ms_user_id');
+            localStorage.removeItem('ms_email');
+            localStorage.removeItem('ms_avatar');
+            localStorage.removeItem('ms_role');
+            localStorage.removeItem('ms_keys');
+            localStorage.removeItem('ms_todoList');
+            localStorage.removeItem('ms_todoList_date_str');
+            window.location.href= '/login';
             return Promise.reject();
         }
 
