@@ -4,7 +4,7 @@
       <el-col :span="8">
         <el-card shadow="hover" class="mgb20">
           <div class="user-info">
-            <el-avatar :size="120" :src="avatar" />
+            <el-avatar :size="120" :src="avatar"/>
             <div class="user-info-cont">
               <div class="user-info-name">{{ name }}</div>
               <div>{{ email }}</div>
@@ -39,7 +39,9 @@
                 </div>
               </div>
               <div class="grid-content grid-con-1" v-if="role === 'canteen_admin'" @click="gotoAnnouncementManagement">
-                <el-icon class="grid-con-icon"><Promotion /></el-icon>
+                <el-icon class="grid-con-icon">
+                  <Promotion/>
+                </el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.community }}</div>
                   <div>公告</div>
@@ -59,7 +61,9 @@
                 </div>
               </div>
               <div class="grid-content grid-con-3" v-if="role === 'canteen_admin'" @click="gotoComplaintManagement">
-                <el-icon class="grid-con-icon"><WarningFilled /></el-icon>
+                <el-icon class="grid-con-icon">
+                  <WarningFilled/>
+                </el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.complaintCount }}</div>
                   <div>进行中投诉信息</div>
@@ -86,7 +90,8 @@
             <div class="clearfix">
               <span>每日TODOLIST</span>
               <el-button style="float: right; padding: 3px 0" text @click="handleState">添加</el-button>
-              <el-button style="float: right; padding: 3px; margin-right: 10px" text @click="handleReset">重置</el-button>
+              <el-button style="float: right; padding: 3px; margin-right: 10px" text @click="handleReset">重置
+              </el-button>
             </div>
           </template>
 
@@ -143,6 +148,7 @@ import {getComplaintList} from "../api/complain";
 import {getTopicList} from "../api/topic";
 import {getAnnouncementList} from "../api/announcement";
 
+
 const email: string = localStorage.getItem('ms_email') || 'vvbbnn00@foxmail.com';
 
 const hitokoto = reactive({
@@ -161,6 +167,7 @@ fetch('https://v1.hitokoto.cn?c=k')
     .catch(() => {
       hitokoto.hitokoto = '网络错误';
     })
+
 
 const router = useRouter();
 const name = localStorage.getItem('ms_username');
@@ -234,7 +241,7 @@ if (role === 'admin') {
         ElMessage.error(response3.data.message);
         return;
       }
-      const undoneComplaints = response3.data?.list.filter( complaint => {
+      const undoneComplaints = response3.data?.list.filter(complaint => {
         return complaint.status !== 'finished';
       });
       query.complaintCount += undoneComplaints.length;
