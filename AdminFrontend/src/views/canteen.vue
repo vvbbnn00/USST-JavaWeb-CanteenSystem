@@ -127,7 +127,7 @@
         <el-table :data="infoData" style="width: 100%">
           <el-table-column label="简介" align="left">
             <template #default="scope">
-              <div class="plugins-tips">{{ scope.row.introduction }}</div>
+              <pre class="plugins-tips">{{ scope.row.introduction }}</pre>
             </template>
           </el-table-column>
         </el-table>
@@ -226,7 +226,7 @@ const query = reactive({
   canteen_id: undefined as unknown as number,
   kw: '',
   currentPage: 1,
-  pageSize: 15
+  pageSize: 10
 });
 
 const validateForm = reactive({

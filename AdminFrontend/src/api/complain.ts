@@ -5,7 +5,8 @@ export const getComplaintList = (query: any) => {
     if (query.status === '') {
         delete query.status;
     }
-
+    query.orderBy = 'updatedAt';
+    query.asc = false;
     return request({
         url: `${BASE_URL}/api/rest/canteen/complaint/list`,
         method: 'POST',

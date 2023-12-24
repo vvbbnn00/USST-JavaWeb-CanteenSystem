@@ -108,7 +108,7 @@
         <el-table :data="infoData" style="width: 100%">
           <el-table-column label="简介" align="left">
             <template #default="scope">
-              <div class="plugins-tips">{{ scope.row.introduction }}</div>
+              <pre class="plugins-tips">{{ scope.row.introduction }}</pre>
             </template>
           </el-table-column>
         </el-table>
@@ -257,7 +257,7 @@ const query = reactive({
   cuisineId: undefined as unknown as number,
   recommended: null as boolean | null,
   currentPage: 1,
-  pageSize: 15,
+  pageSize: 10,
 });
 const isAdmin = localStorage.getItem('ms_role');
 const canteenList = ref([]);
@@ -266,6 +266,7 @@ watch(() => query.canteenId, (newCanteenId) => {
   if (newCanteenId) {
     getCuisine(newCanteenId);
   } else {
+    query.cuisineId = undefined;
     cuisineList.value = [];
   }
 });
