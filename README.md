@@ -48,6 +48,7 @@ USST JavaWeb大作业：上海理工大学食堂点评交流社区
 ## 部署方案
 
 - 使用`Docker-Compose`部署，每一个子项目都应当有独立的`Dockerfile`。
+- 需要创建`db-network`网络，用于连接数据库和后端。
 
 ## 文件存储服务
 
