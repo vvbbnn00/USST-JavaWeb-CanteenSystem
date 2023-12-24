@@ -7,7 +7,7 @@
           <el-option v-for="item in canteenList" :key="item.canteenId" :label="item.name"
                      :value="item.canteenId"></el-option>
         </el-select>
-        <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end" v-if="query.canteenId">新增菜品</el-button>
+        <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end" v-if="query.canteenId">新增菜系</el-button>
       </div>
       <el-table :data="cuisineData" border class="table" ref="multipleTable" header-cell-class-name="table-header" empty-text="请选择食堂以继续">
         <el-table-column prop="cuisineId" label="菜系ID"></el-table-column>
