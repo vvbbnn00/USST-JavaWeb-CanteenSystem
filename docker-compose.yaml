@@ -5,7 +5,7 @@ services:
     ports:
       - "127.0.0.1:10001:3000"
     depends_on:
-      - next-backend
+      - java-backend
 
   java-backend:
     build: ./JavaBackend
