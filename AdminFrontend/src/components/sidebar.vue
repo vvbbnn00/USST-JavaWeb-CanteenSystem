@@ -10,7 +10,7 @@
         unique-opened
         router
     >
-      <div v-if="isAdmin === 'admin'">
+      <template v-if="isAdmin === 'admin'">
         <template v-for="item in items">
           <template v-if="item.subs">
             <el-sub-menu :index="item.index" :key="item.index">
@@ -46,8 +46,8 @@
             </el-menu-item>
           </template>
         </template>
-      </div>
-      <div v-if="isAdmin === 'canteen_admin'">
+      </template>
+      <template v-if="isAdmin === 'canteen_admin'">
         <template v-for="item in canteenAdminItems">
           <template v-if="item.subs">
             <el-sub-menu :index="item.index" :key="item.index">
@@ -83,7 +83,7 @@
             </el-menu-item>
           </template>
         </template>
-      </div>
+      </template>
     </el-menu>
   </div>
 </template>
