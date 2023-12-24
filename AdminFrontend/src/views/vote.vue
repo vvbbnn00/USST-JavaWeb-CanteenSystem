@@ -207,8 +207,11 @@ import {parseDateTime} from "../utils/string";
 import Schart from 'vue-schart';
 import {nextTick} from "vue";
 
+const userId = localStorage.getItem('ms_user_id');
+
 const query = reactive({
   isStarted: null as boolean | null,
+  userId: Number(userId),
   currentPage: 1,
   pageSize: 10
 });

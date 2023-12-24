@@ -62,7 +62,7 @@
                 <el-icon class="grid-con-icon"><WarningFilled /></el-icon>
                 <div class="grid-cont-right">
                   <div class="grid-num">{{ query.complaintCount }}</div>
-                  <div>未处理投诉信息</div>
+                  <div>进行中投诉信息</div>
                 </div>
               </div>
             </el-card>
@@ -172,7 +172,7 @@ const query = reactive({
   commentCount: undefined as unknown as number,
   canteenCount: undefined as unknown as number,
   community: 0,
-  complaintCount: undefined as unknown as number,
+  complaintCount: 0,
 });
 
 if (role === 'admin') {
@@ -224,18 +224,21 @@ if (role === 'admin') {
       console.log(query.community)
     }
     // 获取举报条数
-    const response3 = await getComplaintList({
-      currentPage: 1,
-      pageSize: 100
-    });
-    if (response3.data.code !== 200) {
-      ElMessage.error(response3.data.message);
-      return;
+    for (const canteen of canteenData.value) {
+      const response3 = await getComplaintList({
+        currentPage: 1,
+        pageSize: 100,
+        canteenId: canteen.canteenId
+      });
+      if (response3.data.code !== 200) {
+        ElMessage.error(response3.data.message);
+        return;
+      }
+      const undoneComplaints = response3.data?.list.filter( complaint => {
+        return complaint.status !== 'finished';
+      });
+      query.complaintCount += undoneComplaints.length;
     }
-    const undoneComplaints = response3.data?.list.filter( complaint => {
-      return complaint.status === 'pending';
-    });
-    query.complaintCount = undoneComplaints.length;
   })();
 }
 
@@ -275,11 +278,7 @@ const defaultTodoList = [
     status: false
   },
   {
-    title: '评价信息管理',
-    status: false
-  },
-  {
-    title: '交流社区信息管理',
+    title: '评价交流信息管理',
     status: false
   },
   {
@@ -287,6 +286,27 @@ const defaultTodoList = [
     status: false
   }
 ];
+
+const canteenAdminTodoList = [
+  {
+    title: '管理/更新食堂',
+    status: false
+  },
+  {
+    title: '菜系/菜品管理',
+    status: false
+  },
+  {
+    title: '公告信息管理',
+    status: false
+  },
+  {
+    title: '投诉信息处理',
+    status: false
+  }
+];
+
+const isAdmin = localStorage.getItem('ms_role');
 
 let todoList: any = reactive([]);
 
@@ -300,12 +320,20 @@ const loadTodoList = () => {
     if (ms_todoList_date === date_str) {
       todoList = reactive(JSON.parse(ms_todoList));
     } else {
-      todoList = reactive(defaultTodoList);
+      if (isAdmin === 'admin') {
+        todoList = reactive(defaultTodoList);
+      } else if (isAdmin === 'canteen_admin') {
+        todoList = reactive(canteenAdminTodoList);
+      }
       localStorage.setItem('ms_todoList', JSON.stringify(todoList));
       localStorage.setItem('ms_todoList_date_str', date_str);
     }
   } else {
-    todoList = reactive(defaultTodoList);
+    if (isAdmin === 'admin') {
+      todoList = reactive(defaultTodoList);
+    } else if (isAdmin === 'canteen_admin') {
+      todoList = reactive(canteenAdminTodoList);
+    }
     const date = new Date();
     const date_str = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     localStorage.setItem('ms_todoList', JSON.stringify(todoList));
@@ -323,7 +351,11 @@ const saveTodoList = () => {
 loadTodoList();
 
 const handleReset = () => {
-  todoList = reactive(defaultTodoList);
+  if (isAdmin === 'admin') {
+    todoList = reactive(defaultTodoList);
+  } else if (isAdmin === 'canteen_admin') {
+    todoList = reactive(canteenAdminTodoList);
+  }
   saveTodoList();
   // Reload the page
   router.go(0);

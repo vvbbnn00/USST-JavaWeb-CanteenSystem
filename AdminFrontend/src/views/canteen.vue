@@ -59,7 +59,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pagination" v-if="isAdmin === 'admin'">
+      <div class="pagination">
         <el-pagination
             background
             layout="total, prev, pager, next"
@@ -91,9 +91,9 @@
           </div>
         </el-form-item>
         <el-form-item label="添加管理员" v-if="isAdmin === 'admin'">
-          <el-select v-model="canteenAdminAdd" placeholder="请选择用户">
+          <el-select v-model="canteenAdminAdd" placeholder="请选择用户" clearable>
             <el-option
-                v-for="item in userList"
+                v-for="item in notCanteenAdminList"
                 :key="item.userId"
                 :label="item.username"
                 :value="item.userId"
@@ -102,7 +102,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="删除管理员" v-if="isAdmin === 'admin' && createForm.canteenId">
-          <el-select v-model="canteenAdminDelete" placeholder="请选择删除管理员">
+          <el-select v-model="canteenAdminDelete" placeholder="请选择删除管理员" clearable>
             <el-option
                 v-for="item in canteenAdminList"
                 :key="item.userId"
@@ -213,6 +213,7 @@ import {
 } from "../api/canteen";
 import {parseDateTime} from "../utils/string";
 import {getUserList} from "../api/user";
+import {watchEffect} from "vue";
 
 const isAdmin = localStorage.getItem('ms_role');
 const userId = Number(localStorage.getItem('ms_user_id'));
@@ -225,7 +226,7 @@ const query = reactive({
   canteen_id: undefined as unknown as number,
   kw: '',
   currentPage: 1,
-  pageSize: 10
+  pageSize: 15
 });
 
 const validateForm = reactive({
@@ -278,7 +279,7 @@ const getData = () => {
 
       canteenData.value = data?.list;
       pageTotal.value = data?.total || 0;
-      query.currentPage = data?.currentPage || 1;
+      query.currentPage = data?.currentPage;
       query.pageSize = data?.pageSize;
     });
   } else {
@@ -404,6 +405,7 @@ const saveNewCanteen = async () => {
 };
 
 const canteenAdminList = ref([]);
+const notCanteenAdminList = ref([]);
 const handleEdit = async (index: number, row: any) => {
   createForm = reactive(JSON.parse(JSON.stringify(row)));
   createVisible.value = true;
@@ -417,8 +419,14 @@ const handleEdit = async (index: number, row: any) => {
       canteenAdminList.value = data?.data;
     });
   }
-
 };
+
+watchEffect(() => {
+  const adminSet = new Set(canteenAdminList.value.map(admin => admin.userId));
+  notCanteenAdminList.value = userList.value.filter(user => {
+    return !adminSet.has(user.userId);
+  });
+});
 
 const chooseCommentId = ref(0);
 const handleReply = (row: any) => {
