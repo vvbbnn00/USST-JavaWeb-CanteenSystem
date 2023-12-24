@@ -100,12 +100,17 @@
     </el-dialog>
 
     <!-- 投诉回复 -->
-    <el-dialog title="回复" v-model="complaintReplyVisible" width="40%">
+    <el-dialog title="回复" v-model="complaintReplyVisible" width="65%">
       <el-form label-width="90px" :model="complaintReplyComment" :rules="validateForm">
         <el-form-item label="回复内容" required prop="content">
           <el-input type="textarea" v-model="complaintReplyComment.content" placeholder="请输入投诉回复内容" rows="3"></el-input>
         </el-form-item>
       </el-form>
+      <el-table :data="replyData" border class="table" ref="multipleTable">
+        <el-table-column type="index" :index="indexMethod" width="100"></el-table-column>
+        <el-table-column prop="user.username" label="发送用户" width="150px"></el-table-column>
+        <el-table-column prop="content" label="回复内容"></el-table-column>
+      </el-table>
       <template #footer>
 				<span class="dialog-footer">
 					<el-button @click="complaintReplyVisible = false">取 消</el-button>
@@ -122,7 +127,7 @@ import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Edit, Search, Check} from '@element-plus/icons-vue';
 import {parseDateTime} from "../utils/string";
-import {complaintReply, getComplaintList, shutComplaint} from "../api/complain";
+import {complaintReply, getComplaintList, shutComplaint, getComplaintInfo} from "../api/complain";
 import {MdPreview} from "md-editor-v3";
 import {getUserCanteen} from "../api/canteen";
 
@@ -209,7 +214,6 @@ const handleInfo = (index: number, row: any) => {
   complaintInfoVisible.value = true;
 };
 
-
 const handleCheck = (row: any) => {
   // 二次确认删除
   ElMessageBox.confirm('完成该条投诉？', '提示', {
@@ -236,9 +240,22 @@ const complaintReplyComment = reactive({
   content: '',
 })
 const chooseComplaintId = ref(0);
+const replyData = ref([]);
+const getReplyData = (complaintId: number) => {
+  getComplaintInfo(complaintId).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+
+    replyData.value = data?.data?.comments;
+  })
+}
 const handleReply = (row: any) => {
-  complaintReplyVisible.value = true;
+  getReplyData(row.complaintId);
   chooseComplaintId.value = row.complaintId;
+  complaintReplyVisible.value = true;
 };
 const saveComplaintReply = async () => {
   complaintReplyVisible.value = false;
@@ -251,6 +268,10 @@ const saveComplaintReply = async () => {
   }
   complaintReplyComment.content = '';
 };
+
+const indexMethod = (index: number) => {
+  return index + 1;
+}
 
 </script>
 
