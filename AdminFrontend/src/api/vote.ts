@@ -41,3 +41,43 @@ export const newVote = (createForm: any) => {
     });
 
 }
+
+export const getVoteOptionsList = (voteId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${voteId}`,
+        method: 'GET',
+    });
+}
+
+export const createVoteOption = (voteId: number, name: string) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${voteId}/option`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            name: name
+        })
+    });
+}
+
+export const deleteVoteOption = (voteId: number, optionId: number) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${voteId}/option/${optionId}`,
+        method: 'DELETE'
+    });
+}
+
+export const updateVoteOption = (voteId: number, optionId: number, name: string) => {
+    return request({
+        url: `${BASE_URL}/api/rest/vote/${voteId}/option/${optionId}`,
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            name: name
+        })
+    });
+}

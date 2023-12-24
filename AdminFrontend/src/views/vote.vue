@@ -3,7 +3,7 @@
     <div class="container">
       <div class="handle-box">
         <el-select v-model="query.isStarted" placeholder="投票状态选择" class="mr10" clearable>
-          <el-option key=true label="进行中" value=true></el-option>
+          <el-option key=true label="已发布" value=true></el-option>
           <el-option key=false label="未开始/已结束" value=false></el-option>
         </el-select>
         <el-button type="primary" :icon="Plus" @click="handleCreate" class="flex-end">新增投票基础信息</el-button>
@@ -51,10 +51,10 @@
         </el-table-column>
         <el-table-column label="操作" width="270px" align="center" fixed="right">
           <template #default="scope">
-            <el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
+            <el-button text :icon="Edit" @click="handleEdit(scope.row)">
               编辑基础信息
             </el-button>
-            <el-button text :icon="CirclePlus" class="green" @click="" v-if="!scope.row.isStarted">
+            <el-button text :icon="CirclePlus" class="green" @click="handleOptionsEdit(scope.row)" v-if="!scope.row.isStarted">
               编辑选项
             </el-button>
             <el-button text :icon="PieChart" class="blue" @click="" v-if="scope.row.isStarted">
@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <!-- 新增弹出框 -->
+    <!-- 编辑弹出框 -->
     <el-dialog title="编辑" v-model="createVisible" width="40%">
       <el-form label-width="90px" :model="editForm" :rules="validateForm">
         <el-form-item label="投票ID" required prop="voteId" v-if="editForm.voteId">
@@ -126,6 +126,52 @@
       </template>
     </el-dialog>
 
+    <!-- 投票选项 弹出框 -->
+    <el-dialog title="编辑选项" v-model="voteOptionsVisible">
+      <el-form label-width="400px">
+        <el-table :data="voteOptionsData" border class="table" ref="multipleTable">
+          <el-table-column type="index" :index="indexMethod" width="100"></el-table-column>
+          <el-table-column prop="name" label="选项内容"></el-table-column>
+          <el-table-column label="操作" width="200" align="center" fixed="right">
+            <template #default="scope">
+              <el-button text :icon="Edit" @click="handleEditOptions(scope.row)">
+                编辑
+              </el-button>
+              <el-button
+                  text
+                  :icon="Delete"
+                  class="red"
+                  @click="handleDeleteOptions(scope.row)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="voteOptionsVisible = false">返 回</el-button>
+          <el-button type="primary" :icon="Plus" @click="handleCreateVoteOptions">新增</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!--  选项  -->
+    <el-dialog title="编辑选项" v-model="createVoteOptionsVisible" width="40%">
+      <el-form label-width="90px" :model="optionsName" :rules="validateForm">
+        <el-form-item label="选项内容" required prop="name">
+          <el-input v-model="optionsName.name" placeholder="请输入选项内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+				<span class="dialog-footer">
+					<el-button @click="createVoteOptionsVisible = false">取 消</el-button>
+					<el-button type="primary" @click="saveOption">确 定</el-button>
+				</span>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -133,7 +179,7 @@
 import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Plus, Edit, Delete, CirclePlus, PieChart} from '@element-plus/icons-vue';
-import {getVoteList, deleteVote, updateVote, newVote} from "../api/vote";
+import {getVoteList, deleteVote, updateVote, newVote, getVoteOptionsList, createVoteOption, deleteVoteOption, updateVoteOption} from "../api/vote";
 import {parseDateTime} from "../utils/string";
 
 const query = reactive({
@@ -144,10 +190,12 @@ const query = reactive({
 
 const validateForm = reactive({
   voteName: [
-    {required: true, message: '请输入投票名称', trigger: 'blur'}
+    {required: true, message: '请输入投票名称', trigger: 'blur'},
+    {max: 15, message: '投票名称最多15个字符', trigger: 'blur'}
   ],
   voteIntro: [
-    {required: true, message: '请输入投票介绍', trigger: 'blur'}
+    {required: true, message: '请输入投票介绍', trigger: 'blur'},
+    {max: 25, message: '投票介绍最多25个字符', trigger: 'blur'}
   ],
   startTime: [
     {required: true, message: '请选择开始时间', trigger: 'blur'}
@@ -170,6 +218,10 @@ const validateForm = reactive({
       },
       trigger: 'blur'
     }
+  ],
+  name: [
+    {required: true, message: '请输入选项内容', trigger: 'blur'},
+    {max: 15, message: '选项内容最多15个字符', trigger: 'blur'}
   ]
 });
 
@@ -250,7 +302,7 @@ const saveEditForm = async () => {
   }
 };
 
-const handleEdit = async (index: number, row: any) => {
+const handleEdit = async (row: any) => {
   editForm = reactive(JSON.parse(JSON.stringify(row)));
   createVisible.value = true;
 };
@@ -267,6 +319,79 @@ const clearForm = () => {
   });
 }
 
+const voteOptionsData = ref([]);
+const voteSelect = ref(0);
+const voteOptionsVisible = ref(false);
+const indexMethod = (index: number) => {
+  return index + 1;
+}
+const getVoteOption = () => {
+  getVoteOptionsList(voteSelect.value).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+
+    voteOptionsData.value = data?.list;
+  });
+};
+
+const handleOptionsEdit = async (row: any) => {
+  voteSelect.value = row.voteId;
+  voteOptionsVisible.value = true;
+  getVoteOption();
+};
+
+const createVoteOptionsVisible = ref(false);
+const optionsName = reactive({
+  voteOptionId: undefined as unknown as number,
+  name: ''
+});
+const handleCreateVoteOptions = () => {
+  optionsName.voteOptionId = undefined as unknown as number;
+  optionsName.name = '';
+  createVoteOptionsVisible.value = true;
+};
+
+const saveOption = async () => {
+  createVoteOptionsVisible.value = false;
+  try {
+    if (optionsName.voteOptionId) {
+      await updateVoteOption(voteSelect.value, optionsName.voteOptionId, optionsName.name);
+    } else {
+      await createVoteOption(voteSelect.value, optionsName.name);
+    }
+    getVoteOption();
+    ElMessage.success(`创建选项成功`);
+  } catch (e) {
+    ElMessage.error(`创建选项失败`);
+  }
+};
+
+const handleEditOptions = (row: any) => {
+  optionsName.voteOptionId = row.voteOptionId;
+  optionsName.name = row.name;
+  createVoteOptionsVisible.value = true;
+};
+
+const handleDeleteOptions = (row: any) => {
+  // 二次确认删除
+  ElMessageBox.confirm('确定要删除该选项吗？', '提示', {
+    type: 'warning'
+  })
+      .then(async () => {
+        let res = await deleteVoteOption(voteSelect.value,row.voteOptionId);
+        if (res.data.code !== 200) {
+          ElMessage.error(res.data.message);
+          return;
+        }
+        ElMessage.success('删除选项成功');
+        getVoteOption();
+      })
+      .catch(() => {
+      });
+};
 </script>
 
 <style scoped>
