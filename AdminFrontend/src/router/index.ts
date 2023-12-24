@@ -83,6 +83,15 @@ const routes: RouteRecordRaw[] = [
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/announcement.vue'),
+            },
+            {
+                path: '/vote',
+                name: 'vote',
+                meta: {
+                    title: '投票管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "dashboard" */ '../views/vote.vue'),
             }
         ],
     },
@@ -130,7 +139,6 @@ router.beforeEach((to, from, next) => {
         permiss.handleRemove();
         next('/login');
     } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
-        // 如果没有权限，则进入403
         next('/403');
     } else {
         next();
