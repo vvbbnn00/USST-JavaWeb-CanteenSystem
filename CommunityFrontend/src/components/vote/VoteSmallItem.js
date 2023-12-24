@@ -11,8 +11,8 @@ export default function VoteSmallItem({vote}) {
         <div className={"flex flex-col p-2.5 hover:bg-gray-100 cursor-pointer transition-background"}>
             <div className={"flex flex-row items-center"}>
                 {vote?.isStarted ?
-                    <Chip color={"warning"} variant={"flat"}>未开始</Chip> :
-                    <Chip color={"success"} variant={"flat"}>进行中</Chip>
+                    <Chip color={"success"} variant={"flat"}>进行中</Chip> :
+                    <Chip color={"warning"} variant={"flat"}>未开始</Chip>
                 }
                 <span className={"text-gray-600 pl-1.5 font-bold"}>{vote?.voteName}</span>
             </div>

@@ -36,7 +36,7 @@ export default function FoodRankList() {
                 <ScrollShadow className={"max-h-[500px]"}>
                     <div className={"grid grid-cols-2 mt-3"}>
                         {data?.map((item, index) => {
-                            return <Link href={"/item/" + item?.itemId}>
+                            return <Link href={"/item/" + item?.itemId} key={item?.itemId}>
                                 <div
                                     className={"flex flex-col items-center hover:bg-gray-100 cursor-pointer transition-background pt-3 pb-3"}
                                     key={index}>
@@ -45,22 +45,22 @@ export default function FoodRankList() {
                                                className={"object-cover w-[150px] h-[150px]"} isZoomed={true}/>
                                         <div
                                             className={"text-left text-gray-800 text-sm mt-1 pl-1 flex items-center gap-1 w-full line-clamp-1 break-all "}>
-                                            <text className={"truncate font-bold text-medium"}>{item?.name}</text>
+                                            <span className={"truncate font-bold text-medium"}>{item?.name}</span>
                                             {item?.recommended && <span className={"text-red-500"}><LikeFilled/></span>}
                                         </div>
                                         <div
                                             className={"text-left text-gray-800 text-sm pl-1 flex items-center gap-1 w-full line-clamp-1 break-all "}>
                                             <span className={"text-orange-500"}><StarFilled/></span>
-                                            <text
-                                                className={"text-gray-500"}>{item?.compScore > 0 ? item?.compScore?.toFixed(2) : "暂无评分"}</text>
+                                            <span
+                                                className={"text-gray-500"}>{item?.compScore > 0 ? item?.compScore?.toFixed(2) : "暂无评分"}</span>
                                         </div>
                                         <div>
-                                            <text className={"text-red-500 text-medium font-bold"}>
+                                            <span className={"text-red-500 text-medium font-bold"}>
                                                 ￥{(item?.promotionPrice || item?.price)?.toFixed(2)}
-                                            </text>
-                                            <text className={"text-gray-500 text-sm ml-1 line-through"}>
+                                            </span>
+                                            <span className={"text-gray-500 text-sm ml-1 line-through"}>
                                                 ￥{item?.price?.toFixed(2)}
-                                            </text>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

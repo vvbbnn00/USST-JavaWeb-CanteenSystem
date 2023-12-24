@@ -235,7 +235,7 @@ export default function ItemPage({params}) {
                                                className={"object-cover w-[180px] h-[180px]"} isZoomed={true}/>
                                         <div
                                             className={"text-left text-gray-800 text-medium font-bold mt-2 pl-1 flex items-center gap-1 w-full line-clamp-1 break-all "}>
-                                            <text className={"line-clamp-1"}>
+                                            <span className={"line-clamp-1"}>
                                                 {item?.recommended &&
                                                     <span
                                                         className={"text-red-500 mr-1"}
@@ -243,28 +243,28 @@ export default function ItemPage({params}) {
                                                     <LikeFilled/>
                                                 </span>}
                                                 {item?.name}
-                                            </text>
+                                            </span>
                                         </div>
                                         <div
                                             className={"text-left text-gray-800 text-medium pl-1 flex items-center gap-1 w-full line-clamp-1 break-all "}>
                                             <span className={"text-orange-500"}>
                                                 <StarFilled/>
                                             </span>
-                                            <text className={"text-gray-500"}>
+                                            <span className={"text-gray-500"}>
                                                 {item?.compScore > 0 ?
                                                     <span
                                                         className={"text-orange-500 font-bold"}>{item?.compScore?.toFixed(2)}</span> :
                                                     <span className={"text-sm"}>暂无评分</span>
                                                 }
-                                            </text>
+                                            </span>
                                         </div>
                                         <div>
-                                            <text className={"text-red-500 text-lg font-bold"}>
+                                            <span className={"text-red-500 text-lg font-bold"}>
                                                 ￥{(item?.promotionPrice || item?.price)?.toFixed(2)}
-                                            </text>
-                                            <text className={"text-gray-500 text-sm ml-1 line-through"}>
+                                            </span>
+                                            <span className={"text-gray-500 text-sm ml-1 line-through"}>
                                                 ￥{item?.price?.toFixed(2)}
-                                            </text>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
