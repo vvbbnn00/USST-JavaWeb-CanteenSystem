@@ -129,7 +129,7 @@ import {Edit, Search, Check} from '@element-plus/icons-vue';
 import {parseDateTime} from "../utils/string";
 import {complaintReply, getComplaintList, shutComplaint, getComplaintInfo} from "../api/complain";
 import {MdPreview} from "md-editor-v3";
-import {getUserCanteen} from "../api/canteen";
+import {getCanteenList, getUserCanteen} from "../api/canteen";
 
 const query = reactive({
   kw: '',
@@ -148,9 +148,6 @@ if (isAdmin !== 'admin') {
       return;
     }
     canteenData.value = data?.data;
-    pageTotal.value = data?.data?.length;
-    query.currentPage = data?.currentPage || 1;
-    query.pageSize = data?.pageSize;
   });
   getUserCanteen();
 }
