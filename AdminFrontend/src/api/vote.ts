@@ -7,9 +7,6 @@ export const getVoteList = (query: any) => {
         delete query.userId;
     }
 
-    if (query.isStarted === null) {
-        delete query.isStarted;
-    }
     return request({
         url: `${BASE_URL}/api/rest/vote/list`,
         method: 'POST',
