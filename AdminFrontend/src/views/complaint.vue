@@ -140,21 +140,7 @@ const query = reactive({
 
 const canteenData = ref([]);
 const isAdmin = localStorage.getItem('ms_role');
-if (isAdmin === 'admin') {
-  getCanteenList({
-    currentPage: 1,
-    pageSize: 100
-  }).then(res => {
-    let data = res.data;
-    if (data.code !== 200) {
-      ElMessage.error(data.message);
-      return;
-    }
-
-    canteenData.value = data?.list;
-  });
-  getCanteenList();
-} else {
+if (isAdmin !== 'admin') {
   getUserCanteen().then(res => {
     let data = res.data;
     if (data.code !== 200) {
