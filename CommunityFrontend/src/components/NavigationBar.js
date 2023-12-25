@@ -127,6 +127,13 @@ export default function NavigationBar() {
                     投诉中心
                 </Link>
             </NavbarItem>
+            {(user?.role === 'admin' || user?.role === 'canteen_admin') &&
+                <NavbarItem isActive={pathname.startsWith("/management")}>
+                    <Link color="foreground" href="/management">
+                        后台管理
+                    </Link>
+                </NavbarItem>
+            }
         </NavbarContent>
 
         <NavbarContent as="div" justify="end">
@@ -145,7 +152,7 @@ export default function NavigationBar() {
                                isInvisible={unreadMessageCount === 0}
                                shape="circle">
                             <div className={"text-[28px] overflow-hidden"}>
-                                <MailFilled className={"rounded-lg overflow-hidden"} />
+                                <MailFilled className={"rounded-lg overflow-hidden"}/>
                             </div>
                         </Badge>
                     </Link>

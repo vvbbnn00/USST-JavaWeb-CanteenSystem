@@ -24,7 +24,7 @@
 					</span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="loginout">退出登录</el-dropdown-item>
+              <el-dropdown-item command="loginout">返回社区</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -55,21 +55,9 @@ onMounted(() => {
 
 // 用户名下拉菜单选择事件
 const router = useRouter();
-const permiss = usePermissStore();
 const handleCommand = (command: string) => {
   if (command == 'loginout') {
-    localStorage.removeItem('ms_username');
-    localStorage.removeItem('ms_token');
-    localStorage.removeItem('ms_email');
-    localStorage.removeItem('ms_user_id');
-    permiss.handleRemove();
-    localStorage.removeItem('ms_todoList');
-    localStorage.removeItem('ms_todoList_date_str');
-    localStorage.removeItem('ms_role');
-    localStorage.removeItem('ms_avatar');
-    router.push('/login');
-  } else if (command == 'user') {
-    router.push('/user');
+    window.location.href = '/';
   }
 };
 </script>

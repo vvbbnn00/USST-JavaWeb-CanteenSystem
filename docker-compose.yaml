@@ -1,16 +1,27 @@
 version: '3.1'
 services:
-  mariadb:
-    image: mariadb:10.3
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: canteen
-      MYSQL_USER: canteen
-      MYSQL_PASSWORD: canteen
-    volumes:
-      - ./mariadb:/var/lib/mysql
+  next-frontend:
+    build:
+      context: ./CommunityFrontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     ports:
-      - 3306:3306
-  
-  # ...
+      - "127.0.0.1:10001:3000"
+    depends_on:
+      - java-backend
+    env_file:
+      - .env
+
+  java-backend:
+    build: ./JavaBackend
+    ports:
+      - "127.0.0.1:10002:8080"
+    networks:
+      - db-network
+    env_file:
+      - .env
+
+networks:
+  db-network:
+    external: true

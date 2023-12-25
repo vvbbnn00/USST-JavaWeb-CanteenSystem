@@ -1,11 +1,12 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { usePermissStore } from '../store/permiss';
 import Home from '../views/home.vue';
+import Entrypoint from "../views/entrypoint.vue";
 
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/dashboard',
+        component: Entrypoint,
     },
     {
         path: '/',
@@ -130,19 +131,20 @@ router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | 食堂管理系统`;
     const role = localStorage.getItem('ms_keys');
     const permiss = usePermissStore();
-    if (!role && to.path !== '/login') {
-        localStorage.removeItem('ms_username');
-        localStorage.removeItem('ms_user_id');
-        localStorage.removeItem('ms_email');
-        localStorage.removeItem('ms_avatar');
-        localStorage.removeItem('ms_role');
-        permiss.handleRemove();
-        next('/login');
-    } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
-        next('/403');
-    } else {
-        next();
-    }
+    next();
+    // if (!role && to.path !== '/login') {
+    //     localStorage.removeItem('ms_username');
+    //     localStorage.removeItem('ms_user_id');
+    //     localStorage.removeItem('ms_email');
+    //     localStorage.removeItem('ms_avatar');
+    //     localStorage.removeItem('ms_role');
+    //     permiss.handleRemove();
+    //     next('/login');
+    // } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
+    //     next('/403');
+    // } else {
+    //     next();
+    // }
 });
 
 export default router;
