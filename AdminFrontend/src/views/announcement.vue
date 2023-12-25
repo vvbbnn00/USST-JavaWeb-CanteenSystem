@@ -90,7 +90,7 @@
 
 <script setup lang="ts" name="tabs">
 import {ref, reactive, watch} from 'vue';
-import {getUserCanteen} from "../api/canteen";
+import {getCanteenList, getUserCanteen} from "../api/canteen";
 import {ElMessage} from "element-plus";
 import {deleteAnnouncement, getAnnouncementList, newAnnouncement, updateAnnouncement} from "../api/announcement";
 import {parseDateTime} from "../utils/string";
@@ -100,18 +100,33 @@ import {ElMessageBox} from "element-plus";
 const canteenId = ref();
 const message = ref('first');
 const canteenList = ref([]);
-const getCanteenList = () => {
-  getUserCanteen().then(res => {
-    let data = res.data;
-    if (data.code !== 200) {
-      ElMessage.error(data.message);
-      return;
-    }
+const isAdmin = localStorage.getItem('isAdmin');
+const getCanteenListData = () => {
+  if (isAdmin === 'admin') {
+    getCanteenList({
+      currentPage: 1,
+      pageSize: 100
+    }).then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
 
-    canteenList.value = data?.data;
-  });
+      canteenList.value = data?.list;
+    });
+  } else {
+    getUserCanteen().then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
+      canteenList.value = data?.data;
+    });
+  }
 };
-getCanteenList();
+getCanteenListData();
 
 const announcementData = ref([]);
 const getAnnouncementData = () => {

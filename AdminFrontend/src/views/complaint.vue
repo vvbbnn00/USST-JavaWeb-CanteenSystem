@@ -129,7 +129,7 @@ import {Edit, Search, Check} from '@element-plus/icons-vue';
 import {parseDateTime} from "../utils/string";
 import {complaintReply, getComplaintList, shutComplaint, getComplaintInfo} from "../api/complain";
 import {MdPreview} from "md-editor-v3";
-import {getUserCanteen} from "../api/canteen";
+import {getCanteenList, getUserCanteen} from "../api/canteen";
 
 const query = reactive({
   kw: '',
@@ -140,7 +140,21 @@ const query = reactive({
 
 const canteenData = ref([]);
 const isAdmin = localStorage.getItem('ms_role');
-if (isAdmin !== 'admin') {
+if (isAdmin === 'admin') {
+  getCanteenList({
+    currentPage: 1,
+    pageSize: 100
+  }).then(res => {
+    let data = res.data;
+    if (data.code !== 200) {
+      ElMessage.error(data.message);
+      return;
+    }
+
+    canteenData.value = data?.list;
+  });
+  getCanteenList();
+} else {
   getUserCanteen().then(res => {
     let data = res.data;
     if (data.code !== 200) {
@@ -148,9 +162,6 @@ if (isAdmin !== 'admin') {
       return;
     }
     canteenData.value = data?.data;
-    pageTotal.value = data?.data?.length;
-    query.currentPage = data?.currentPage || 1;
-    query.pageSize = data?.pageSize;
   });
   getUserCanteen();
 }

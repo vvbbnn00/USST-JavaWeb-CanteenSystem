@@ -121,6 +121,14 @@ const items: {
       {
         index: '/canteen',
         title: '食堂管理',
+      },
+      {
+        index: '/cuisine',
+        title: '菜系管理',
+      },
+      {
+        index: '/item',
+        title: '菜品管理',
       }
     ],
   },
@@ -140,6 +148,18 @@ const items: {
     title: '反馈管理',
     index: '3',
     subs: [
+      {
+        index: '/complaint',
+        title: '投诉管理',
+      },
+      {
+        index: '/announcement',
+        title: '公告管理',
+      },
+      {
+        index: '/vote',
+        title: '投票管理',
+      },
       {
         index: '/topic',
         title: '社区信息管理',

@@ -81,11 +81,12 @@
 import {ref, reactive, watch} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Plus, Edit, Delete} from '@element-plus/icons-vue';
-import {getUserCanteen} from "../api/canteen";
+import {getUserCanteen, getCanteenList} from "../api/canteen";
 import {deleteCuisine, getCuisineList, updateCuisine, createCuisine} from "../api/cuisine";
 import {parseDateTime} from "../utils/string";
 
 const canteenList = ref([]);
+const isAdmin = localStorage.getItem('isAdmin');
 
 const query = reactive({
   canteenId: undefined as unknown as number,
@@ -93,17 +94,32 @@ const query = reactive({
   pageSize: 10
 });
 
-const getCanteenList = () => {
-  getUserCanteen().then(res => {
-    let data = res.data;
-    if (data.code !== 200) {
-      ElMessage.error(data.message);
-      return;
-    }
-    canteenList.value = data?.data;
-  });
+const getCanteenListData = () => {
+  if (isAdmin === 'admin') {
+    getCanteenList({
+      currentPage: 1,
+      pageSize: 100
+    }).then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
+
+      canteenList.value = data?.list;
+    });
+  } else {
+    getUserCanteen().then(res => {
+      let data = res.data;
+      if (data.code !== 200) {
+        ElMessage.error(data.message);
+        return;
+      }
+      canteenList.value = data?.data;
+    });
+  }
 };
-getCanteenList();
+getCanteenListData();
 
 const validateForm = reactive({
   name: [
