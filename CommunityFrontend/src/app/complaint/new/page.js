@@ -5,10 +5,10 @@ import {message} from "antd";
 import {Button, Image, Input, Skeleton, Textarea} from "@nextui-org/react";
 import {CloseOutlined} from "@ant-design/icons";
 import EmojiButton from "@/components/common/EmojiButton";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {ImageIcon} from "@/components/icons/ImageIcon";
 import {fetchApiWithAuth} from "@/utils/api";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {getUploadUrl, selectFile} from "@/utils/upload";
 import CanteenSelect from "@/app/complaint/CanteenSelect";
 import {useFormStatus} from "react-dom";
@@ -26,14 +26,22 @@ const SubmitButton = () => {
 }
 
 
-export default function ComplaintCreatePage({searchParams}) {
+export default function ComplaintCreatePage({}) {
+    const searchParams = useSearchParams()
     const [files, setFiles] = useState([]);
     const [messageApi, contextHolder] = message.useMessage();
     const [tmpFiles, setTmpFiles] = useState([]);
     const router = useRouter();
     const contentRef = useRef(null);
     const [content, setContent] = useState("");
-    const [canteenId, setCanteenId] = useState(searchParams?.canteenId);
+    const [canteenId, setCanteenId] = useState(searchParams.get("canteenId"));
+
+    useEffect(() => {
+        const content = searchParams.get("content");
+        if (content) {
+            setContent(content);
+        }
+    }, [searchParams]);
 
     const inputEmoji = (emoji) => {
         if (!emoji) return;

@@ -11,8 +11,10 @@ import {VerifiedOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
 import MessagePanel from "@/app/user/message/MessagePanel";
 import {getMe} from "@/utils/auth";
+import { useSearchParams } from 'next/navigation'
 
-export default function MessagePage({searchParams}) {
+export default function MessagePage() {
+    const searchParams = useSearchParams();
     const {data: recentUser, isLoading: isRecentUserLoading} = useSWR(
         "/api/rest/user/message/target/list",
         (...args) => fetchApiWithAuth(...args).then(r => r.list),
@@ -24,15 +26,16 @@ export default function MessagePage({searchParams}) {
     const [selectedUser, setSelectedUser] = useState();
 
     useEffect(() => {
-        if (searchParams?.to) {
-            fetchApiWithAuth(`/api/rest/user/${searchParams?.to}`).then(r => {
+        const toUserId = searchParams?.get("to");
+        if (toUserId) {
+            fetchApiWithAuth(`/api/rest/user/${toUserId}`).then(r => {
                 setSelectedUser(r.data);
             });
         }
         getMe().then(r => {
             setMe(r);
         })
-    }, []);
+    }, [searchParams]);
 
     useEffect(() => {
         if (!me) return;
