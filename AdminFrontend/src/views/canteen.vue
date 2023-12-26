@@ -39,7 +39,7 @@
             <el-button class="el-icon-lx-calendar" @click="handleComment(scope.row, false)">
               查看评论
             </el-button>
-            <el-button class="el-icon-lx-questionfill" @click="handleComment(scope.row, true)" v-if="isAdmin === 'admin'">
+            <el-button class="el-icon-lx-questionfill" @click="handleComment(scope.row, true)" v-if="isAdmin !== 'admin'">
               查看未回复评论
             </el-button>
           </template>
@@ -353,16 +353,16 @@ const createVisible = ref(false);
 const handleDelete = (row: any) => {
   console.log(row.canteenId)
   // 二次确认删除
-  ElMessageBox.confirm('确定要删除/恢复吗？', '提示', {
+  ElMessageBox.confirm('确定要删除食堂吗？', '提示', {
     type: 'warning'
   })
       .then(async () => {
         try {
           await deleteCanteen(row.canteenId)
-          ElMessage.success(`删除/恢复成功`);
+          ElMessage.success(`删除食堂成功`);
           getData();
         } catch (e) {
-          ElMessage.error(`删除/恢复失败`);
+          ElMessage.error(`删除食堂失败`);
         }
       })
       .catch(() => {
