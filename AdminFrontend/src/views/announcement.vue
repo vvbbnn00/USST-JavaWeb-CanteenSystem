@@ -100,7 +100,7 @@ import {ElMessageBox} from "element-plus";
 const canteenId = ref();
 const message = ref('first');
 const canteenList = ref([]);
-const isAdmin = localStorage.getItem('isAdmin');
+const isAdmin = localStorage.getItem('ms_role');
 const getCanteenListData = () => {
   if (isAdmin === 'admin') {
     getCanteenList({
