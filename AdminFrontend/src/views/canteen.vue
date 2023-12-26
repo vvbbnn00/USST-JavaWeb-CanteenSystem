@@ -39,7 +39,7 @@
             <el-button class="el-icon-lx-calendar" @click="handleComment(scope.row, false)">
               查看评论
             </el-button>
-            <el-button class="el-icon-lx-questionfill" @click="handleComment(scope.row, true)">
+            <el-button class="el-icon-lx-questionfill" @click="handleComment(scope.row, true)" v-if="isAdmin === 'admin'">
               查看未回复评论
             </el-button>
           </template>
